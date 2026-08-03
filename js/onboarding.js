@@ -74,6 +74,23 @@ function isProfileComplete(p) {
   return !!(p && p.gender && p.name && p.birthdate && p.avatar);
 }
 
+/* =========================================================
+   学習スケジュール設定の永続化（localStorage）
+   ========================================================= */
+const SCHEDULE_KEY = 'shosa_game_schedule';
+
+function loadSavedSchedule() {
+  try {
+    const raw = localStorage.getItem(SCHEDULE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+function saveSchedule(schedule) {
+  try { localStorage.setItem(SCHEDULE_KEY, JSON.stringify(schedule)); } catch (e) { /* ignore */ }
+}
+
 const obState = {
   japaneseLevel: null,
   languageSetting: "easy", // 推奨設定の初期値
@@ -82,7 +99,15 @@ const obState = {
   aptitudeIndex: 0,
   answers: { touchpoint: null, purpose: null, interest: null, concern: null },
   aptitudeScores: {},
-  profile: { gender: null, name: "", country: "", birthdate: "", avatar: null, voiceType: "A" }
+  profile: { gender: null, name: "", country: "", birthdate: "", avatar: null, voiceType: "A" },
+  schedule: {
+    preferredTime: null,
+    notifyTime: "20:00",
+    notifyEnabled: true,
+    lessonsPerDay: 1,
+    days: { mon: true, tue: true, wed: true, thu: true, fri: true, sat: false, sun: false },
+    streakGoal: null
+  }
 };
 
 /* ---------- 0b. STORY COVER（プログラム全体の導入。Figma「ホテルスタッフ体験」に対応） ---------- */
@@ -170,8 +195,12 @@ function loadIntroSlide(i) {
   if (slide.type === 'collage') {
     content.innerHTML = `
       <div class="ob-collage-diagonal">
-        <div class="panel panel-top">アプリ内学習の場面1</div>
-        <div class="panel panel-bottom">アプリ内学習の場面2</div>
+        <div class="panel panel-top" style="background-image:url('https://images.pexels.com/photos/3771087/pexels-photo-3771087.jpeg?auto=compress&cs=tinysrgb&h=500&fit=crop&w=900');">
+          <span class="panel-caption">アプリ内学習の場面1</span>
+        </div>
+        <div class="panel panel-bottom" style="background-image:url('https://images.pexels.com/photos/7820321/pexels-photo-7820321.jpeg?auto=compress&cs=tinysrgb&h=500&fit=crop&w=900');">
+          <span class="panel-caption">アプリ内学習の場面2</span>
+        </div>
       </div>
       <h2 style="font-size:20px;color:#2d3748;font-weight:900;text-align:center;margin-bottom:10px;">${slide.title}</h2>
       <p class="ob-tagline">${slide.text.replace(/\n/g, '<br>')}</p>`;
@@ -179,8 +208,8 @@ function loadIntroSlide(i) {
     content.innerHTML = `
       <h2 style="font-size:17px;color:#2d3748;font-weight:900;text-align:center;margin-bottom:12px;">${slide.title.replace(/\n/g, '<br>')}</h2>
       <div class="ob-image-collage">
-        <img class="img-main" src="https://images.pexels.com/photos/14036250/pexels-photo-14036250.jpeg?auto=compress&cs=tinysrgb&h=400&fit=crop&w=700" alt="ホテルのイメージ">
-        <div class="ph img-sub">イメージ画像</div>
+        <img class="img-main" src="https://images.pexels.com/photos/14036250/pexels-photo-14036250.jpeg?auto=compress&cs=tinysrgb&h=400&fit=crop&w=700" alt="ホテルフロントのイメージ">
+        <img class="img-sub" src="https://images.pexels.com/photos/5378703/pexels-photo-5378703.jpeg?auto=compress&cs=tinysrgb&h=300&fit=crop&w=500" alt="ホテル接客のイメージ">
       </div>
       <p class="ob-tagline" style="text-align:left;">${slide.body.replace(/\n/g, '<br>')}</p>
       <ul class="ob-checklist">${slide.checklist.map(c => `<li>${c}</li>`).join('')}</ul>`;
@@ -197,7 +226,7 @@ function loadIntroSlide(i) {
   } else if (slide.type === 'certification') {
     content.innerHTML = `
       <h2 style="font-size:18px;color:#2d3748;font-weight:900;text-align:center;margin-bottom:12px;">${slide.title.replace(/\n/g, '<br>')}</h2>
-      <div class="ob-image-placeholder large">検定イメージ画像</div>
+      <img class="ob-image-placeholder large" style="object-fit:cover;" src="https://images.pexels.com/photos/9829324/pexels-photo-9829324.jpeg?auto=compress&cs=tinysrgb&h=500&fit=crop&w=800" alt="検定・修了証のイメージ">
       <ul class="ob-checklist" style="margin-top:14px;">${slide.checklist.map(c => `<li>${c}</li>`).join('')}</ul>
       <p class="ob-tagline">${slide.footer}</p>`;
   }
@@ -453,9 +482,29 @@ function finalizeOnboarding() {
       ${dims.map(d => `<div class="pc-stat-row"><span class="pc-stat-label">${d}</span><span class="pc-stat-stars">${starsFor(d)}</span></div>`).join('')}
     </div>`;
 
+  const recommendedRole = suggestRecommendedRole(obState.answers.purpose);
+  $('ob-passport-feedback').innerHTML = `
+    <h3>適性診断フィードバック</h3>
+    <div>あなたにおすすめ職種<br><strong style="font-size:15px;">${recommendedRole}</strong></div>
+    <div class="ob-passport-badge-s">S</div>
+    <div class="ob-passport-feedback-caption">potentialタグのパラメーターを言語で表示</div>`;
+
   $('ob-passport-reveal').classList.remove('hidden');
   $('ob-passport-card-wrap').classList.add('hidden');
   showScreen('screen-ob-passport');
+}
+
+// 「興味のある働き方」の回答から、おすすめ職種をざっくり提案する
+function suggestRecommendedRole(purposeAnswer) {
+  const map = {
+    "フロントデスクに立ちたい": "フロント",
+    "ハウスキーピングをしたい": "ハウスキーピング",
+    "レストランで働きたい": "レストラン",
+    "優秀なホテリエになりたい": "オールラウンダー・ホテリエ",
+    "バックオフィスで働きたい": "バックオフィス",
+    "まだ決まってない": "フロント"
+  };
+  return map[purposeAnswer] || "フロント";
 }
 
 $('btn-ob-passport-open').addEventListener('click', () => goTo(loadPassportCardView));
@@ -465,7 +514,112 @@ function loadPassportCardView() {
   $('ob-passport-card-wrap').classList.remove('hidden');
 }
 
-$('btn-ob-passport-start').addEventListener('click', () => goTo(startGame));
+$('btn-ob-passport-start').addEventListener('click', () => goTo(loadScheduleTime));
+
+/* ---------- 1n. 学習スケジュール作成 STEP1：時間帯・通知設定 ---------- */
+function loadScheduleTime() {
+  const optWrap = $('ob-schedule-time-options');
+  optWrap.innerHTML = '';
+  const nextBtn = $('btn-ob-schedule-time-next');
+  ONBOARDING_DATA.scheduleTimeOptions.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'ob-list-row' + (opt.id === obState.schedule.preferredTime ? ' selected' : '');
+    btn.innerHTML = `<span class="ob-list-icon">●</span><span>${devEscSafe(opt.label)}</span>`;
+    btn.addEventListener('click', () => {
+      optWrap.querySelectorAll('.ob-list-row').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      obState.schedule.preferredTime = opt.id;
+      nextBtn.disabled = false;
+    });
+    optWrap.appendChild(btn);
+  });
+  $('ob-schedule-notify-time').value = obState.schedule.notifyTime;
+  $('ob-schedule-notify-toggle').checked = obState.schedule.notifyEnabled;
+  nextBtn.disabled = !obState.schedule.preferredTime;
+  showScreen('screen-ob-schedule-time');
+}
+$('ob-schedule-notify-time').addEventListener('change', () => {
+  obState.schedule.notifyTime = $('ob-schedule-notify-time').value;
+});
+$('ob-schedule-notify-toggle').addEventListener('change', () => {
+  obState.schedule.notifyEnabled = $('ob-schedule-notify-toggle').checked;
+});
+$('btn-ob-schedule-time-next').addEventListener('click', () => goTo(loadScheduleDays));
+
+/* ---------- 1o. 学習スケジュール作成 STEP2：レッスン数・曜日 ---------- */
+const WEEKDAYS = [
+  { id: 'mon', label: '月曜日' }, { id: 'tue', label: '火曜日' }, { id: 'wed', label: '水曜日' },
+  { id: 'thu', label: '木曜日' }, { id: 'fri', label: '金曜日' }, { id: 'sat', label: '土曜日' },
+  { id: 'sun', label: '日曜日' }
+];
+
+function updateScheduleDaysNextState() {
+  const anyDaySelected = WEEKDAYS.some(d => obState.schedule.days[d.id]);
+  $('btn-ob-schedule-days-next').disabled = !anyDaySelected;
+}
+
+function renderLessonCountLabel() {
+  $('ob-schedule-lesson-count-label').textContent = `${obState.schedule.lessonsPerDay}レッスン／日`;
+  $('ob-schedule-days-list').querySelectorAll('.ob-weekday-row').forEach(row => {
+    const lessonEl = row.querySelector('.wd-lesson-count');
+    if (lessonEl) lessonEl.textContent = `${obState.schedule.lessonsPerDay}レッスン`;
+  });
+}
+
+function loadScheduleDays() {
+  renderLessonCountLabel();
+  const list = $('ob-schedule-days-list');
+  list.innerHTML = WEEKDAYS.map(d => `
+    <div class="ob-weekday-row${obState.schedule.days[d.id] ? ' selected' : ''}" data-day="${d.id}">
+      <span>${d.label}</span>
+      <span class="wd-right"><span class="wd-lesson-count">${obState.schedule.lessonsPerDay}レッスン</span><span class="ob-weekday-check">${obState.schedule.days[d.id] ? '✓' : ''}</span></span>
+    </div>`).join('');
+  list.querySelectorAll('.ob-weekday-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const day = row.dataset.day;
+      obState.schedule.days[day] = !obState.schedule.days[day];
+      row.classList.toggle('selected', obState.schedule.days[day]);
+      row.querySelector('.ob-weekday-check').textContent = obState.schedule.days[day] ? '✓' : '';
+      updateScheduleDaysNextState();
+    });
+  });
+  updateScheduleDaysNextState();
+  showScreen('screen-ob-schedule-days');
+}
+$('btn-schedule-lesson-minus').addEventListener('click', () => {
+  obState.schedule.lessonsPerDay = Math.max(1, obState.schedule.lessonsPerDay - 1);
+  renderLessonCountLabel();
+});
+$('btn-schedule-lesson-plus').addEventListener('click', () => {
+  obState.schedule.lessonsPerDay = Math.min(5, obState.schedule.lessonsPerDay + 1);
+  renderLessonCountLabel();
+});
+$('btn-ob-schedule-days-next').addEventListener('click', () => goTo(loadScheduleGoal));
+
+/* ---------- 1p. 学習スケジュール作成 STEP3：継続目標日数（Let's start!） ---------- */
+function loadScheduleGoal() {
+  const optWrap = $('ob-schedule-goal-options');
+  optWrap.innerHTML = '';
+  const nextBtn = $('btn-ob-schedule-goal-next');
+  ONBOARDING_DATA.scheduleStreakOptions.forEach(days => {
+    const btn = document.createElement('button');
+    btn.className = 'ob-option-btn' + (days === obState.schedule.streakGoal ? ' selected' : '');
+    btn.textContent = `${days}日連続`;
+    btn.addEventListener('click', () => {
+      optWrap.querySelectorAll('.ob-option-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      obState.schedule.streakGoal = days;
+      nextBtn.disabled = false;
+    });
+    optWrap.appendChild(btn);
+  });
+  nextBtn.disabled = !obState.schedule.streakGoal;
+  showScreen('screen-ob-schedule-goal');
+}
+$('btn-ob-schedule-goal-next').addEventListener('click', () => {
+  saveSchedule(obState.schedule);
+  goTo(startGame);
+});
 
 /* ---------- 設定画面（あとからいつでもプロフィールを編集） ---------- */
 $('btn-open-settings').addEventListener('click', () => goTo(loadSettings));
@@ -571,6 +725,7 @@ function startOnboarding() {
   const savedProfile = loadSavedProfile();
   const savedHearings = loadSavedHearingAnswers();
   const savedAptitude = loadSavedAptitudeScores();
+  const savedSchedule = loadSavedSchedule();
   obState.japaneseLevel = null;
   obState.languageSetting = 'easy';
   obState.slideIndex = 0;
@@ -579,5 +734,6 @@ function startOnboarding() {
   obState.answers = savedHearings ? { ...savedHearings } : { touchpoint: null, purpose: null, interest: null, concern: null };
   obState.aptitudeScores = savedAptitude ? { ...savedAptitude } : {};
   obState.profile = savedProfile ? { ...savedProfile } : { gender: null, name: '', country: '', birthdate: '', avatar: null, voiceType: 'A' };
+  obState.schedule = savedSchedule ? { ...obState.schedule, ...savedSchedule } : obState.schedule;
   loadStoryCover();
 }

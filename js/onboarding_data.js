@@ -91,5 +91,17 @@ const ONBOARDING_DATA = {
   voiceTypes: [
     { id: "A", label: "タイプA", rate: 1.0, pitch: 1.0 },
     { id: "B", label: "タイプB", rate: 0.9, pitch: 1.3 }
-  ]
+  ],
+
+  // 1n. 学習スケジュール作成：時間帯の選択肢
+  scheduleTimeOptions: [
+    { id: "morning", label: "朝起きた後" },
+    { id: "lunch", label: "ランチタイム" },
+    { id: "evening", label: "夕食前後" },
+    { id: "night", label: "寝る前" },
+    { id: "other", label: "その他" }
+  ],
+
+  // 1p. 学習スケジュール作成：継続目標日数の選択肢
+  scheduleStreakOptions: [3, 5, 14, 30]
 };

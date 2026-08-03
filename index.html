@@ -218,16 +218,22 @@
 
     <!-- 1l. PROFILE INPUT 02 -->
     <section id="screen-ob-profile2" class="screen hidden">
-      <div class="ob-progress">プロフィール入力02</div>
-      <h2 style="font-size:16px;color:#2d3748;margin-bottom:10px;">自分のアバターを選んでね</h2>
-      <div class="ob-avatar-grid" id="ob-avatar-grid"></div>
+      <div class="ob-progress-bar"><div class="ob-progress-bar-fill" style="width:100%;"></div></div>
+      <h2 style="font-size:16px;color:#2d3748;margin-bottom:14px;">プロフィールを入力してください</h2>
       <div class="ob-form-group">
         <label>音声タイプ</label>
+        <div class="ob-voice-sample-row">
+          <span>Hi, my name is ○○.</span>
+          <button id="btn-ob-voice-sample" class="ob-sample-icon-btn" title="音声再生アイコン">🔊</button>
+        </div>
         <div class="ob-voice-row" id="ob-voice-row">
           <div class="ob-voice-btn selected" data-value="A">タイプA</div>
           <div class="ob-voice-btn" data-value="B">タイプB</div>
         </div>
-        <button id="btn-ob-voice-sample" class="ob-sample-btn">🔊 サンプルを聴く</button>
+      </div>
+      <div class="ob-form-group">
+        <label>アイコン</label>
+        <div class="ob-avatar-grid" id="ob-avatar-grid"></div>
       </div>
       <button id="btn-ob-profile2-next" class="primary-btn" disabled>NEXT</button>
     </section>
@@ -235,15 +241,80 @@
     <!-- 1m. SHOSA PASSPORT COMPLETE -->
     <section id="screen-ob-passport" class="screen hidden">
       <div id="ob-passport-reveal" class="passport-reveal-wrap">
-        <div class="trophy">🎉</div>
+        <div class="ob-passport-hero-img">
+          <img src="https://images.pexels.com/photos/7310015/pexels-photo-7310015.jpeg?auto=compress&cs=tinysrgb&h=400&fit=crop&w=400" alt="パスポートのイメージ">
+        </div>
         <h2 style="font-size:18px;color:#2d3748;margin-bottom:8px;">SHOSA Passport 完成！</h2>
         <p style="font-size:13px;color:#718096;">あなた専用の学習プロフィールができました。</p>
         <button id="btn-ob-passport-open" class="primary-btn">OPEN</button>
       </div>
       <div id="ob-passport-card-wrap" class="hidden">
         <div class="passport-card" id="ob-passport-card"></div>
-        <button id="btn-ob-passport-start" class="primary-btn">はじめる</button>
+        <div class="explanation-card" id="ob-passport-feedback" style="margin-top:12px;"></div>
+        <button id="btn-ob-passport-start" class="primary-btn">NEXT</button>
       </div>
+    </section>
+
+    <!-- 1n. 学習スケジュール作成 STEP1：好きな時間帯・通知設定 -->
+    <section id="screen-ob-schedule-time" class="screen hidden">
+      <h2 style="font-size:16px;color:#2d3748;font-weight:900;margin-bottom:12px;">学習スケジュール作成</h2>
+      <div class="ob-chat-row">
+        <div class="ob-chat-avatar-wrap">
+          <div class="avatar-circle small">🤖</div>
+          <span class="avatar-label">キャラクター</span>
+        </div>
+        <div class="ob-chat-bubble"><p>学習の時間を決めよう！続けやすいタイミングを選んでね。</p></div>
+      </div>
+      <div class="ob-options" id="ob-schedule-time-options"></div>
+      <div class="ob-form-group" style="margin-top:10px;">
+        <label>この時間にお知らせします</label>
+        <div class="ob-notify-row">
+          <span class="ob-list-icon" style="width:28px;height:28px;font-size:13px;">⏰</span>
+          <input type="time" id="ob-schedule-notify-time" class="ob-time-input" value="20:00">
+          <span class="ob-list-icon" style="width:28px;height:28px;font-size:13px;">🔔</span>
+          <label class="ob-toggle">
+            <input type="checkbox" id="ob-schedule-notify-toggle" checked>
+            <span class="ob-toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      <button id="btn-ob-schedule-time-next" class="primary-btn" disabled>NEXT</button>
+    </section>
+
+    <!-- 1o. 学習スケジュール作成 STEP2：レッスン数・曜日 -->
+    <section id="screen-ob-schedule-days" class="screen hidden">
+      <h2 style="font-size:16px;color:#2d3748;font-weight:900;margin-bottom:16px;">学習スケジュール作成</h2>
+      <div class="ob-form-group">
+        <label>毎日の基本レッスン数</label>
+        <div class="ob-lesson-count-row">
+          <span id="ob-schedule-lesson-count-label">1レッスン／日</span>
+          <span class="ob-list-icon" style="width:28px;height:28px;font-size:12px;">アイコン</span>
+        </div>
+        <p class="ob-help-text">所要時間：8〜15分</p>
+        <div class="ob-lesson-count-btns">
+          <button type="button" class="secondary-btn" id="btn-schedule-lesson-minus">－</button>
+          <button type="button" class="secondary-btn" id="btn-schedule-lesson-plus">＋</button>
+        </div>
+      </div>
+      <div class="ob-form-group">
+        <label>学習できる曜日は？</label>
+        <div id="ob-schedule-days-list" class="ob-weekday-list"></div>
+      </div>
+      <button id="btn-ob-schedule-days-next" class="primary-btn" disabled>NEXT</button>
+    </section>
+
+    <!-- 1p. 学習スケジュール作成 STEP3：目標日数（最後にLet's start!） -->
+    <section id="screen-ob-schedule-goal" class="screen hidden">
+      <h2 style="font-size:16px;color:#2d3748;font-weight:900;margin-bottom:12px;">学習スケジュール作成</h2>
+      <div class="ob-chat-row">
+        <div class="ob-chat-avatar-wrap">
+          <div class="avatar-circle small">🤖</div>
+          <span class="avatar-label">キャラクター</span>
+        </div>
+        <div class="ob-chat-bubble"><p>レッスンを続ける目標日数を決めよう！</p></div>
+      </div>
+      <div class="ob-options" id="ob-schedule-goal-options"></div>
+      <button id="btn-ob-schedule-goal-next" class="primary-btn" disabled>Let's start！</button>
     </section>
 
     <!-- SETTINGS / プロフィール編集（あとからいつでも呼び出せる） -->
@@ -312,6 +383,9 @@
             <button class="secondary-btn" data-jump="profile1">プロフィール入力01</button>
             <button class="secondary-btn" data-jump="profile2">プロフィール入力02</button>
             <button class="secondary-btn" data-jump="passport">SHOSAパスポート</button>
+            <button class="secondary-btn" data-jump="scheduletime">スケジュール:時間帯</button>
+            <button class="secondary-btn" data-jump="scheduledays">スケジュール:曜日</button>
+            <button class="secondary-btn" data-jump="schedulegoal">スケジュール:目標</button>
             <button class="secondary-btn" data-jump="daystart1">DAY1（開始カードから）</button>
             <button class="secondary-btn" data-jump="daystart2">DAY2（開始カードから）</button>
             <button class="secondary-btn" data-jump="daystart3">DAY3（開始カードから）</button>

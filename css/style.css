@@ -323,7 +323,7 @@ main { flex: 1; position: relative; overflow-y: auto; overflow-x: hidden; paddin
 
 .ob-image-row { display: flex; gap: 8px; margin: 14px 0; }
 .ob-image-placeholder { flex: 1; height: 60px; background: #edf2f7; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #a0aec0; text-align: center; padding: 4px; }
-.ob-image-placeholder.large { height: 96px; flex: none; width: 100%; }
+.ob-image-placeholder.large { height: 220px; flex: none; width: 100%; }
 
 .ob-tagline { font-size: 12px; color: #718096; text-align: center; line-height: 1.7; margin-top: 6px; }
 
@@ -812,33 +812,34 @@ main { flex: 1; position: relative; overflow-y: auto; overflow-x: hidden; paddin
 .ob-scroll-hint { text-align: center; font-size: 11px; color: #a0aec0; margin: 6px 0 2px; letter-spacing: 1px; }
 
 /* ---- スライド1：斜めカット2分割コラージュ ---- */
-.ob-collage-diagonal { position: relative; height: 160px; border-radius: 14px; overflow: hidden; margin-bottom: 16px; }
+.ob-collage-diagonal { position: relative; height: 340px; border-radius: 14px; overflow: hidden; margin-bottom: 28px; }
 .ob-collage-diagonal .panel {
   position: absolute; left: 0; right: 0; display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 700; color: #4a5568; text-align: center; padding: 8px;
+  font-size: 11px; font-weight: 700; color: #fff; text-align: center; padding: 8px;
+  background-size: cover; background-position: center;
+}
+.ob-collage-diagonal .panel-caption {
+  background: rgba(26,32,44,0.55); padding: 3px 10px; border-radius: 6px; backdrop-filter: blur(1px);
 }
 .ob-collage-diagonal .panel-top {
-  top: 0; height: 65%; background: #e2e8f0;
+  top: 0; height: 65%;
   clip-path: polygon(0 0, 100% 0, 100% 62%, 0 100%);
   align-items: flex-start; padding-top: 14px;
 }
 .ob-collage-diagonal .panel-bottom {
-  bottom: 0; height: 65%; background: #cbd5e0;
+  bottom: 0; height: 65%;
   clip-path: polygon(0 38%, 100% 0, 100% 100%, 0 100%);
   align-items: flex-end; padding-bottom: 14px;
 }
 
 /* ---- スライド2：オフセットして重なる画像コラージュ ---- */
-.ob-image-collage { position: relative; height: 150px; margin: 16px 0 22px; }
-.ob-image-collage img, .ob-image-collage .ph {
+.ob-image-collage { position: relative; height: 220px; margin: 16px 0 22px; }
+.ob-image-collage img {
   position: absolute; border-radius: 12px; box-shadow: var(--shadow); object-fit: cover;
   border: 3px solid #fff;
 }
-.ob-image-collage .img-main { width: 72%; height: 108px; left: 0; top: 0; z-index: 1; }
-.ob-image-collage .img-sub {
-  width: 52%; height: 78px; right: 0; bottom: 0; z-index: 2; background: #edf2f7; display: flex;
-  align-items: center; justify-content: center; font-size: 10px; color: #a0aec0; text-align: center; padding: 4px;
-}
+.ob-image-collage .img-main { width: 72%; height: 160px; left: 0; top: 0; z-index: 1; }
+.ob-image-collage .img-sub { width: 52%; height: 110px; right: 0; bottom: 0; z-index: 2; }
 
 /* ---- スライド3：ステップ間をつなぐタイムライン ---- */
 .ob-steps.timeline { position: relative; padding-left: 2px; }
@@ -858,3 +859,71 @@ main { flex: 1; position: relative; overflow-y: auto; overflow-x: hidden; paddin
   background-size: 5px 5px, 5px 5px;
   background-repeat: no-repeat;
 }
+
+/* =========================================================
+   追加分②：パスポート・音声/アイコン並び替え・学習スケジュール作成
+   ========================================================= */
+
+/* ---- パスポート完成画面の画像 ---- */
+.ob-passport-hero-img {
+  width: 100%; max-width: 320px; height: 320px; margin: 0 auto 24px; border-radius: 16px; background: #e2e8f0;
+  display: flex; align-items: center; justify-content: center; font-size: 44px; box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.ob-passport-hero-img img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ---- 音声タイプのサンプル行（テキスト＋再生アイコン） ---- */
+.ob-voice-sample-row {
+  display: flex; align-items: center; justify-content: space-between; background: #edf2f7; border-radius: 10px;
+  padding: 10px 14px; font-size: 12px; color: #4a5568; margin-bottom: 10px;
+}
+.ob-sample-icon-btn {
+  width: 30px; height: 30px; border-radius: 15px; border: none; background: #fff; box-shadow: var(--shadow);
+  font-size: 14px; cursor: pointer; flex-shrink: 0; margin-left: 10px;
+}
+
+/* ---- 通知時刻・トグルスイッチ行 ---- */
+.ob-notify-row { display: flex; align-items: center; gap: 10px; }
+.ob-time-input {
+  flex: 1; padding: 10px 12px; border: 1.5px solid #e2e8f0; border-radius: 10px; font-size: 13px; color: #2d3748;
+}
+.ob-toggle { position: relative; display: inline-block; width: 42px; height: 24px; flex-shrink: 0; }
+.ob-toggle input { opacity: 0; width: 0; height: 0; }
+.ob-toggle-slider {
+  position: absolute; cursor: pointer; inset: 0; background: #cbd5e0; border-radius: 24px; transition: 0.2s;
+}
+.ob-toggle-slider::before {
+  content: ''; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background: #fff;
+  border-radius: 50%; transition: 0.2s;
+}
+.ob-toggle input:checked + .ob-toggle-slider { background: var(--accent-blue); }
+.ob-toggle input:checked + .ob-toggle-slider::before { transform: translateX(18px); }
+
+/* ---- レッスン数ステッパー ---- */
+.ob-lesson-count-row {
+  display: flex; align-items: center; justify-content: space-between; background: #edf2f7; border-radius: 10px;
+  padding: 12px 14px; font-size: 14px; font-weight: 700; color: #2d3748; margin-bottom: 6px;
+}
+.ob-lesson-count-btns { display: flex; gap: 10px; margin-top: 10px; }
+.ob-lesson-count-btns .secondary-btn { flex: 1; width: auto; margin-top: 0; font-size: 16px; font-weight: 900; }
+
+/* ---- 曜日リスト ---- */
+.ob-weekday-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.ob-weekday-row {
+  display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: #fff;
+  border: 1.5px solid #e2e8f0; border-radius: 10px; font-size: 13px; color: #2d3748; cursor: pointer;
+}
+.ob-weekday-row.selected { border-color: #3182ce; background: #ebf8ff; }
+.ob-weekday-row .wd-right { display: flex; align-items: center; gap: 8px; font-size: 11px; color: #a0aec0; }
+.ob-weekday-check {
+  width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid #cbd5e0; background: #fff; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 12px; color: #fff;
+}
+.ob-weekday-row.selected .ob-weekday-check { background: #3182ce; border-color: #3182ce; }
+
+/* ---- パスポートカード：適性診断フィードバック補足 ---- */
+.ob-passport-badge-s {
+  width: 34px; height: 34px; border-radius: 17px; background: var(--accent-blue); color: #fff; font-size: 13px;
+  font-weight: 900; display: flex; align-items: center; justify-content: center; margin: 10px auto 6px;
+}
+.ob-passport-feedback-caption { text-align: center; font-size: 10px; color: #a0aec0; margin-top: 2px; }
