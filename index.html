@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SHOSA - ホテルスタッフ体験ゲーム</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+
+<div class="device-container">
+  <div id="top-nav-bar" class="top-nav-bar">
+    <button id="btn-global-back" class="global-back-btn hidden">← 戻る</button>
+    <button id="btn-bgm-toggle" class="bgm-toggle-btn">🔊</button>
+    <button id="btn-open-settings" class="settings-btn">⚙️ 設定</button>
+  </div>
+  <audio id="bgm-audio" src="assets/audio/lobby_bgm.mp3" loop preload="auto"></audio>
+  <header id="game-header" class="game-header hidden">
+    <div class="timeline-indicator">
+      <span id="current-day-label" class="day-badge">DAY1</span>
+      <span id="current-time-label" class="time-badge">07:45</span>
+      <span id="player-badge" class="player-badge hidden">
+        <span id="player-badge-avatar" class="player-badge-avatar"></span>
+        <span id="player-badge-name"></span>
+      </span>
+    </div>
+    <div class="metrics-summary">
+      <div class="metric-pill">
+        <span class="icon">🤝</span>
+        <span class="label">チーム度</span>
+        <span id="team-score-val" class="score-val">50</span>
+      </div>
+      <div class="metric-pill">
+        <span class="icon">✨</span>
+        <span class="label">ゲスト安心</span>
+        <span id="guest-score-val" class="score-val">50</span>
+      </div>
+    </div>
+  </header>
+
+  <main id="app-viewport">
+
+    <!-- 1. TITLE (登録開始) -->
+    <section id="screen-title" class="screen">
+      <div class="title-card">
+        <div class="logo-badge">Toward the future of working in Japan</div>
+        <h1 class="main-title">SHOSA</h1>
+        <div class="title-scene-wrap" style="margin: 20px 0;">
+          <img src="assets/images/scenes/title_lobby.jpg" alt="" class="title-scene-img">
+        </div>
+        <p class="sub-title">現場で通用する「プロの姿勢」と「型」を、リアルなストーリーで学びましょう。</p>
+      </div>
+      <button id="btn-start-game" class="primary-btn pulse">START</button>
+      <button id="btn-title-continue" class="secondary-btn hidden">🏠 続きから（Day選択メニューへ）</button>
+    </section>
+
+    <!-- 1b/1c. SHOSA READY CHECK + 日本語レベル確認（1画面に統合） -->
+    <section id="screen-ob-level" class="screen hidden">
+      <div>
+        <span class="ob-card-badge">before starting...</span>
+        <h2 style="font-size:20px;color:#2d3748;font-weight:900;">SHOSA Ready CHECK</h2>
+        <div class="ob-divider"></div>
+      </div>
+      <div class="character-preview compact">
+        <div class="avatar-circle small">🤖</div>
+      </div>
+      <div class="speech-bubble"><p>Please tell me about your Japanese language level.</p></div>
+      <div class="ob-options" id="ob-level-options"></div>
+      <button id="btn-ob-level-next" class="primary-btn" disabled>NEXT</button>
+    </section>
+
+    <!-- 1d. RECOMMENDED LANGUAGE SETTING -->
+    <section id="screen-ob-recommend" class="screen hidden">
+      <div class="ob-progress">SHOSA Ready CHECK</div>
+      <div class="character-preview compact">
+        <div class="avatar-circle small">🤖</div>
+      </div>
+      <div class="speech-bubble"><p>Here are the language settings we recommend for you.</p></div>
+      <div class="explanation-card" style="margin-top:14px;">
+        <h3 id="ob-recommend-title">Easy Japanese</h3>
+        <ul class="ob-checklist">
+          <li>文章を短く表示します</li>
+          <li>難しい言葉を減らします</li>
+          <li>あとで変更できます</li>
+        </ul>
+      </div>
+      <div class="ob-btn-row">
+        <button id="btn-ob-recommend-change" class="secondary-btn">CHANGE</button>
+        <button id="btn-ob-recommend-next" class="primary-btn">NEXT</button>
+      </div>
+    </section>
+
+    <!-- 1e. LANGUAGE SETTING SELECTION -->
+    <section id="screen-ob-langselect" class="screen hidden">
+      <div class="ob-progress">SHOSA Ready CHECK</div>
+      <div class="character-preview compact">
+        <div class="avatar-circle small">🤖</div>
+      </div>
+      <div class="speech-bubble"><p>Please select your language setting.</p></div>
+      <div class="ob-lang-list" id="ob-lang-list"></div>
+      <button id="btn-ob-langselect-next" class="primary-btn" disabled>NEXT</button>
+    </section>
+
+    <!-- 1f. CHARACTER INTRO CAROUSEL (キャラクター紹介 part 1) -->
+    <section id="screen-ob-intro" class="screen hidden">
+      <div id="ob-intro-content"></div>
+      <div class="ob-dots" id="ob-intro-dots"></div>
+      <button id="btn-ob-intro-next" class="primary-btn">NEXT</button>
+    </section>
+
+    <!-- 1g. AI TUTOR GREETING (キャラクター紹介 part 2) -->
+    <section id="screen-ob-character" class="screen hidden">
+      <div class="ob-progress">キャラクター紹介</div>
+      <div class="character-preview">
+        <div class="avatar-circle">🤖</div>
+        <div class="avatar-label">AIチューター SHOSA</div>
+      </div>
+      <div class="speech-bubble"><p>はじめまして！SHOSAだよ。学習をサポートするために、まずは少しだけ君のことを教えてね。</p></div>
+      <button id="btn-ob-character-next" class="primary-btn">NEXT</button>
+    </section>
+
+    <!-- 1h. HEARING (reused for 4 questions) -->
+    <section id="screen-ob-hearing" class="screen hidden">
+      <div class="ob-progress" id="ob-hearing-progress">ヒアリング01</div>
+      <div class="character-preview compact"><div class="avatar-circle small">🤖</div></div>
+      <div class="question-box"><p id="ob-hearing-question">-</p></div>
+      <div class="ob-options" id="ob-hearing-options"></div>
+      <button id="btn-ob-hearing-next" class="primary-btn" disabled>NEXT</button>
+    </section>
+
+    <!-- 1i. APTITUDE INTRO -->
+    <section id="screen-ob-aptitude-intro" class="screen hidden">
+      <div class="ob-progress">適性診断</div>
+      <div class="character-preview compact"><div class="avatar-circle small">🤖</div></div>
+      <div class="explanation-card"><h3>はじめるまえに</h3><div id="ob-aptitude-intro-text">-</div></div>
+      <button id="btn-ob-aptitude-intro-next" class="primary-btn">START</button>
+    </section>
+
+    <!-- 1j. APTITUDE QUESTION (reused x5) -->
+    <section id="screen-ob-aptitude" class="screen hidden">
+      <div class="ob-progress" id="ob-aptitude-progress">適性診断 1/5</div>
+      <div class="ob-likert-question" id="ob-aptitude-question">-</div>
+      <div class="ob-likert-row" id="ob-aptitude-row"></div>
+      <div class="ob-likert-labels"><span>そう思わない</span><span>とてもそう思う</span></div>
+      <button id="btn-ob-aptitude-next" class="primary-btn" disabled>NEXT</button>
+    </section>
+
+    <!-- 1k. PROFILE INPUT 01 -->
+    <section id="screen-ob-profile1" class="screen hidden">
+      <div class="ob-progress">プロフィール入力01</div>
+      <h2 style="font-size:16px;color:#2d3748;margin-bottom:14px;">プロフィールを入力してね</h2>
+      <div class="ob-form-group">
+        <label>性別</label>
+        <div class="ob-pill-row" id="ob-gender-row">
+          <div class="ob-pill" data-value="男性">男性</div>
+          <div class="ob-pill" data-value="女性">女性</div>
+          <div class="ob-pill" data-value="その他">その他</div>
+        </div>
+      </div>
+      <div class="ob-form-group">
+        <label>名前（10文字以内）</label>
+        <input type="text" id="ob-name-input" class="ob-text-input" maxlength="10" placeholder="アプリ内での呼び名">
+      </div>
+      <div class="ob-form-group">
+        <label>生年月日</label>
+        <input type="date" id="ob-birthdate-input" class="ob-date-input">
+      </div>
+      <button id="btn-ob-profile1-next" class="primary-btn" disabled>NEXT</button>
+    </section>
+
+    <!-- 1l. PROFILE INPUT 02 -->
+    <section id="screen-ob-profile2" class="screen hidden">
+      <div class="ob-progress">プロフィール入力02</div>
+      <h2 style="font-size:16px;color:#2d3748;margin-bottom:10px;">自分のアバターを選んでね</h2>
+      <div class="ob-avatar-grid" id="ob-avatar-grid"></div>
+      <div class="ob-form-group">
+        <label>音声タイプ</label>
+        <div class="ob-voice-row" id="ob-voice-row">
+          <div class="ob-voice-btn selected" data-value="A">タイプA</div>
+          <div class="ob-voice-btn" data-value="B">タイプB</div>
+        </div>
+        <button id="btn-ob-voice-sample" class="ob-sample-btn">🔊 サンプルを聴く</button>
+      </div>
+      <button id="btn-ob-profile2-next" class="primary-btn" disabled>NEXT</button>
+    </section>
+
+    <!-- 1m. SHOSA PASSPORT COMPLETE -->
+    <section id="screen-ob-passport" class="screen hidden">
+      <div id="ob-passport-reveal" class="passport-reveal-wrap">
+        <div class="trophy">🎉</div>
+        <h2 style="font-size:18px;color:#2d3748;margin-bottom:8px;">SHOSA Passport 完成！</h2>
+        <p style="font-size:13px;color:#718096;">あなた専用の学習プロフィールができました。</p>
+        <button id="btn-ob-passport-open" class="primary-btn">OPEN</button>
+      </div>
+      <div id="ob-passport-card-wrap" class="hidden">
+        <div class="passport-card" id="ob-passport-card"></div>
+        <button id="btn-ob-passport-start" class="primary-btn">はじめる</button>
+      </div>
+    </section>
+
+    <!-- SETTINGS / プロフィール編集（あとからいつでも呼び出せる） -->
+    <section id="screen-settings" class="screen hidden">
+      <h2 style="font-size:16px;color:#2d3748;margin-bottom:14px;">プロフィール設定</h2>
+      <div class="ob-form-group">
+        <label>性別</label>
+        <div class="ob-pill-row" id="settings-gender-row">
+          <div class="ob-pill" data-value="男性">男性</div>
+          <div class="ob-pill" data-value="女性">女性</div>
+          <div class="ob-pill" data-value="その他">その他</div>
+        </div>
+      </div>
+      <div class="ob-form-group">
+        <label>名前（10文字以内）</label>
+        <input type="text" id="settings-name-input" class="ob-text-input" maxlength="10" placeholder="アプリ内での呼び名">
+      </div>
+      <div class="ob-form-group">
+        <label>生年月日</label>
+        <input type="date" id="settings-birthdate-input" class="ob-date-input">
+      </div>
+      <div class="ob-form-group">
+        <label>アバター</label>
+        <div class="ob-avatar-grid" id="settings-avatar-grid"></div>
+      </div>
+      <div class="ob-form-group">
+        <label>音声タイプ</label>
+        <div class="ob-voice-row" id="settings-voice-row">
+          <div class="ob-voice-btn" data-value="A">タイプA</div>
+          <div class="ob-voice-btn" data-value="B">タイプB</div>
+        </div>
+        <button id="btn-settings-voice-sample" class="ob-sample-btn">🔊 サンプルを聴く</button>
+      </div>
+      <div class="ob-btn-row">
+        <button id="btn-settings-cancel" class="secondary-btn">キャンセル</button>
+        <button id="btn-settings-save" class="primary-btn" disabled>保存する</button>
+      </div>
+
+      <div class="ob-form-group" style="margin-top:22px;padding-top:18px;border-top:1px solid #e2e8f0;">
+        <label>診断・ヒアリングの再受験</label>
+        <div class="ob-btn-row">
+          <button id="btn-settings-retake-hearing" class="secondary-btn">🗒️ ヒアリングをやり直す</button>
+          <button id="btn-settings-retake-aptitude" class="secondary-btn">📊 適性診断をやり直す</button>
+        </div>
+      </div>
+
+      <div class="ob-form-group">
+        <label>メニュー</label>
+        <button id="btn-open-hub" class="secondary-btn">🏠 Day選択メニューを開く</button>
+      </div>
+
+      <div class="ob-form-group">
+        <label>開発者向け</label>
+        <button id="btn-open-dev-overview" class="secondary-btn">🛠️ 開発者ビュー（全イベント一覧）を開く</button>
+        <details class="dev-jump-details">
+          <summary>🧭 画面ジャンプ（開発用）</summary>
+          <div class="dev-jump-grid" id="dev-jump-grid">
+            <button class="secondary-btn" data-jump="level">SHOSA Ready CHECK（日本語レベル確認）</button>
+            <button class="secondary-btn" data-jump="recommend">おすすめ言語設定</button>
+            <button class="secondary-btn" data-jump="langselect">言語設定選択</button>
+            <button class="secondary-btn" data-jump="intro">キャラクター紹介カルーセル</button>
+            <button class="secondary-btn" data-jump="character">AIチューター挨拶</button>
+            <button class="secondary-btn" data-jump="hearing">ヒアリング</button>
+            <button class="secondary-btn" data-jump="aptitude">適性診断</button>
+            <button class="secondary-btn" data-jump="profile1">プロフィール入力01</button>
+            <button class="secondary-btn" data-jump="profile2">プロフィール入力02</button>
+            <button class="secondary-btn" data-jump="passport">SHOSAパスポート</button>
+            <button class="secondary-btn" data-jump="day1">DAY1（イベント導入から）</button>
+            <button class="secondary-btn" data-jump="day2">DAY2（イベント導入から）</button>
+            <button class="secondary-btn" data-jump="day3">DAY3（イベント導入から）</button>
+            <button class="secondary-btn" data-jump="hub">メニュー（Day選択）</button>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- 2. DAY SUMMARY (recap after clearing a day) -->
+    <section id="screen-day-summary" class="screen hidden">
+      <div class="day-banner">
+        <h2 id="summary-day-title">DAY 1</h2>
+        <p id="summary-day-desc">-</p>
+      </div>
+      <div class="stars-rating" id="summary-stars">
+        <span class="star empty">★</span><span class="star empty">★</span><span class="star empty">★</span>
+      </div>
+      <div class="high-score-box">
+        <div>HIGH-SCORE: <span id="high-score-val">0</span></div>
+        <div>完了日数: <span id="completed-days-val">0</span> / 3</div>
+      </div>
+      <button id="btn-day-continue" class="primary-btn">NEXT</button>
+    </section>
+
+    <!-- 3. EVENT INTRO -->
+    <section id="screen-event-intro" class="screen hidden">
+      <div class="npc-banner-wrap">
+        <img id="intro-banner" class="npc-banner" src="" alt="">
+        <div class="npc-banner-name" id="intro-avatar-name">-</div>
+      </div>
+      <div class="question-header">
+        <div class="q-label">Story</div>
+        <button id="btn-translate-intro" class="translate-btn">English ></button>
+      </div>
+      <div class="story-box">
+        <p id="event-story-text">-</p>
+        <p id="event-story-text-en" class="question-en hidden">-</p>
+      </div>
+      <div class="hint-card">
+        <span class="hint-icon">💡</span>
+        <div>
+          <div class="hint-text" id="event-hint-text">-</div>
+          <div class="hint-text question-en hidden" id="event-hint-text-en" style="margin-top:6px;">-</div>
+        </div>
+      </div>
+      <button id="btn-intro-next" class="primary-btn">NEXT</button>
+    </section>
+
+    <!-- 4. DIALOGUE -->
+    <section id="screen-dialogue" class="screen hidden">
+      <div class="npc-banner-wrap">
+        <img id="dialogue-banner" class="npc-banner" src="" alt="">
+        <div class="npc-banner-name" id="dialogue-avatar-name">-</div>
+      </div>
+      <div class="question-header">
+        <div class="q-label">Dialogue</div>
+        <button id="btn-translate-dialogue" class="translate-btn">English ></button>
+      </div>
+      <div class="speech-bubble" id="dialogue-speech-bubble">
+        <p id="dialogue-text">-</p>
+        <p id="dialogue-text-en" class="question-en hidden">-</p>
+      </div>
+      <div class="gauge-container">
+        <div class="gauge-header">
+          <span id="gauge-label">-</span>
+          <span id="gauge-change-indicator" class="change-tag">NORMAL</span>
+        </div>
+        <div class="gauge-bar"><div id="gauge-fill" class="gauge-fill" style="width: 50%;"></div></div>
+      </div>
+      <button id="btn-dialogue-next" class="primary-btn">NEXT</button>
+    </section>
+
+    <!-- 5. QUESTION -->
+    <section id="screen-question" class="screen hidden">
+      <div class="npc-banner-wrap npc-banner-wrap-compact">
+        <img id="question-banner" class="npc-banner" src="" alt="">
+        <div class="npc-banner-name" id="question-avatar-name">-</div>
+      </div>
+      <div class="question-header">
+        <div class="q-label">Question</div>
+        <button id="btn-translate" class="translate-btn">English ></button>
+      </div>
+      <div class="question-box">
+        <p id="question-text">-</p>
+        <p id="question-text-en" class="question-en hidden">-</p>
+      </div>
+      <div class="choices-container" id="choices-container"></div>
+      <div class="bottom-hint">
+        <span class="hint-icon">💡</span>
+        <span>迷ったら「相手が今、何に困っているか」を考えてみましょう。</span>
+      </div>
+    </section>
+
+    <!-- 6. RESULT -->
+    <section id="screen-result" class="screen hidden">
+      <div class="npc-banner-wrap">
+        <img id="result-banner" class="npc-banner" src="" alt="">
+        <div class="avatar-status-badge" id="result-status-badge">S</div>
+        <div class="npc-banner-name" id="result-avatar-name">-</div>
+      </div>
+      <div class="question-header">
+        <div class="q-label">Result</div>
+        <button id="btn-translate-result" class="translate-btn">English ></button>
+      </div>
+      <div class="speech-bubble" id="result-speech-bubble">
+        <p id="result-feedback-text">-</p>
+        <p id="result-feedback-text-en" class="question-en hidden">-</p>
+      </div>
+      <div class="gauge-container">
+        <div class="gauge-header">
+          <span id="result-gauge-label">評価ゲージ</span>
+          <span id="result-gauge-change" class="change-tag up">UP ▲</span>
+        </div>
+        <div class="gauge-bar"><div id="result-gauge-fill" class="gauge-fill" style="width: 70%;"></div></div>
+      </div>
+      <button id="btn-show-explanation" class="primary-btn">解説を見る</button>
+    </section>
+
+    <!-- 7. EXPLANATION -->
+    <section id="screen-explanation" class="screen hidden">
+      <div class="explanation-header">
+        <span class="lesson-no" id="exp-lesson-no">[レッスン1]</span>
+        <span class="exp-tag">SHOSAの解説</span>
+        <button id="btn-translate-exp" class="translate-btn" style="margin-left:auto;">English ></button>
+      </div>
+      <div class="explanation-card">
+        <h3 id="exp-title">SHOSAの極意</h3>
+        <div class="exp-content" id="exp-content-body">-</div>
+        <div class="exp-content question-en hidden" id="exp-content-body-en" style="margin-top:12px;">-</div>
+      </div>
+      <button id="btn-exp-next" class="primary-btn">NEXT</button>
+    </section>
+
+    <!-- 8. VOICE PRACTICE -->
+    <section id="screen-voice" class="screen hidden">
+      <div class="explanation-header">
+        <span class="lesson-no" id="voice-lesson-no">[レッスン1]</span>
+        <span class="exp-tag">定型文の発音練習</span>
+        <button id="btn-translate-voice" class="translate-btn" style="margin-left:auto;">English ></button>
+      </div>
+      <div class="npc-banner-wrap npc-banner-wrap-compact">
+        <img id="voice-banner" class="npc-banner" src="" alt="">
+        <div class="npc-banner-name" id="voice-avatar-name">-</div>
+      </div>
+      <div class="script-card" id="voice-script-card">
+        <p id="voice-script-text">-</p>
+        <p id="voice-script-text-en" class="question-en hidden">-</p>
+        <button id="btn-listen-sample" class="listen-sample-btn">🔊 お手本を聴く</button>
+      </div>
+      <div class="voice-recorder-area">
+        <div id="visualizer-container" class="visualizer-waves">
+          <div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div>
+        </div>
+        <button id="btn-mic" class="mic-btn"><span class="mic-icon">🎙️</span></button>
+        <div id="mic-status-label" class="mic-status">タップして話してください</div>
+        <div id="recognized-text" class="recognized-text"></div>
+      </div>
+      <div id="voice-success-badge" class="voice-success hidden"><span class="star-award">⭐ 完璧な発音です！</span></div>
+      <button id="btn-voice-skip" class="secondary-btn">スキップして次へ</button>
+      <button id="btn-voice-next" class="primary-btn hidden">クリアして次へ</button>
+    </section>
+
+    <!-- 9. GAME OVER -->
+    <section id="screen-game-over" class="screen hidden">
+      <div class="completion-card">
+        <div class="trophy">🏆</div>
+        <h2 id="final-title">全プログラム修了！</h2>
+        <p id="final-subtitle">おめでとうございます！3日間の体験と総仕上げテストをすべてやり遂げました。</p>
+        <div class="final-score-box">
+          <div class="score-row"><span>最終スコア:</span><span id="final-total-score" class="score-highlight">0 pt</span></div>
+          <div class="score-row"><span>SHOSA理解度:</span><span id="final-rank" class="rank-highlight">-</span></div>
+        </div>
+      </div>
+
+      <div class="hub-section-title">好きなDayをプレイする</div>
+      <div class="hub-day-grid" id="hub-day-grid"></div>
+
+      <button id="btn-hub-passport" class="secondary-btn">📔 SHOSAパスポートを見る</button>
+      <button id="btn-restart" class="primary-btn">最初からやり直す</button>
+    </section>
+
+  </main>
+</div>
+
+<!-- 開発者ビュー：全イベント（ヒアリング・分岐・解説等）の俯瞰表示。スマホフレームの外に表示 -->
+<div id="dev-overview" class="dev-overview hidden">
+  <div class="dev-header">
+    <div>
+      <h1>🛠️ SHOSA Developer Overview</h1>
+      <p>game_data.js / onboarding_data.js の内容をそのまま俯瞰表示しています（データを更新すれば自動で反映されます）</p>
+    </div>
+    <button id="btn-close-dev-overview" class="dev-close-btn">✕ 閉じる</button>
+  </div>
+  <div class="dev-overview-scroll">
+    <div class="dev-overview-inner">
+      <div id="dev-overview-content"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script src="js/game_data.js"></script>
+<script src="js/onboarding_data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/onboarding.js"></script>
+<script src="js/dev_overview.js"></script>
+</body>
+</html>
