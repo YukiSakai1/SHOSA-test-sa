@@ -55,6 +55,16 @@
       <button id="btn-title-continue" class="secondary-btn hidden">🏠 続きから（Day選択メニューへ）</button>
     </section>
 
+    <!-- 0b. STORY COVER（プログラム全体の導入。Figma「ホテルスタッフ体験」に対応） -->
+    <section id="screen-story-cover" class="screen hidden">
+      <div class="character-preview">
+      </div>
+      <h2 class="story-cover-title">ホテルスタッフ体験</h2>
+      <div class="ob-divider"></div>
+      <p class="story-cover-desc">日本のホテルで通用する「プロの姿勢と型（SHOSA）」を、リアルな現場のストーリーで体験しながら学びましょう。</p>
+      <button id="btn-story-cover-next" class="primary-btn">NEXT</button>
+    </section>
+
     <!-- 1b/1c. SHOSA READY CHECK + 日本語レベル確認（1画面に統合） -->
     <section id="screen-ob-level" class="screen hidden">
       <div>
@@ -62,10 +72,14 @@
         <h2 style="font-size:20px;color:#2d3748;font-weight:900;">SHOSA Ready CHECK</h2>
         <div class="ob-divider"></div>
       </div>
-      <div class="character-preview compact">
-        <div class="avatar-circle small">🤖</div>
+      <div class="ob-progress-bar"><div class="ob-progress-bar-fill" style="width:33%;"></div></div>
+      <div class="ob-chat-row">
+        <div class="ob-chat-avatar-wrap">
+          <div class="avatar-circle small">🤖</div>
+          <span class="avatar-label">キャラクター</span>
+        </div>
+        <div class="ob-chat-bubble"><p>Please tell me about your Japanese language level.</p></div>
       </div>
-      <div class="speech-bubble"><p>Please tell me about your Japanese language level.</p></div>
       <div class="ob-options" id="ob-level-options"></div>
       <button id="btn-ob-level-next" class="primary-btn" disabled>NEXT</button>
     </section>
@@ -73,10 +87,14 @@
     <!-- 1d. RECOMMENDED LANGUAGE SETTING -->
     <section id="screen-ob-recommend" class="screen hidden">
       <div class="ob-progress">SHOSA Ready CHECK</div>
-      <div class="character-preview compact">
-        <div class="avatar-circle small">🤖</div>
+      <div class="ob-progress-bar"><div class="ob-progress-bar-fill" style="width:66%;"></div></div>
+      <div class="ob-chat-row">
+        <div class="ob-chat-avatar-wrap">
+          <div class="avatar-circle small">🤖</div>
+          <span class="avatar-label">キャラクター</span>
+        </div>
+        <div class="ob-chat-bubble"><p>Here are the language settings we recommend for you.</p></div>
       </div>
-      <div class="speech-bubble"><p>Here are the language settings we recommend for you.</p></div>
       <div class="explanation-card" style="margin-top:14px;">
         <h3 id="ob-recommend-title">Easy Japanese</h3>
         <ul class="ob-checklist">
@@ -94,10 +112,14 @@
     <!-- 1e. LANGUAGE SETTING SELECTION -->
     <section id="screen-ob-langselect" class="screen hidden">
       <div class="ob-progress">SHOSA Ready CHECK</div>
-      <div class="character-preview compact">
-        <div class="avatar-circle small">🤖</div>
+      <div class="ob-progress-bar"><div class="ob-progress-bar-fill" style="width:100%;"></div></div>
+      <div class="ob-chat-row">
+        <div class="ob-chat-avatar-wrap">
+          <div class="avatar-circle small">🤖</div>
+          <span class="avatar-label">キャラクター</span>
+        </div>
+        <div class="ob-chat-bubble"><p>Please select your language setting.</p></div>
       </div>
-      <div class="speech-bubble"><p>Please select your language setting.</p></div>
       <div class="ob-lang-list" id="ob-lang-list"></div>
       <button id="btn-ob-langselect-next" class="primary-btn" disabled>NEXT</button>
     </section>
@@ -123,33 +145,42 @@
     <!-- 1h. HEARING (reused for 4 questions) -->
     <section id="screen-ob-hearing" class="screen hidden">
       <div class="ob-progress" id="ob-hearing-progress">ヒアリング01</div>
-      <div class="character-preview compact"><div class="avatar-circle small">🤖</div></div>
-      <div class="question-box"><p id="ob-hearing-question">-</p></div>
+      <div class="ob-progress-bar"><div class="ob-progress-bar-fill" id="ob-hearing-progress-fill" style="width:25%;"></div></div>
+      <div class="ob-chat-row">
+        <div class="ob-chat-avatar-wrap">
+          <div class="avatar-circle small">🤖</div>
+          <span class="avatar-label">キャラクター</span>
+        </div>
+        <div class="ob-chat-bubble"><p id="ob-hearing-question">-</p></div>
+      </div>
       <div class="ob-options" id="ob-hearing-options"></div>
       <button id="btn-ob-hearing-next" class="primary-btn" disabled>NEXT</button>
     </section>
 
     <!-- 1i. APTITUDE INTRO -->
     <section id="screen-ob-aptitude-intro" class="screen hidden">
-      <div class="ob-progress">適性診断</div>
-      <div class="character-preview compact"><div class="avatar-circle small">🤖</div></div>
-      <div class="explanation-card"><h3>はじめるまえに</h3><div id="ob-aptitude-intro-text">-</div></div>
-      <button id="btn-ob-aptitude-intro-next" class="primary-btn">START</button>
+      <div>
+        <span class="ob-card-badge">キャラクター</span>
+        <h2 style="font-size:20px;color:#2d3748;font-weight:900;">適性診断</h2>
+        <div class="ob-divider"></div>
+      </div>
+      <div id="ob-aptitude-intro-text" class="ob-tagline" style="text-align:left;font-size:13px;">-</div>
+      <button id="btn-ob-aptitude-intro-next" class="primary-btn">NEXT</button>
     </section>
 
-    <!-- 1j. APTITUDE QUESTION (reused x5) -->
+    <!-- 1j. APTITUDE QUESTIONS（全問を1画面でスクロール表示） -->
     <section id="screen-ob-aptitude" class="screen hidden">
-      <div class="ob-progress" id="ob-aptitude-progress">適性診断 1/5</div>
-      <div class="ob-likert-question" id="ob-aptitude-question">-</div>
-      <div class="ob-likert-row" id="ob-aptitude-row"></div>
-      <div class="ob-likert-labels"><span>そう思わない</span><span>とてもそう思う</span></div>
+      <div class="ob-progress" id="ob-aptitude-progress">適性診断 0/5</div>
+      <div class="ob-progress-bar"><div class="ob-progress-bar-fill" id="ob-aptitude-progress-fill" style="width:0%;"></div></div>
+      <div id="ob-aptitude-list"></div>
+      <div class="ob-scroll-hint" id="ob-aptitude-scroll-hint">スクロール</div>
       <button id="btn-ob-aptitude-next" class="primary-btn" disabled>NEXT</button>
     </section>
 
     <!-- 1k. PROFILE INPUT 01 -->
     <section id="screen-ob-profile1" class="screen hidden">
-      <div class="ob-progress">プロフィール入力01</div>
-      <h2 style="font-size:16px;color:#2d3748;margin-bottom:14px;">プロフィールを入力してね</h2>
+      <div class="ob-progress-bar"><div class="ob-progress-bar-fill" style="width:80%;"></div></div>
+      <h2 style="font-size:16px;color:#2d3748;margin-bottom:14px;">プロフィールを入力してください</h2>
       <div class="ob-form-group">
         <label>性別</label>
         <div class="ob-pill-row" id="ob-gender-row">
@@ -159,11 +190,27 @@
         </div>
       </div>
       <div class="ob-form-group">
-        <label>名前（10文字以内）</label>
+        <label>名前</label>
         <input type="text" id="ob-name-input" class="ob-text-input" maxlength="10" placeholder="アプリ内での呼び名">
+        <p class="ob-help-text">アプリ内でのあなたの名前です。10文字以内でシンプルな名前を設定してください。</p>
       </div>
       <div class="ob-form-group">
-        <label>生年月日</label>
+        <label>出身国</label>
+        <select id="ob-country-input" class="ob-select">
+          <option value="">選択してください</option>
+          <option value="日本">日本</option>
+          <option value="中国">中国</option>
+          <option value="ベトナム">ベトナム</option>
+          <option value="フィリピン">フィリピン</option>
+          <option value="ネパール">ネパール</option>
+          <option value="インドネシア">インドネシア</option>
+          <option value="ミャンマー">ミャンマー</option>
+          <option value="韓国">韓国</option>
+          <option value="その他">その他</option>
+        </select>
+      </div>
+      <div class="ob-form-group">
+        <label>誕生日</label>
         <input type="date" id="ob-birthdate-input" class="ob-date-input">
       </div>
       <button id="btn-ob-profile1-next" class="primary-btn" disabled>NEXT</button>
@@ -254,6 +301,7 @@
         <details class="dev-jump-details">
           <summary>🧭 画面ジャンプ（開発用）</summary>
           <div class="dev-jump-grid" id="dev-jump-grid">
+            <button class="secondary-btn" data-jump="storycover">ホテルスタッフ体験（導入カバー）</button>
             <button class="secondary-btn" data-jump="level">SHOSA Ready CHECK（日本語レベル確認）</button>
             <button class="secondary-btn" data-jump="recommend">おすすめ言語設定</button>
             <button class="secondary-btn" data-jump="langselect">言語設定選択</button>
@@ -264,6 +312,9 @@
             <button class="secondary-btn" data-jump="profile1">プロフィール入力01</button>
             <button class="secondary-btn" data-jump="profile2">プロフィール入力02</button>
             <button class="secondary-btn" data-jump="passport">SHOSAパスポート</button>
+            <button class="secondary-btn" data-jump="daystart1">DAY1（開始カードから）</button>
+            <button class="secondary-btn" data-jump="daystart2">DAY2（開始カードから）</button>
+            <button class="secondary-btn" data-jump="daystart3">DAY3（開始カードから）</button>
             <button class="secondary-btn" data-jump="day1">DAY1（イベント導入から）</button>
             <button class="secondary-btn" data-jump="day2">DAY2（イベント導入から）</button>
             <button class="secondary-btn" data-jump="day3">DAY3（イベント導入から）</button>
@@ -284,9 +335,32 @@
       </div>
       <div class="high-score-box">
         <div>HIGH-SCORE: <span id="high-score-val">0</span></div>
-        <div>完了日数: <span id="completed-days-val">0</span> / 3</div>
+        <div>完了回数: <span id="completed-days-val">0</span> / 3</div>
       </div>
       <button id="btn-day-continue" class="primary-btn">NEXT</button>
+    </section>
+
+    <!-- 2b. DAY START CARD（Hubから各Dayに入る前の確認画面。Figma「DAY1 07:20」に対応） -->
+    <section id="screen-day-start" class="screen hidden">
+      <div class="day-track" id="day-start-track"></div>
+      <div class="character-preview">
+      </div>
+      <span class="ob-card-badge day-start-tag" id="day-start-tag">考えて選ぶ</span>
+      <h2 id="day-start-title" class="day-start-title">DAY1　07:45</h2>
+      <div class="question-header">
+        <div class="q-label">Scene</div>
+        <button id="btn-translate-day-start" class="translate-btn">English ></button>
+      </div>
+      <div class="story-box">
+        <p id="day-start-desc">-</p>
+        <p id="day-start-desc-en" class="question-en hidden">-</p>
+      </div>
+      <div class="stars-rating" id="day-start-stars"></div>
+      <div class="high-score-box">
+        <div>HIGH-SCORE: <span id="day-start-highscore-val">0</span></div>
+        <div>完了回数: <span id="day-start-completed-val">0</span> / 3</div>
+      </div>
+      <button id="btn-day-start-next" class="primary-btn">NEXT</button>
     </section>
 
     <!-- 3. EVENT INTRO -->

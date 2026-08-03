@@ -82,8 +82,14 @@ const obState = {
   aptitudeIndex: 0,
   answers: { touchpoint: null, purpose: null, interest: null, concern: null },
   aptitudeScores: {},
-  profile: { gender: null, name: "", birthdate: "", avatar: null, voiceType: "A" }
+  profile: { gender: null, name: "", country: "", birthdate: "", avatar: null, voiceType: "A" }
 };
+
+/* ---------- 0b. STORY COVER（プログラム全体の導入。Figma「ホテルスタッフ体験」に対応） ---------- */
+function loadStoryCover() {
+  showScreen('screen-story-cover');
+}
+$('btn-story-cover-next').addEventListener('click', () => goTo(loadLevelCheck));
 
 /* ---------- 1b/1c. SHOSA Ready CHECK ＋ 日本語レベル確認（統合済み） ---------- */
 
@@ -163,28 +169,31 @@ function loadIntroSlide(i) {
 
   if (slide.type === 'collage') {
     content.innerHTML = `
-      <div class="ob-collage">
-        <div class="ob-collage-half">アプリ内学習の場面1</div>
-        <div class="ob-collage-half">アプリ内学習の場面2</div>
+      <div class="ob-collage-diagonal">
+        <div class="panel panel-top">アプリ内学習の場面1</div>
+        <div class="panel panel-bottom">アプリ内学習の場面2</div>
       </div>
       <h2 style="font-size:20px;color:#2d3748;font-weight:900;text-align:center;margin-bottom:10px;">${slide.title}</h2>
       <p class="ob-tagline">${slide.text.replace(/\n/g, '<br>')}</p>`;
   } else if (slide.type === 'checklist') {
     content.innerHTML = `
       <h2 style="font-size:17px;color:#2d3748;font-weight:900;text-align:center;margin-bottom:12px;">${slide.title.replace(/\n/g, '<br>')}</h2>
-      <div class="ob-image-row">${'<div class="ob-image-placeholder">イメージ画像</div>'.repeat(slide.images || 0)}</div>
+      <div class="ob-image-collage">
+        <img class="img-main" src="https://images.pexels.com/photos/14036250/pexels-photo-14036250.jpeg?auto=compress&cs=tinysrgb&h=400&fit=crop&w=700" alt="ホテルのイメージ">
+        <div class="ph img-sub">イメージ画像</div>
+      </div>
       <p class="ob-tagline" style="text-align:left;">${slide.body.replace(/\n/g, '<br>')}</p>
       <ul class="ob-checklist">${slide.checklist.map(c => `<li>${c}</li>`).join('')}</ul>`;
   } else if (slide.type === 'steps') {
     content.innerHTML = `
-      <div class="character-preview compact" style="margin-bottom:10px;">
+      <h2 style="font-size:18px;color:#2d3748;font-weight:900;text-align:center;margin-bottom:14px;">${slide.title}</h2>
+      <div class="ob-steps timeline">${slide.steps.map((s, idx) => `
+        <div class="ob-step"><div class="ob-step-num">${idx + 1}</div><div class="ob-step-body"><strong>${s.label}</strong><span>${s.desc}</span></div></div>`).join('')}</div>
+      <p class="ob-tagline" style="margin-bottom:14px;">${slide.footer}</p>
+      <div class="character-preview compact">
         <div class="avatar-circle small">🤖</div>
         <div class="avatar-label">${slide.avatarLabel}</div>
-      </div>
-      <h2 style="font-size:18px;color:#2d3748;font-weight:900;text-align:center;margin-bottom:14px;">${slide.title}</h2>
-      <div class="ob-steps">${slide.steps.map((s, idx) => `
-        <div class="ob-step"><div class="ob-step-num">${idx + 1}</div><div class="ob-step-body"><strong>${s.label}</strong><span>${s.desc}</span></div></div>`).join('')}</div>
-      <p class="ob-tagline">${slide.footer}</p>`;
+      </div>`;
   } else if (slide.type === 'certification') {
     content.innerHTML = `
       <h2 style="font-size:18px;color:#2d3748;font-weight:900;text-align:center;margin-bottom:12px;">${slide.title.replace(/\n/g, '<br>')}</h2>
@@ -227,6 +236,8 @@ function loadHearing(i) {
   obState.hearingIndex = i;
   const h = ONBOARDING_DATA.hearings[i];
   $('ob-hearing-progress').textContent = h.label;
+  const total = ONBOARDING_DATA.hearings.length;
+  $('ob-hearing-progress-fill').style.width = Math.round(((i + 1) / total) * 100) + '%';
   $('ob-hearing-question').textContent = h.question;
   const optWrap = $('ob-hearing-options');
   optWrap.innerHTML = '';
@@ -234,10 +245,10 @@ function loadHearing(i) {
   const currentAnswer = obState.answers[h.key];
   h.options.forEach(opt => {
     const btn = document.createElement('button');
-    btn.className = 'ob-option-btn' + (opt === currentAnswer ? ' selected' : '');
-    btn.textContent = opt;
+    btn.className = 'ob-list-row' + (opt === currentAnswer ? ' selected' : '');
+    btn.innerHTML = `<span class="ob-list-icon">●</span><span>${devEscSafe(opt)}</span>`;
     btn.addEventListener('click', () => {
-      optWrap.querySelectorAll('.ob-option-btn').forEach(b => b.classList.remove('selected'));
+      optWrap.querySelectorAll('.ob-list-row').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
       obState.answers[h.key] = opt;
       nextBtn.disabled = false;
@@ -246,6 +257,14 @@ function loadHearing(i) {
   });
   nextBtn.disabled = !currentAnswer;
   showScreen('screen-ob-hearing');
+}
+
+// 簡易HTMLエスケープ（onboarding.js内だけで使う小さなヘルパー）
+function devEscSafe(str) {
+  if (str === undefined || str === null) return '';
+  const div = document.createElement('div');
+  div.textContent = String(str);
+  return div.innerHTML;
 }
 
 // ヒアリングの後：適性診断に回答済みならスキップして先へ
@@ -268,33 +287,48 @@ $('btn-ob-hearing-next').addEventListener('click', () => {
 
 /* ---------- 1i/1j. 適性診断 ---------- */
 function loadAptitudeIntro() {
-  $('ob-aptitude-intro-text').textContent = ONBOARDING_DATA.aptitudeIntro;
+  $('ob-aptitude-intro-text').innerHTML = ONBOARDING_DATA.aptitudeIntro;
   showScreen('screen-ob-aptitude-intro');
 }
-$('btn-ob-aptitude-intro-next').addEventListener('click', () => goTo(loadAptitude, 0));
+$('btn-ob-aptitude-intro-next').addEventListener('click', () => goTo(loadAptitude));
 
-function loadAptitude(i) {
-  obState.aptitudeIndex = i;
-  const q = ONBOARDING_DATA.aptitudeQuestions[i];
-  $('ob-aptitude-progress').textContent = `適性診断 ${i + 1}/${ONBOARDING_DATA.aptitudeQuestions.length}`;
-  $('ob-aptitude-question').textContent = q.text;
-  const row = $('ob-aptitude-row');
-  row.innerHTML = '';
-  const nextBtn = $('btn-ob-aptitude-next');
-  const currentVal = obState.aptitudeScores[q.dimension];
-  for (let v = 1; v <= 5; v++) {
-    const btn = document.createElement('button');
-    btn.className = 'ob-likert-btn' + (v === currentVal ? ' selected' : '');
-    btn.textContent = String(v);
-    btn.addEventListener('click', () => {
-      row.querySelectorAll('.ob-likert-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      obState.aptitudeScores[q.dimension] = v;
-      nextBtn.disabled = false;
+// 適性診断：全問を1画面にまとめてスクロール表示し、すべて回答したらNEXTが押せる
+function updateAptitudeProgress() {
+  const questions = ONBOARDING_DATA.aptitudeQuestions;
+  const answered = questions.filter(q => obState.aptitudeScores[q.dimension] != null).length;
+  $('ob-aptitude-progress').textContent = `適性診断 ${answered}/${questions.length}`;
+  $('ob-aptitude-progress-fill').style.width = Math.round((answered / questions.length) * 100) + '%';
+  $('btn-ob-aptitude-next').disabled = answered < questions.length;
+  $('ob-aptitude-scroll-hint').classList.toggle('hidden', answered >= questions.length);
+}
+
+function loadAptitude() {
+  const questions = ONBOARDING_DATA.aptitudeQuestions;
+  const list = $('ob-aptitude-list');
+  list.innerHTML = questions.map((q, qi) => `
+    <div class="aptitude-block" data-dimension="${q.dimension}">
+      <div class="ob-likert-question">${devEscSafe(q.text)}</div>
+      <div class="ob-likert-row" data-dimension="${q.dimension}">
+        ${[1, 2, 3, 4, 5].map(v => `<button type="button" class="ob-likert-btn" data-value="${v}">${v}</button>`).join('')}
+      </div>
+      <div class="ob-likert-labels"><span>そう思わない</span><span>とてもそう思う</span></div>
+    </div>`).join('');
+
+  questions.forEach(q => {
+    const row = list.querySelector(`.ob-likert-row[data-dimension="${q.dimension}"]`);
+    const currentVal = obState.aptitudeScores[q.dimension];
+    row.querySelectorAll('.ob-likert-btn').forEach(btn => {
+      if (Number(btn.dataset.value) === currentVal) btn.classList.add('selected');
+      btn.addEventListener('click', () => {
+        row.querySelectorAll('.ob-likert-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        obState.aptitudeScores[q.dimension] = Number(btn.dataset.value);
+        updateAptitudeProgress();
+      });
     });
-    row.appendChild(btn);
-  }
-  nextBtn.disabled = !currentVal;
+  });
+
+  updateAptitudeProgress();
   showScreen('screen-ob-aptitude');
 }
 
@@ -308,12 +342,8 @@ function goPastAptitude() {
 }
 
 $('btn-ob-aptitude-next').addEventListener('click', () => {
-  if (obState.aptitudeIndex < ONBOARDING_DATA.aptitudeQuestions.length - 1) {
-    goTo(loadAptitude, obState.aptitudeIndex + 1);
-  } else {
-    saveAptitudeScores(obState.aptitudeScores);
-    goPastAptitude();
-  }
+  saveAptitudeScores(obState.aptitudeScores);
+  goPastAptitude();
 });
 
 /* ---------- 1k. プロフィール入力01 ---------- */
@@ -322,6 +352,7 @@ function loadProfile1() {
     p.classList.toggle('selected', p.dataset.value === obState.profile.gender);
   });
   $('ob-name-input').value = obState.profile.name || '';
+  $('ob-country-input').value = obState.profile.country || '';
   $('ob-birthdate-input').value = obState.profile.birthdate || '';
   validateProfile1();
   showScreen('screen-ob-profile1');
@@ -331,6 +362,9 @@ function validateProfile1() {
   const ok = obState.profile.gender && $('ob-name-input').value.trim().length > 0 && $('ob-birthdate-input').value;
   $('btn-ob-profile1-next').disabled = !ok;
 }
+$('ob-country-input').addEventListener('change', () => {
+  obState.profile.country = $('ob-country-input').value;
+});
 
 document.querySelectorAll('#ob-gender-row .ob-pill').forEach(pill => {
   pill.addEventListener('click', () => {
@@ -345,6 +379,7 @@ $('ob-birthdate-input').addEventListener('change', validateProfile1);
 
 $('btn-ob-profile1-next').addEventListener('click', () => {
   obState.profile.name = $('ob-name-input').value.trim();
+  obState.profile.country = $('ob-country-input').value;
   obState.profile.birthdate = $('ob-birthdate-input').value;
   goTo(loadProfile2);
 });
@@ -543,6 +578,6 @@ function startOnboarding() {
   obState.aptitudeIndex = 0;
   obState.answers = savedHearings ? { ...savedHearings } : { touchpoint: null, purpose: null, interest: null, concern: null };
   obState.aptitudeScores = savedAptitude ? { ...savedAptitude } : {};
-  obState.profile = savedProfile ? { ...savedProfile } : { gender: null, name: '', birthdate: '', avatar: null, voiceType: 'A' };
-  loadLevelCheck();
+  obState.profile = savedProfile ? { ...savedProfile } : { gender: null, name: '', country: '', birthdate: '', avatar: null, voiceType: 'A' };
+  loadStoryCover();
 }

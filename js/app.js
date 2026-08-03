@@ -282,7 +282,7 @@ function startGame() {
   state.completedDaySet = new Array(GAME_DATA.days.length).fill(false);
   state.stars = [];
   $('game-header').classList.remove('hidden');
-  loadEventIntro(0);
+  loadDayStart(0);
 }
 
 // NPCの表情バナー画像を取得。専用の表情画像が無いNPC（Day2の先輩スタッフ等）は
@@ -290,6 +290,46 @@ function startGame() {
 function npcBannerSrc(npc, expression) {
   const key = { neutral: 'bannerNeutral', happy: 'bannerHappy', worried: 'bannerWorried' }[expression] || 'bannerNeutral';
   return npc[key] || npc.avatar;
+}
+
+// DAY1/DAY2/DAY3の進行トラッカー（現在地・完了済みDayをハイライト）
+function renderDayTrack(container, currentIdx) {
+  container.innerHTML = '';
+  GAME_DATA.days.forEach((day, i) => {
+    if (i > 0) {
+      const line = document.createElement('div');
+      line.className = 'day-track-line';
+      container.appendChild(line);
+    }
+    const step = document.createElement('div');
+    step.className = 'day-track-step'
+      + (i === currentIdx ? ' active' : '')
+      + (state.completedDaySet[i] ? ' done' : '');
+    step.innerHTML = `<span>DAY${i + 1}</span><span class="day-track-dot"></span>`;
+    container.appendChild(step);
+  });
+}
+
+// Hub（Day選択）や「次のDayへ」から、各Dayの本編（イベント導入）に入る前に
+// 表示する確認カード。ジャンル・これまでの★評価・ハイスコアを一覧できる。
+function loadDayStart(idx) {
+  state.dayIndex = idx;
+  const day = GAME_DATA.days[idx];
+  $('game-header').classList.remove('hidden');
+  updateHeader();
+  playBgm(BGM_TITLE_TRACK);
+
+  renderDayTrack($('day-start-track'), idx);
+  $('day-start-tag').textContent = day.genreTag || '考えて選ぶ';
+  $('day-start-title').textContent = day.dayTitle + '　' + day.timeLabel;
+  $('day-start-desc').textContent = personalize(day.sceneIntro || day.daySummaryDesc);
+  $('day-start-desc-en').textContent = personalize(day.sceneIntro_en || '');
+  $('day-start-desc-en').classList.add('hidden');
+  $('btn-translate-day-start').textContent = 'English >';
+  renderStars($('day-start-stars'), state.stars[idx] || 0);
+  $('day-start-highscore-val').textContent = state.highScore;
+  $('day-start-completed-val').textContent = state.completedDays;
+  showScreen('screen-day-start');
 }
 
 function loadEventIntro(idx) {
@@ -562,7 +602,7 @@ function renderHubDayGrid() {
     const earned = state.stars[i];
     const starsText = earned ? '★'.repeat(earned) + '☆'.repeat(3 - earned) : '未プレイ';
     btn.innerHTML = `<div class="hub-day-title">${day.dayTitle}</div><div class="hub-day-stars">${starsText}</div>`;
-    btn.addEventListener('click', () => goTo(loadEventIntro, i));
+    btn.addEventListener('click', () => goTo(loadDayStart, i));
     grid.appendChild(btn);
   });
 }
@@ -591,7 +631,8 @@ $('btn-voice-skip').addEventListener('click', () => {
   goTo(completeDay);
 });
 $('btn-voice-next').addEventListener('click', () => goTo(completeDay));
-$('btn-day-continue').addEventListener('click', () => goTo(loadEventIntro, state.dayIndex + 1));
+$('btn-day-continue').addEventListener('click', () => goTo(loadDayStart, state.dayIndex + 1));
+$('btn-day-start-next').addEventListener('click', () => goTo(loadEventIntro, state.dayIndex));
 $('btn-hub-passport').addEventListener('click', () => {
   if (typeof finalizeOnboarding === 'function') goTo(finalizeOnboarding);
 });
@@ -599,6 +640,7 @@ $('btn-open-hub').addEventListener('click', () => goTo(loadGameOver));
 
 // 開発用ジャンプメニュー：どの画面へも直接移動できる（テスト用）
 const DEV_JUMP_TARGETS = {
+  storycover: () => goTo(loadStoryCover),
   level: () => goTo(loadLevelCheck),
   recommend: () => goTo(loadRecommend),
   langselect: () => goTo(loadLangSelect),
@@ -609,6 +651,9 @@ const DEV_JUMP_TARGETS = {
   profile1: () => goTo(loadProfile1),
   profile2: () => goTo(loadProfile2),
   passport: () => goTo(finalizeOnboarding),
+  daystart1: () => goTo(loadDayStart, 0),
+  daystart2: () => goTo(loadDayStart, 1),
+  daystart3: () => goTo(loadDayStart, 2),
   day1: () => goTo(loadEventIntro, 0),
   day2: () => goTo(loadEventIntro, 1),
   day3: () => goTo(loadEventIntro, 2),
@@ -644,6 +689,7 @@ wireTranslateToggle('btn-translate-dialogue', 'dialogue-text-en', 'dialogue-text
 wireTranslateToggle('btn-translate-result', 'result-feedback-text-en', 'result-feedback-text');
 wireTranslateToggle('btn-translate-exp', 'exp-content-body-en');
 wireTranslateToggle('btn-translate-voice', 'voice-script-text-en', 'voice-script-text');
+wireTranslateToggle('btn-translate-day-start', 'day-start-desc-en');
 
 // タイプライター表示中の吹き出しをタップすると、即座に全文表示にスキップできる
 enableTypewriterSkip('dialogue-speech-bubble', 'dialogue-text');

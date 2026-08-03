@@ -9,6 +9,9 @@ const GAME_DATA = {
       dayTitle: "DAY 1",
       bgm: "assets/audio/day1_bgm.mp3",
       timeLabel: "07:45",
+      genreTag: "考えて選ぶ",
+      sceneIntro: "ホテルスタッフとして初めての朝。あなたは更衣室で身支度を終えて、朝礼に向かおうとしています。",
+      sceneIntro_en: "It's your first morning as hotel staff. You've finished getting ready in the locker room and are about to head to the morning meeting.",
       daySummaryDesc: "忙しい朝の現場で、指示の優先順位を判断し「報連相（ほうれんそう）」の基本を身につけます。",
       npc: {
         name: "チーフ（上司）",
@@ -58,6 +61,9 @@ const GAME_DATA = {
       dayTitle: "DAY 2",
       bgm: "assets/audio/day2_bgm.mp3",
       timeLabel: "10:15",
+      genreTag: "考えて選ぶ",
+      sceneIntro: "フロント業務2日目。少しずつ仕事にも慣れてきた頃、今日も忙しい一日が始まります。",
+      sceneIntro_en: "It's your second day at the front desk. You're starting to get used to the job, and another busy day is about to begin.",
       daySummaryDesc: "フロントで、早朝チェックインを希望するゲストへの言葉づかいと心配りを学びます。",
       npc: {
         name: "先輩スタッフ",
@@ -107,6 +113,9 @@ const GAME_DATA = {
       dayTitle: "DAY 3（総仕上げ）",
       bgm: "assets/audio/day3_bgm.mp3",
       timeLabel: "18:30",
+      genreTag: "考えて選ぶ",
+      sceneIntro: "いよいよ最終日。これまで学んだことを活かす時が来ました。ディナータイムのレストランへ向かいます。",
+      sceneIntro_en: "It's finally the last day. The time has come to put everything you've learned into practice, as you head to the restaurant for dinner service.",
       daySummaryDesc: "レストランが満席の忙しい時間帯。複数の対応が重なったときの優先順位を判断する、これまでの総仕上げです。",
       npc: {
         name: "チーフ（上司）",
