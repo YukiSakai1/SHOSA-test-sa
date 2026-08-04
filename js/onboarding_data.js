@@ -103,5 +103,14 @@ const ONBOARDING_DATA = {
   ],
 
   // 1p. 学習スケジュール作成：継続目標日数の選択肢
-  scheduleStreakOptions: [3, 5, 14, 30]
+  scheduleStreakOptions: [3, 5, 14, 30],
+
+  // ステータス表示（on/offで表示非表示切り替え）
+  stats: {
+    visible: false,
+    items: [
+      { icon: "🤝", label: "チーム度", value: 50 },
+      { icon: "✨", label: "ゲスト安心", value: 50 }
+    ]
+  }
 };

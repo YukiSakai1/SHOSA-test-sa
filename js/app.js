@@ -31,7 +31,8 @@ const state = {
   completedDays: 0,
   completedDaySet: [],
   stars: [],
-  lastChoice: null
+  lastChoice: null,
+  statsVisible: false
 };
 
 /* =========================================================
@@ -104,6 +105,25 @@ $('btn-bgm-toggle').addEventListener('click', () => {
   updateBgmButton();
   // まだ再生が始まっていない場合、このタップ自体がユーザー操作になるので再生を試みる
   startBgmIfNeeded();
+});
+
+/* =========================================================
+   STATS DISPLAY TOGGLE
+   ========================================================= */
+function updateStatsVisibility() {
+  const header = $('game-header');
+  const metrics = header.querySelector('.metrics-summary');
+  if (metrics) {
+    metrics.classList.toggle('hidden', !state.statsVisible);
+  }
+  const btn = $('btn-stats-toggle');
+  btn.textContent = state.statsVisible ? '📊 ON' : '📊';
+  btn.classList.toggle('active', state.statsVisible);
+}
+
+$('btn-stats-toggle').addEventListener('click', () => {
+  state.statsVisible = !state.statsVisible;
+  updateStatsVisibility();
 });
 
 // Chapter 0（オンボーディング）で入力した名前があれば「○○」をそれに置き換える
