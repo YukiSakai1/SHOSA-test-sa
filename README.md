@@ -188,12 +188,6 @@ SHOSA Ready CHECKから各Day・SHOSAパスポート・メニューまで、全1
 - 0章の質問・カルーセル内容は `js/onboarding_data.js` を編集。
 どちらも `app.js` / `onboarding.js` 側の変更は基本的に不要です。
 
-## 機能メモ
-- ハイスコアはブラウザの `localStorage` に保存され、再訪問時も残ります。
-- 発音練習は対応ブラウザ（Chrome等）では Web Speech API（音声認識）を使用し、
-  非対応環境では自動でシミュレーション版にフォールバックします。
-- お手本再生には `speechSynthesis`（ブラウザ標準の音声合成）を使用しています。
-
 ## 今後の拡張候補
 - キャラクターを絵文字からオリジナルイラストに差し替え（`assets/images/` + CSSの `avatar-circle` を `<img>` に変更）
 - Day4以降のシナリオ追加
