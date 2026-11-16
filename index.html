@@ -2,25 +2,43 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>SHOSA - ホテルスタッフ体験ゲーム</title>
-<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Montserrat:wght@700&family=Roboto:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=106">
+<script>
+/* Fit the 402x874 phone stage into the viewport (PC/tablet only) */
+(function () {
+  var root = document.documentElement;
+  function fit() {
+    var w = window.innerWidth, h = window.innerHeight;
+    var framed = w > 500 && h >= 620;
+    // 894 = 874 screen + 14 bezel + 6 outline, 420 = 402 + 14 + 4
+    var s = framed ? Math.min(1, (h - 32) / 894, (w - 32) / 420) : 1;
+    root.style.setProperty('--stage-scale', s.toFixed(4));
+  }
+  fit();
+  window.addEventListener('resize', fit);
+  window.addEventListener('orientationchange', fit);
+})();
+</script>
 </head>
 <body>
 
-
 <div class="device-container">
   <div id="top-nav-bar" class="top-nav-bar">
-    <button id="btn-global-back" class="global-back-btn hidden">← 戻る</button>
-    <button id="btn-bgm-toggle" class="bgm-toggle-btn">🔊</button>
     <button id="btn-stats-toggle" class="stats-toggle-btn">📊</button>
     <button id="btn-open-settings" class="settings-btn">⚙️ 設定</button>
   </div>
-  <audio id="bgm-audio" src="assets/audio/lobby_bgm.mp3" loop preload="auto"></audio>
   <header id="game-header" class="game-header hidden">
+    <button id="btn-game-header-back" class="figma-header-back-btn game-header-back-btn" title="戻る" aria-label="戻る" onclick="goBack();">
+      <img src="assets/images/btn_header_back.png" alt="戻る" class="figma-header-back-icon">
+    </button>
     <div class="timeline-indicator">
       <span id="current-day-label" class="day-badge">DAY1</span>
-      <span id="current-time-label" class="time-badge">07:45</span>
+      <span id="current-time-label" class="time-badge">07:20</span>
       <span id="player-badge" class="player-badge hidden">
         <span id="player-badge-avatar" class="player-badge-avatar"></span>
         <span id="player-badge-name"></span>
@@ -42,23 +60,54 @@
 
   <main id="app-viewport">
 
-    <!-- 1. TITLE (登録開始) -->
-    <section id="screen-title" class="screen">
-      <div class="title-card">
-        <div class="logo-badge">Toward the future of working in Japan</div>
-        <h1 class="main-title">SHOSA</h1>
-        <div class="title-scene-wrap" style="margin: 20px 0;">
-          <img src="assets/images/scenes/title_lobby.jpg" alt="" class="title-scene-img">
+    <!-- 1. TITLE (Figma CH0-01) -->
+    <section id="screen-title" class="screen figma-ch0-01-screen">
+      <button class="figma-header-back-btn figma-back-btn-floating hidden" id="btn-title-back" title="戻る" aria-label="戻る" onclick="goBack();">
+        <img src="assets/images/btn_header_back.png" alt="戻る" class="figma-header-back-icon">
+      </button>
+      <!-- Cream Heraldic Shield Card & Floating Brand / Mascot Layer -->
+      <div class="ch01-shield-wrap">
+        <img src="assets/images/card_start_shield.png" alt="" class="ch01-shield-img">
+        <div class="ch01-shield-content">
+          <p class="ch01-tagline">Toward the future of working in Japan</p>
+          <div class="ch01-logo-wrap">
+            <img src="assets/images/logo_shosa_white.png" alt="SHOSA" class="ch01-logo-img">
+          </div>
+          <div class="ch01-mascot-wrap">
+            <img src="assets/images/mascot_shosa_standing.png" alt="SHOSA Mascot" class="ch01-mascot-img">
+          </div>
         </div>
-        <p class="sub-title">現場で通用する「プロの姿勢」と「型」を、リアルなストーリーで学びましょう。</p>
       </div>
-      <button id="btn-start-game" class="primary-btn pulse">START</button>
-      <button id="btn-title-continue" class="secondary-btn hidden">🏠 続きから（Day選択メニューへ）</button>
+
+      <!-- Bottom Auth / Start Action Buttons (Figma CH0-01 Frame 95) -->
+      <div class="ch01-bottom-actions">
+        <button id="btn-login-google" class="ch01-btn ch01-btn-google">
+          <img src="assets/images/figma/icon_google.svg" alt="Google" class="ch01-btn-icon">
+          <span data-i18n="title_google_btn">Googleで続ける</span>
+        </button>
+        <button id="btn-login-apple" class="ch01-btn ch01-btn-apple">
+          <img src="assets/images/figma/icon_apple.svg" alt="Apple" class="ch01-btn-icon">
+          <span data-i18n="title_apple_btn">Appleで続ける</span>
+        </button>
+        <button id="btn-login-phone" class="ch01-btn ch01-btn-phone">
+          <span data-i18n="title_phone_btn">電話番号で続ける</span>
+        </button>
+        <div class="ch01-login-link-wrap" style="display:none;">
+          <span class="ch01-login-desc">アカウントをお持ちの方はこちら</span>
+          <button id="btn-login-link" class="ch01-login-link-btn">ログイン</button>
+        </div>
+        <button id="btn-title-continue" class="ch01-btn ch01-btn-continue hidden" data-i18n="title_continue_btn">🏠 続きから（Day選択メニューへ）</button>
+        <button id="btn-title-reset-all" class="text-link-btn hidden" data-i18n="title_reset_btn">最初からやり直す（診断・登録情報もリセット）</button>
+      </div>
     </section>
 
     <!-- 0b. STORY COVER（プログラム全体の導入。Figma「ホテルスタッフ体験」に対応） -->
     <section id="screen-story-cover" class="screen hidden">
+      <button class="figma-header-back-btn figma-back-btn-floating" title="戻る" aria-label="戻る" onclick="goBack();">
+        <img src="assets/images/btn_header_back.png" alt="戻る" class="figma-header-back-icon">
+      </button>
       <div class="character-preview">
+        <img src="assets/images/mascot_shosa_standing.png" alt="SHOSA" class="story-cover-mascot">
       </div>
       <h2 class="story-cover-title">ホテルスタッフ体験</h2>
       <div class="ob-divider"></div>
@@ -66,260 +115,736 @@
       <button id="btn-story-cover-next" class="primary-btn">NEXT</button>
     </section>
 
-    <!-- 1b/1c. SHOSA READY CHECK + 日本語レベル確認（1画面に統合） -->
-    <section id="screen-ob-level" class="screen hidden">
-      <div>
-        <span class="ob-card-badge">before starting...</span>
-        <h2 style="font-size:20px;color:#2d3748;font-weight:900;">SHOSA Ready CHECK</h2>
-        <div class="ob-divider"></div>
-      </div>
-      <div class="ob-progress-bar"><div class="ob-progress-bar-fill" style="width:33%;"></div></div>
-      <div class="ob-chat-row">
-        <div class="ob-chat-avatar-wrap">
-          <div class="avatar-circle small">🤖</div>
-          <span class="avatar-label">キャラクター</span>
-        </div>
-        <div class="ob-chat-bubble"><p>Please tell me about your Japanese language level.</p></div>
-      </div>
-      <div class="ob-options" id="ob-level-options"></div>
-      <button id="btn-ob-level-next" class="primary-btn" disabled>NEXT</button>
-    </section>
-
-    <!-- 1d. RECOMMENDED LANGUAGE SETTING -->
-    <section id="screen-ob-recommend" class="screen hidden">
-      <div class="ob-progress">SHOSA Ready CHECK</div>
-      <div class="ob-progress-bar"><div class="ob-progress-bar-fill" style="width:66%;"></div></div>
-      <div class="ob-chat-row">
-        <div class="ob-chat-avatar-wrap">
-          <div class="avatar-circle small">🤖</div>
-          <span class="avatar-label">キャラクター</span>
-        </div>
-        <div class="ob-chat-bubble"><p>Here are the language settings we recommend for you.</p></div>
-      </div>
-      <div class="explanation-card" style="margin-top:14px;">
-        <h3 id="ob-recommend-title">Easy Japanese</h3>
-        <ul class="ob-checklist">
-          <li>文章を短く表示します</li>
-          <li>難しい言葉を減らします</li>
-          <li>あとで変更できます</li>
-        </ul>
-      </div>
-      <div class="ob-btn-row">
-        <button id="btn-ob-recommend-change" class="secondary-btn">CHANGE</button>
-        <button id="btn-ob-recommend-next" class="primary-btn">NEXT</button>
-      </div>
-    </section>
-
-    <!-- 1e. LANGUAGE SETTING SELECTION -->
-    <section id="screen-ob-langselect" class="screen hidden">
-      <div class="ob-progress">SHOSA Ready CHECK</div>
-      <div class="ob-progress-bar"><div class="ob-progress-bar-fill" style="width:100%;"></div></div>
-      <div class="ob-chat-row">
-        <div class="ob-chat-avatar-wrap">
-          <div class="avatar-circle small">🤖</div>
-          <span class="avatar-label">キャラクター</span>
-        </div>
-        <div class="ob-chat-bubble"><p>Please select your language setting.</p></div>
-      </div>
-      <div class="ob-lang-list" id="ob-lang-list"></div>
-      <button id="btn-ob-langselect-next" class="primary-btn" disabled>NEXT</button>
-    </section>
-
-    <!-- 1f. CHARACTER INTRO CAROUSEL (キャラクター紹介 part 1) -->
-    <section id="screen-ob-intro" class="screen hidden">
-      <div id="ob-intro-content"></div>
-      <div class="ob-dots" id="ob-intro-dots"></div>
-      <button id="btn-ob-intro-next" class="primary-btn">NEXT</button>
-    </section>
-
-    <!-- 1g. AI TUTOR GREETING (キャラクター紹介 part 2) -->
-    <section id="screen-ob-character" class="screen hidden">
-      <div class="ob-progress">キャラクター紹介</div>
-      <div class="character-preview">
-        <div class="avatar-circle">🤖</div>
-        <div class="avatar-label">AIチューター SHOSA</div>
-      </div>
-      <div class="speech-bubble"><p>はじめまして！SHOSAだよ。学習をサポートするために、まずは少しだけ君のことを教えてね。</p></div>
-      <button id="btn-ob-character-next" class="primary-btn">NEXT</button>
-    </section>
-
-    <!-- 1h. HEARING (reused for 4 questions) -->
-    <section id="screen-ob-hearing" class="screen hidden">
-      <div class="ob-progress" id="ob-hearing-progress">ヒアリング01</div>
-      <div class="ob-progress-bar"><div class="ob-progress-bar-fill" id="ob-hearing-progress-fill" style="width:25%;"></div></div>
-      <div class="ob-chat-row">
-        <div class="ob-chat-avatar-wrap">
-          <div class="avatar-circle small">🤖</div>
-          <span class="avatar-label">キャラクター</span>
-        </div>
-        <div class="ob-chat-bubble"><p id="ob-hearing-question">-</p></div>
-      </div>
-      <div class="ob-options" id="ob-hearing-options"></div>
-      <button id="btn-ob-hearing-next" class="primary-btn" disabled>NEXT</button>
-    </section>
-
-    <!-- 1i. APTITUDE INTRO -->
-    <section id="screen-ob-aptitude-intro" class="screen hidden">
-      <div>
-        <span class="ob-card-badge">キャラクター</span>
-        <h2 style="font-size:20px;color:#2d3748;font-weight:900;">適性診断</h2>
-        <div class="ob-divider"></div>
-      </div>
-      <div id="ob-aptitude-intro-text" class="ob-tagline" style="text-align:left;font-size:13px;">-</div>
-      <button id="btn-ob-aptitude-intro-next" class="primary-btn">NEXT</button>
-    </section>
-
-    <!-- 1j. APTITUDE QUESTIONS（全問を1画面でスクロール表示） -->
-    <section id="screen-ob-aptitude" class="screen hidden">
-      <div class="ob-progress" id="ob-aptitude-progress">適性診断 0/5</div>
-      <div class="ob-progress-bar"><div class="ob-progress-bar-fill" id="ob-aptitude-progress-fill" style="width:0%;"></div></div>
-      <div id="ob-aptitude-list"></div>
-      <div class="ob-scroll-hint" id="ob-aptitude-scroll-hint">スクロール</div>
-      <button id="btn-ob-aptitude-next" class="primary-btn" disabled>NEXT</button>
-    </section>
-
-    <!-- 1k. PROFILE INPUT 01 -->
-    <section id="screen-ob-profile1" class="screen hidden">
-      <div class="ob-progress-bar"><div class="ob-progress-bar-fill" style="width:80%;"></div></div>
-      <h2 style="font-size:16px;color:#2d3748;margin-bottom:14px;">プロフィールを入力してください</h2>
-      <div class="ob-form-group">
-        <label>性別</label>
-        <div class="ob-pill-row" id="ob-gender-row">
-          <div class="ob-pill" data-value="男性">男性</div>
-          <div class="ob-pill" data-value="女性">女性</div>
-          <div class="ob-pill" data-value="その他">その他</div>
+    <!-- 1e. LANGUAGE SETTING SELECTION (Figma CH0-08) -->
+    <section id="screen-ob-langselect" class="screen hidden figma-langselect-screen">
+      <button class="figma-header-back-btn figma-back-btn-floating" title="戻る" aria-label="戻る" onclick="goBack();">
+        <img src="assets/images/btn_header_back.png" alt="戻る" class="figma-header-back-icon">
+      </button>
+      <div class="langselect-header-area">
+        <div class="langselect-hero">
+          <div class="langselect-mascot-wrap">
+            <img src="assets/images/mascot_shosa_face.png" alt="SHOSA" class="langselect-mascot">
+            <div class="langselect-shadow"></div>
+          </div>
+          <div class="langselect-bubble">
+            <p>Please select<br>your language setting.</p>
+          </div>
         </div>
       </div>
-      <div class="ob-form-group">
-        <label>名前</label>
-        <input type="text" id="ob-name-input" class="ob-text-input" maxlength="10" placeholder="アプリ内での呼び名">
-        <p class="ob-help-text">アプリ内でのあなたの名前です。10文字以内でシンプルな名前を設定してください。</p>
-      </div>
-      <div class="ob-form-group">
-        <label>出身国</label>
-        <select id="ob-country-input" class="ob-select">
-          <option value="">選択してください</option>
-          <option value="日本">日本</option>
-          <option value="中国">中国</option>
-          <option value="ベトナム">ベトナム</option>
-          <option value="フィリピン">フィリピン</option>
-          <option value="ネパール">ネパール</option>
-          <option value="インドネシア">インドネシア</option>
-          <option value="ミャンマー">ミャンマー</option>
-          <option value="韓国">韓国</option>
-          <option value="その他">その他</option>
-        </select>
-      </div>
-      <div class="ob-form-group">
-        <label>誕生日</label>
-        <input type="date" id="ob-birthdate-input" class="ob-date-input">
-      </div>
-      <button id="btn-ob-profile1-next" class="primary-btn" disabled>NEXT</button>
-    </section>
-
-    <!-- 1l. PROFILE INPUT 02 -->
-    <section id="screen-ob-profile2" class="screen hidden">
-      <div class="ob-progress-bar"><div class="ob-progress-bar-fill" style="width:100%;"></div></div>
-      <h2 style="font-size:16px;color:#2d3748;margin-bottom:14px;">プロフィールを入力してください</h2>
-      <div class="ob-form-group">
-        <label>音声タイプ</label>
-        <div class="ob-voice-sample-row">
-          <span>Hi, my name is ○○.</span>
-          <button id="btn-ob-voice-sample" class="ob-sample-icon-btn" title="音声再生アイコン">🔊</button>
-        </div>
-        <div class="ob-voice-row" id="ob-voice-row">
-          <div class="ob-voice-btn selected" data-value="A">タイプA</div>
-          <div class="ob-voice-btn" data-value="B">タイプB</div>
-        </div>
-      </div>
-      <div class="ob-form-group">
-        <label>アイコン</label>
-        <div class="ob-avatar-grid" id="ob-avatar-grid"></div>
-      </div>
-      <button id="btn-ob-profile2-next" class="primary-btn" disabled>NEXT</button>
-    </section>
-
-    <!-- 1m. SHOSA PASSPORT COMPLETE -->
-    <section id="screen-ob-passport" class="screen hidden">
-      <div id="ob-passport-reveal" class="passport-reveal-wrap">
-        <div class="ob-passport-hero-img">
-          <img src="https://images.pexels.com/photos/7310015/pexels-photo-7310015.jpeg?auto=compress&cs=tinysrgb&h=400&fit=crop&w=400" alt="パスポートのイメージ">
-        </div>
-        <h2 style="font-size:18px;color:#2d3748;margin-bottom:8px;">SHOSA Passport 完成！</h2>
-        <p style="font-size:13px;color:#718096;">あなた専用の学習プロフィールができました。</p>
-        <button id="btn-ob-passport-open" class="primary-btn">OPEN</button>
-      </div>
-      <div id="ob-passport-card-wrap" class="hidden">
-        <div class="passport-card" id="ob-passport-card"></div>
-        <div class="explanation-card" id="ob-passport-feedback" style="margin-top:12px;"></div>
-        <button id="btn-ob-passport-start" class="primary-btn">NEXT</button>
+      <div class="langselect-card-list" id="ob-lang-list"></div>
+      <div class="langselect-bottom-area">
+        <button id="btn-ob-langselect-next" class="langselect-next-btn" disabled>NEXT</button>
       </div>
     </section>
 
-    <!-- 1n. 学習スケジュール作成 STEP1：好きな時間帯・通知設定 -->
-    <section id="screen-ob-schedule-time" class="screen hidden">
-      <h2 style="font-size:16px;color:#2d3748;font-weight:900;margin-bottom:12px;">学習スケジュール作成</h2>
-      <div class="ob-chat-row">
-        <div class="ob-chat-avatar-wrap">
-          <div class="avatar-circle small">🤖</div>
-          <span class="avatar-label">キャラクター</span>
+    <!-- 1f. CHARACTER INTRO CAROUSEL (Figma CH0-03 〜 CH0-06) -->
+    <section id="screen-ob-intro" class="screen hidden figma-carousel-screen">
+      <button id="btn-ob-intro-back" class="figma-header-back-btn figma-back-btn-floating hidden" title="戻る" aria-label="戻る" onclick="goBack();">
+        <img src="assets/images/btn_header_back.png" alt="戻る" class="figma-header-back-icon">
+      </button>
+      <div id="ob-intro-content" class="intro-slide-container"></div>
+    </section>
+
+    <!-- 1g. AI TUTOR GREETING (Figma CH0-07) -->
+    <section id="screen-ob-character" class="screen figma-ch07-screen hidden">
+      <button class="figma-header-back-btn figma-back-btn-floating" title="戻る" aria-label="戻る" onclick="goBack();">
+        <img src="assets/images/btn_header_back.png" alt="戻る" class="figma-header-back-icon">
+      </button>
+      <button class="btn-en-toggle figma-en-btn-floating" title="Translate / 言語切り替え">
+    <div class="reproduced-lang-chip">
+      <svg class="reload-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" />
+        <polyline points="21 3 21 8 16 8" />
+      </svg>
+      <span class="lang-text">EN</span>
+    </div>
+      </button>
+      <!-- Multi-Layer Hotel Corridor Scene (Figma CH0-07 / CH0-13) -->
+      <div class="ch07-corridor-scene">
+        <div class="ch07-wall-bg"></div>
+        <svg class="ch07-floor-svg" viewBox="0 0 402 540" preserveAspectRatio="none">
+          <defs>
+            <pattern id="ch07-carpet-pattern-1" patternUnits="userSpaceOnUse" width="160" height="55.5">
+              <image href="assets/images/carpet_beige.jpg" width="160" height="55.5" preserveAspectRatio="none" />
+            </pattern>
+          </defs>
+          <polygon points="0,31 85,0 317,0 402,31 402,42 317,10 85,10 0,42" fill="#E6D8BD" />
+          <polyline points="0,31 85,0 317,0 402,31" stroke="#D1C1A3" stroke-width="1.5" fill="none" />
+          <line x1="85" y1="0" x2="85" y2="10" stroke="#C8B797" stroke-width="1" />
+          <line x1="317" y1="0" x2="317" y2="10" stroke="#C8B797" stroke-width="1" />
+          <polygon points="0,42 85,10 317,10 402,42 402,540 0,540" fill="#BFA889" />
+          <polygon points="0,42 85,10 317,10 402,42 402,540 0,540" fill="url(#ch07-carpet-pattern-1)" opacity="0.9" />
+        </svg>
+        <div class="ch07-door-wrap">
+          <img src="assets/images/scene_door_101.png" alt="Room 101" class="ch07-door-img">
         </div>
-        <div class="ob-chat-bubble"><p>学習の時間を決めよう！続けやすいタイミングを選んでね。</p></div>
+        <div class="ch07-mascot-wrap">
+          <img src="assets/images/mascot_shosa_standing.png" alt="SHOSA" class="ch07-mascot-img">
+        </div>
       </div>
-      <div class="ob-options" id="ob-schedule-time-options"></div>
-      <div class="ob-form-group" style="margin-top:10px;">
-        <label>この時間にお知らせします</label>
-        <div class="ob-notify-row">
-          <span class="ob-list-icon" style="width:28px;height:28px;font-size:13px;">⏰</span>
-          <input type="time" id="ob-schedule-notify-time" class="ob-time-input" value="20:00">
-          <span class="ob-list-icon" style="width:28px;height:28px;font-size:13px;">🔔</span>
-          <label class="ob-toggle">
+      <div class="figma-ch07-overlay">
+        <div class="figma-speech-bubble">
+          <div class="figma-speech-tail"></div>
+          <p class="figma-speech-text" id="ob-greet-text" data-i18n="greet_bubble">はじめまして！SHOSAだよ。<br><br>学習をサポートするために<br>まずは君のことを教えてね。</p>
+        </div>
+        <button id="btn-ob-character-next" class="primary-btn" data-i18n="next">NEXT</button>
+      </div>
+    </section>
+
+    <!-- 1h. HEARING (Figma Frame 248 / CH0-08〜11) -->
+    <section id="screen-ob-hearing" class="screen hidden figma-hearing-screen">
+      <!-- Top Bar: Back, Progress, EN toggle (Frame 248) -->
+      <div class="figma-hearing-header-bar">
+        <button id="btn-hearing-back" class="figma-header-back-btn" type="button" title="戻る" aria-label="戻る" onclick="goBack();">
+          <img src="assets/images/btn_header_back.png" alt="戻る" class="figma-header-back-icon">
+        </button>
+        <div class="figma-hearing-progress-wrap">
+          <div class="figma-hearing-progress-bar">
+            <div class="figma-hearing-progress-fill" id="ob-hearing-progress-fill" style="width: 25%;"></div>
+          </div>
+        </div>
+        <button class="btn-en-toggle" id="btn-hearing-en" title="Translate / 言語切り替え">
+    <div class="reproduced-lang-chip">
+      <svg class="reload-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" />
+        <polyline points="21 3 21 8 16 8" />
+      </svg>
+      <span class="lang-text">EN</span>
+    </div>
+      </button>
+      </div>
+
+      <!-- Mascot & Speech Bubble Hero Area -->
+      <div class="frame248-hero-area">
+        <div class="frame248-mascot-wrap">
+          <img src="assets/images/mascot_shosa_face.png" alt="SHOSA" class="frame248-mascot-img">
+          <div class="frame248-mascot-shadow"></div>
+        </div>
+        <div class="frame248-speech-bubble">
+          <p id="ob-hearing-question" class="frame248-speech-text">これまでに経験した<br>接客業を教えてね！</p>
+        </div>
+      </div>
+
+      <!-- Scalloped Options List (Frame 248: 5 items) -->
+      <div class="frame248-options-list" id="ob-hearing-options"></div>
+
+      <!-- Bottom Area: NEXT Button and Home Bar -->
+      <div class="frame248-bottom-area">
+        <button id="btn-ob-hearing-next" class="langselect-next-btn" disabled>NEXT</button>
+      </div>
+    </section>
+
+    <!-- 1i. APTITUDE INTRO (Figma CH0-13) -->
+    <section id="screen-ob-aptitude-intro" class="screen figma-ch07-screen hidden">
+      <button class="figma-header-back-btn figma-back-btn-floating" title="戻る" aria-label="戻る" onclick="goBack();">
+        <img src="assets/images/btn_header_back.png" alt="戻る" class="figma-header-back-icon">
+      </button>
+      <button class="btn-en-toggle figma-en-btn-floating" title="Translate / 言語切り替え">
+    <div class="reproduced-lang-chip">
+      <svg class="reload-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" />
+        <polyline points="21 3 21 8 16 8" />
+      </svg>
+      <span class="lang-text">EN</span>
+    </div>
+      </button>
+      <!-- Multi-Layer Hotel Corridor Scene (Figma CH0-07 / CH0-13) -->
+      <div class="ch07-corridor-scene">
+        <div class="ch07-wall-bg"></div>
+        <svg class="ch07-floor-svg" viewBox="0 0 402 540" preserveAspectRatio="none">
+          <defs>
+            <pattern id="ch07-carpet-pattern-2" patternUnits="userSpaceOnUse" width="160" height="55.5">
+              <image href="assets/images/carpet_beige.jpg" width="160" height="55.5" preserveAspectRatio="none" />
+            </pattern>
+          </defs>
+          <polygon points="0,31 85,0 317,0 402,31 402,42 317,10 85,10 0,42" fill="#E6D8BD" />
+          <polyline points="0,31 85,0 317,0 402,31" stroke="#D1C1A3" stroke-width="1.5" fill="none" />
+          <line x1="85" y1="0" x2="85" y2="10" stroke="#C8B797" stroke-width="1" />
+          <line x1="317" y1="0" x2="317" y2="10" stroke="#C8B797" stroke-width="1" />
+          <polygon points="0,42 85,10 317,10 402,42 402,540 0,540" fill="#BFA889" />
+          <polygon points="0,42 85,10 317,10 402,42 402,540 0,540" fill="url(#ch07-carpet-pattern-2)" opacity="0.9" />
+        </svg>
+        <div class="ch07-door-wrap">
+          <img src="assets/images/scene_door_101.png" alt="Room 101" class="ch07-door-img">
+        </div>
+        <div class="ch07-mascot-wrap">
+          <img src="assets/images/mascot_shosa_standing.png" alt="SHOSA" class="ch07-mascot-img">
+        </div>
+      </div>
+      <div class="figma-ch07-overlay">
+        <div class="figma-speech-bubble">
+          <div class="figma-speech-tail"></div>
+          <p class="figma-speech-text" data-i18n="aptitude_intro_bubble">
+            各項目について、指定された<br>
+            <strong style="color: #715BE1; font-weight: 700;">5段階評価</strong>で回答してね。<br>
+            <br>
+            将来なりたい自分ではなく、<br>
+            <strong style="color: #715BE1; font-weight: 700;">現在のあなた</strong>に最も当てはまる<br>
+            選択肢を選んでください。
+          </p>
+        </div>
+        <button id="btn-ob-aptitude-intro-next" class="primary-btn" data-i18n="next">NEXT</button>
+      </div>
+    </section>
+
+    <!-- 1j. APTITUDE QUESTIONS (Figma CH0-14) -->
+    <section id="screen-ob-aptitude" class="screen hidden figma-hearing-screen ch14-screen">
+      <!-- Top Bar: Back, Progress, EN toggle (Frame 142) -->
+      <div class="figma-hearing-header-bar">
+        <button id="btn-aptitude-back" class="figma-header-back-btn" type="button" title="戻る" aria-label="戻る" onclick="goBack();">
+          <img src="assets/images/btn_header_back.png" alt="戻る" class="figma-header-back-icon">
+        </button>
+        <div class="figma-hearing-progress-wrap">
+          <div class="figma-hearing-progress-bar">
+            <div class="figma-hearing-progress-fill" id="ob-aptitude-progress-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+        <button class="btn-en-toggle" id="btn-aptitude-en" title="Translate / 言語切り替え">
+    <div class="reproduced-lang-chip">
+      <svg class="reload-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" />
+        <polyline points="21 3 21 8 16 8" />
+      </svg>
+      <span class="lang-text">EN</span>
+    </div>
+      </button>
+      </div>
+
+      <!-- Scrollable Questions List (Frame 19) -->
+      <div class="ch14-scroll-area">
+        <div id="ob-aptitude-list" class="ch14-questions-list"></div>
+      </div>
+
+      <!-- Bottom Area: NEXT Button and Home Bar -->
+      <div class="frame248-bottom-area ch14-bottom-area">
+        <button id="btn-ob-aptitude-next" class="langselect-next-btn ch14-next-btn" disabled>NEXT</button>
+      </div>
+    </section>
+
+    <!-- 1k-0. PROFILE INTRO (Figma CH0-15) -->
+    <section id="screen-ob-profile-intro" class="screen figma-ch07-screen hidden">
+      <button class="figma-header-back-btn figma-back-btn-floating" title="戻る" aria-label="戻る" onclick="goBack();">
+        <img src="assets/images/btn_header_back.png" alt="戻る" class="figma-header-back-icon">
+      </button>
+      <button class="btn-en-toggle figma-en-btn-floating" title="Translate / 言語切り替え">
+    <div class="reproduced-lang-chip">
+      <svg class="reload-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" />
+        <polyline points="21 3 21 8 16 8" />
+      </svg>
+      <span class="lang-text">EN</span>
+    </div>
+      </button>
+      <!-- Multi-Layer Hotel Corridor Scene (Figma CH0-07 / CH0-13) -->
+      <div class="ch07-corridor-scene">
+        <div class="ch07-wall-bg"></div>
+        <svg class="ch07-floor-svg" viewBox="0 0 402 540" preserveAspectRatio="none">
+          <defs>
+            <pattern id="ch07-carpet-pattern-3" patternUnits="userSpaceOnUse" width="160" height="55.5">
+              <image href="assets/images/carpet_beige.jpg" width="160" height="55.5" preserveAspectRatio="none" />
+            </pattern>
+          </defs>
+          <polygon points="0,31 85,0 317,0 402,31 402,42 317,10 85,10 0,42" fill="#E6D8BD" />
+          <polyline points="0,31 85,0 317,0 402,31" stroke="#D1C1A3" stroke-width="1.5" fill="none" />
+          <line x1="85" y1="0" x2="85" y2="10" stroke="#C8B797" stroke-width="1" />
+          <line x1="317" y1="0" x2="317" y2="10" stroke="#C8B797" stroke-width="1" />
+          <polygon points="0,42 85,10 317,10 402,42 402,540 0,540" fill="#BFA889" />
+          <polygon points="0,42 85,10 317,10 402,42 402,540 0,540" fill="url(#ch07-carpet-pattern-3)" opacity="0.9" />
+        </svg>
+        <div class="ch07-door-wrap">
+          <img src="assets/images/scene_door_101.png" alt="Room 101" class="ch07-door-img">
+        </div>
+        <div class="ch07-mascot-wrap">
+          <img src="assets/images/mascot_shosa_standing.png" alt="SHOSA" class="ch07-mascot-img">
+        </div>
+      </div>
+      <div class="figma-ch07-overlay">
+        <div class="figma-speech-bubble">
+          <div class="figma-speech-tail"></div>
+          <p class="figma-speech-text" data-i18n="profile_intro_bubble">あなたの<strong>プロフィール</strong>を<br>入力してね。</p>
+        </div>
+        <button id="btn-ob-profile-intro-next" class="primary-btn" data-i18n="next">NEXT</button>
+      </div>
+    </section>
+
+    <!-- 1k. PROFILE INPUT (Figma CH0-16') -->
+    <section id="screen-ob-profile1" class="screen hidden figma-profile-screen">
+      <!-- Top Bar: Back, Progress, EN toggle -->
+      <div class="figma-header-bar">
+        <button id="btn-profile-back" class="figma-header-back-btn" type="button" title="戻る" aria-label="戻る" onclick="goBack();">
+          <img src="assets/images/btn_header_back.png" alt="戻る" class="figma-header-back-icon">
+        </button>
+        <div class="figma-header-progress-wrap">
+          <div class="figma-header-progress-bar">
+            <div class="figma-header-progress-fill" style="width: 50%;"></div>
+          </div>
+        </div>
+        <button class="btn-en-toggle" id="btn-profile-en" title="Translate / 言語切り替え">
+    <div class="reproduced-lang-chip">
+      <svg class="reload-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" />
+        <polyline points="21 3 21 8 16 8" />
+      </svg>
+      <span class="lang-text">EN</span>
+    </div>
+      </button>
+      </div>
+
+      <!-- Main Profile Box (Figma Frame 128: 360px wide) -->
+      <div class="figma-profile-card">
+        <!-- Title & Gold Sparkle Divider (1frames.png) -->
+        <div class="figma-profile-title-wrap">
+          <h2 class="figma-profile-title" data-i18n="profile_title">プロフィールを入力してください</h2>
+          <img src="assets/images/decor_gold_divider.png" alt="" class="figma-gold-divider-img">
+        </div>
+
+        <div class="figma-profile-fields">
+          <!-- 性別 (Figma Frame 32) -->
+          <div class="figma-field-group">
+            <label class="figma-field-label" data-i18n="gender_label">性別</label>
+            <div class="figma-gender-row" id="ob-gender-row">
+              <button type="button" class="figma-gender-btn" data-value="男性">
+                <span class="gender-btn-text" data-i18n="gender_male">男性</span>
+              </button>
+              <button type="button" class="figma-gender-btn" data-value="女性">
+                <span class="gender-btn-text" data-i18n="gender_female">女性</span>
+              </button>
+              <button type="button" class="figma-gender-btn" data-value="その他">
+                <span class="gender-btn-text" data-i18n="gender_other">その他</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 名前 (Figma Frame 30) -->
+          <div class="figma-field-group">
+            <label class="figma-field-label" data-i18n="name_label">名前</label>
+            <input type="text" id="ob-name-input" class="figma-input-text" maxlength="10" placeholder="あなたのお名前" data-i18n-ph="name_placeholder" value="">
+            <p class="figma-field-help" data-i18n="name_help">アプリ内でのあなたの名前です。<br>10文字以内でシンプルな名前を設定してください。</p>
+          </div>
+
+          <!-- 出身国 (Figma Frame 28) -->
+          <div class="figma-field-group">
+            <label class="figma-field-label" data-i18n="country_label">出身国</label>
+            <div class="figma-select-wrap">
+              <select id="ob-country-input" class="figma-select">
+                <option value="" disabled selected data-i18n="country_placeholder">選択してください</option>
+                <option value="日本">日本</option>
+                <option value="ベトナム">ベトナム</option>
+                <option value="ミャンマー">ミャンマー</option>
+                <option value="シンガポール">シンガポール</option>
+                <option value="インドネシア">インドネシア</option>
+                <option value="ネパール">ネパール</option>
+                <option value="フィリピン">フィリピン</option>
+                <option value="インド">インド</option>
+                <option value="中国">中国</option>
+                <option value="韓国">韓国</option>
+                <option value="その他">その他</option>
+              </select>
+              <span class="figma-select-arrow">∨</span>
+            </div>
+          </div>
+
+          <!-- 誕生日 (Figma Frame 27) -->
+          <div class="figma-field-group">
+            <label class="figma-field-label" data-i18n="birthdate_label">誕生日</label>
+            <div class="figma-select-wrap">
+              <input type="date" id="ob-birthdate-input" class="figma-select figma-date-input" value="2000-01-01">
+              <span class="figma-select-arrow">∨</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Next Button & iOS Home Bar -->
+      <div class="langselect-bottom-area">
+        <button id="btn-ob-profile1-next" class="langselect-next-btn" disabled data-i18n="next">NEXT</button>
+      </div>
+    </section>
+
+    <!-- 1k-2. YOUR JOURNEY (Figma CH0-18) -->
+    <section id="screen-ob-journey" class="screen hidden figma-journey-screen">
+      <!-- Top Bar: Back & EN toggle -->
+      <div class="figma-header-bar figma-journey-header-bar">
+        <button id="btn-journey-back" class="figma-header-back-btn" type="button" title="戻る" aria-label="戻る" onclick="goBack();">
+          <img src="assets/images/btn_header_back.png" alt="戻る" class="figma-header-back-icon">
+        </button>
+        <button class="btn-en-toggle" id="btn-journey-en" title="Translate / 言語切り替え">
+    <div class="reproduced-lang-chip">
+      <svg class="reload-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" />
+        <polyline points="21 3 21 8 16 8" />
+      </svg>
+      <span class="lang-text">EN</span>
+    </div>
+      </button>
+      </div>
+
+      <!-- Header Titles -->
+      <div class="journey-title-container">
+        <p class="journey-subtitle" data-i18n="journey_subtitle">ホテルで働くための、あなたの学びの旅</p>
+        <h1 class="journey-main-title" data-i18n="journey_title">YOUR JOURNEY</h1>
+      </div>
+
+      <!-- Timeline & Doors Container -->
+      <div class="journey-timeline-container" id="ob-journey-list"></div>
+
+      <!-- Bottom Next Button & iOS Home Bar -->
+      <div class="langselect-bottom-area">
+        <button id="btn-ob-journey-next" class="langselect-next-btn" data-i18n="journey_start">START</button>
+      </div>
+    </section>
+
+    <!-- 1m. COMPLETE CELEBRATION (Figma CH0-19) -->
+    <section id="screen-ob-passport" class="screen hidden figma-ch19-screen">
+      <button class="btn-en-toggle figma-en-btn-floating" id="btn-passport-en" title="Translate / 言語切り替え">
+    <div class="reproduced-lang-chip">
+      <svg class="reload-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" />
+        <polyline points="21 3 21 8 16 8" />
+      </svg>
+      <span class="lang-text">EN</span>
+    </div>
+      </button>
+      <!-- Top Badge / Filigree Dividers -->
+      <div class="ch19-top-badge-wrap">
+        <img src="assets/images/figma/decor_filigree_top.png" alt="" class="ch19-sparkle-decor ch19-sparkle-top">
+        <h1 class="ch19-badge-text" data-i18n="ch19_badge">適性診断 完了！</h1>
+        <img src="assets/images/figma/decor_filigree_bottom.png" alt="" class="ch19-sparkle-decor ch19-sparkle-bottom">
+      </div>
+
+      <!-- Center Trophy with Halo -->
+      <img src="assets/images/figma/sunburst_ch19.svg" alt="" class="ch19-trophy-sunburst">
+      <div class="ch19-trophy-wrap">
+        <div class="ch19-trophy-halo"></div>
+        <img src="assets/images/medal-2.png" alt="Trophy" class="ch19-trophy-img">
+      </div>
+
+      <!-- Announcement Section (Figma Frame 240) - Direct on background -->
+      <div class="ch19-message-section">
+        <h2 class="ch19-main-heading" data-i18n="ch19_unlocked">1章 : Omotenashi Mindset が<br>解放されました</h2>
+        <div class="ch19-diamond-divider-wrap">
+          <img src="assets/images/decor_gold_divider.png" alt="" class="figma-gold-divider-img ch19-divider">
+        </div>
+        <p class="ch19-body-desc" data-i18n="ch19_desc1">お疲れ様でした！<br>あなたの選択から、<br>あなたに合った職種を紹介します。</p>
+        <p class="ch19-body-sub" data-i18n="ch19_desc2">「結果を見る」から確認してみよう！</p>
+      </div>
+
+      <!-- Bottom Proceed Button & iOS Home Bar -->
+      <div class="ch19-bottom-area">
+        <button id="btn-ob-view-result" class="ch19-view-result-btn">
+          <img src="assets/images/_レイヤー_4.png" alt="" class="ch19-btn-clipboard-icon">
+          <span class="ch19-btn-label" data-i18n="ch19_btn">結果を見る</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 1m-2. APTITUDE RESULT SCREEN (Figma CH0-20') -->
+    <section id="screen-ob-result" class="screen hidden figma-result-screen">
+      <!-- Close (Figma CH0-20': modal close button) -->
+      <button class="ch20-close-btn" type="button" title="閉じる" aria-label="閉じる" onclick="goBack();">
+        <svg viewBox="0 0 14 14" fill="none" stroke="#715BE1" stroke-width="2.4" stroke-linecap="round"><path d="M1.5 1.5l11 11M12.5 1.5l-11 11"/></svg>
+      </button>
+      <!-- Top Bar: Back & EN toggle (hidden in this frame; kept for JS bindings) -->
+      <div class="figma-header-bar figma-result-header-bar">
+        <button id="btn-result-back" class="figma-header-back-btn" title="戻る" onclick="goBack();">
+          <img src="assets/images/btn_header_back.png" alt="戻る" class="figma-header-back-icon">
+        </button>
+        <button class="btn-en-toggle" id="btn-result-en" title="Translate / 言語切り替え">
+    <div class="reproduced-lang-chip">
+      <svg class="reload-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" />
+        <polyline points="21 3 21 8 16 8" />
+      </svg>
+      <span class="lang-text">EN</span>
+    </div>
+      </button>
+      </div>
+
+      <!-- Main Result Container -->
+      <div class="ch20-screen-container">
+        <!-- White Paper Card with curled bottom -->
+        <div class="ch20-paper-card">
+          <!-- Teal Header Bar with Shosa Face Logo -->
+          <div class="ch20-modal-header">
+            <img src="assets/images/figma/shosa_face_header.png" alt="" class="ch20-header-mascot-icon">
+            <h3 class="ch20-header-title" data-i18n="result_badge">適性診断 結果</h3>
+          </div>
+
+          <!-- Content -->
+          <div class="ch20-modal-content">
+            <!-- Recommended Job Types Header -->
+            <div class="ch20-rec-title-block">
+              <div class="ch20-rec-en-title">Recommended Job Types</div>
+              <div class="ch20-rec-ja-sub" data-i18n="result_recommend">あなたにおすすめ</div>
+              <div class="ch20-teal-divider"></div>
+            </div>
+
+            <!-- Rank 1 Job Card -->
+            <div class="ch20-rank-card ch20-rank-1">
+              <div class="ch20-job-main-row">
+                <div class="ch20-job-info">
+                  <div class="ch20-rank-ribbon">
+                    <span class="ribbon-no">NO</span><span class="ribbon-num">1</span>
+                  </div>
+                  <div class="ch20-job-name-row">
+                    <span class="ch20-job-title result-job-name">Front Desk</span>
+                    <span class="ch20-job-score-group">
+                      <span class="result-job-score">95</span><span class="score-percent">%</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="ch20-job-avatar-badge">
+                  <img src="assets/images/icon_front_desk.png" alt="" class="ch20-job-avatar-img result-job-avatar">
+                </div>
+              </div>
+
+              <!-- Strengths Banner -->
+              <div class="ch20-strengths-banner" data-i18n="result_strengths_title">あなたの強み</div>
+
+              <!-- Strengths List -->
+              <ul class="ch20-strengths-list strengths-list">
+                <!-- Dynamically generated with gold star ★ -->
+              </ul>
+            </div>
+
+            <!-- Rank 2 Job Card (Under / Blurred preview) -->
+            <div class="ch20-rank-card ch20-rank-2 ch20-peeking-card">
+              <div class="ch20-job-main-row">
+                <div class="ch20-job-info">
+                  <div class="ch20-rank-ribbon ribbon-rank-2">
+                    <span class="ribbon-no">NO</span><span class="ribbon-num">2</span>
+                  </div>
+                  <div class="ch20-job-name-row">
+                    <span class="ch20-job-title ch20-rank2-name">Restaurant & Banquet</span>
+                    <span class="ch20-job-score-group">
+                      <span class="ch20-rank2-score">88</span><span class="score-percent">%</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="ch20-job-avatar-badge">
+                  <img src="assets/images/icon_restaurant.png" alt="" class="ch20-job-avatar-img">
+                </div>
+              </div>
+            </div>
+
+            <!-- Locked Notice Overlay -->
+            <div class="ch20-locked-overlay">
+              <div class="ch20-locked-box">
+                <img src="assets/images/figma/icon_lock_gold.svg" alt="" class="ch20-lock-icon">
+                <div class="ch20-lock-text" data-i18n="result_lock_msg">2位以降を閲覧するには<br>1章を進めよう！</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Curled Paper Edge Effect -->
+          <div class="ch20-paper-curl-wrap">
+            <img src="assets/images/figma/page_curl.svg" alt="" class="ch20-page-curl-img">
+          </div>
+        </div>
+
+        <!-- Bottom Action Area -->
+        <div class="ch20-screen-bottom-area">
+          <button id="btn-result-proceed" class="langselect-next-btn ch20-next-cta-btn">NEXT</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1n. 学習スケジュール作成 STEP1：好きな時間帯・通知設定 (Figma iPhone 17 - 110) -->
+    <section id="screen-ob-schedule-time" class="screen hidden figma-schedule-time-screen">
+      <!-- Figma Header Bar: Back Button, Progress Bar (25%), EN Toggle -->
+      <div class="figma-hearing-header-bar">
+        <button id="btn-schedule-time-back" class="figma-header-back-btn" title="戻る" onclick="goBack();">
+          <img src="assets/images/btn_header_back.png" alt="戻る" class="figma-header-back-icon">
+        </button>
+        <div class="figma-hearing-progress-wrap">
+          <div class="figma-hearing-progress-bar">
+            <div class="figma-hearing-progress-fill" style="width: 25%;"></div>
+          </div>
+        </div>
+        <button class="btn-en-toggle" id="btn-schedule-en" title="Translate / 言語切り替え">
+    <div class="reproduced-lang-chip">
+      <svg class="reload-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" />
+        <polyline points="21 3 21 8 16 8" />
+      </svg>
+      <span class="lang-text">EN</span>
+    </div>
+        </button>
+      </div>
+
+      <div class="schedule-time-inner-wrap">
+        <div class="langselect-header-area">
+          <div class="langselect-hero">
+            <div class="langselect-mascot-wrap">
+              <img src="assets/images/mascot_shosa_face.png" alt="SHOSA" class="langselect-mascot">
+              <div class="langselect-shadow"></div>
+            </div>
+            <div class="langselect-bubble">
+              <p data-i18n="schedule_bubble">学習の時間を決めよう！<br>続けやすいタイミングを選んでね。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="schedule-time-card-list" id="ob-schedule-time-options"></div>
+
+        <!-- Figma 紫色のお知らせ時間カード (Figma iPhone 17 - 110) -->
+        <div class="schedule-notify-card" id="schedule-notify-card">
+          <span class="schedule-notify-card-title" data-i18n="notify_label">お知らせ時間</span>
+          <button type="button" class="schedule-notify-time-btn" id="btn-open-time-wheel" title="タップしてお知らせ時間を編集">
+            <span class="schedule-notify-time-val" id="ob-schedule-notify-time-display">10:30</span>
+          </button>
+          <input type="hidden" id="ob-schedule-notify-time" value="10:30">
+          <label class="schedule-notify-ios-toggle" title="通知のON/OFF">
             <input type="checkbox" id="ob-schedule-notify-toggle" checked>
-            <span class="ob-toggle-slider"></span>
+            <span class="schedule-notify-ios-slider"></span>
           </label>
         </div>
+        <p class="schedule-notify-hint" data-i18n="notify_header">この時間にお知らせします</p>
       </div>
-      <button id="btn-ob-schedule-time-next" class="primary-btn" disabled>NEXT</button>
+
+      <div class="langselect-bottom-area">
+        <button id="btn-ob-schedule-time-next" class="langselect-next-btn" disabled>NEXT</button>
+      </div>
+
+      <!-- CH0-22 時間ドラムロールモーダル (Figma Frame 255) -->
+      <div id="modal-time-wheel" class="time-wheel-backdrop hidden">
+        <div class="time-wheel-card">
+          <button id="btn-close-time-wheel" class="time-wheel-close" title="閉じる">✕</button>
+          <div class="time-wheel-title" data-i18n="time_wheel_title">お知らせ時間を編集</div>
+          <div class="time-wheel-container">
+            <div class="time-wheel-selection-bar"></div>
+            <div class="time-wheel-column" id="wheel-hours"></div>
+            <span class="time-wheel-colon">:</span>
+            <div class="time-wheel-column" id="wheel-minutes"></div>
+          </div>
+          <button id="btn-submit-time-wheel" class="time-wheel-submit-btn" data-i18n="time_wheel_submit">設定を完了する</button>
+        </div>
+      </div>
     </section>
 
-    <!-- 1o. 学習スケジュール作成 STEP2：レッスン数・曜日 -->
-    <section id="screen-ob-schedule-days" class="screen hidden">
-      <h2 style="font-size:16px;color:#2d3748;font-weight:900;margin-bottom:16px;">学習スケジュール作成</h2>
-      <div class="ob-form-group">
-        <label>毎日の基本レッスン数</label>
-        <div class="ob-lesson-count-row">
-          <span id="ob-schedule-lesson-count-label">1レッスン／日</span>
-          <span class="ob-list-icon" style="width:28px;height:28px;font-size:12px;">アイコン</span>
-        </div>
-        <p class="ob-help-text">所要時間：8〜15分</p>
-        <div class="ob-lesson-count-btns">
-          <button type="button" class="secondary-btn" id="btn-schedule-lesson-minus">－</button>
-          <button type="button" class="secondary-btn" id="btn-schedule-lesson-plus">＋</button>
-        </div>
-      </div>
-      <div class="ob-form-group">
-        <label>学習できる曜日は？</label>
-        <div id="ob-schedule-days-list" class="ob-weekday-list"></div>
-      </div>
-      <button id="btn-ob-schedule-days-next" class="primary-btn" disabled>NEXT</button>
-    </section>
 
-    <!-- 1p. 学習スケジュール作成 STEP3：目標日数（最後にLet's start!） -->
-    <section id="screen-ob-schedule-goal" class="screen hidden">
-      <h2 style="font-size:16px;color:#2d3748;font-weight:900;margin-bottom:12px;">学習スケジュール作成</h2>
-      <div class="ob-chat-row">
-        <div class="ob-chat-avatar-wrap">
-          <div class="avatar-circle small">🤖</div>
-          <span class="avatar-label">キャラクター</span>
+    <!-- =========================================================
+         HOME: HM-TOP＋MY：案B (WF Wireframe Design)
+         ========================================================= -->
+    <section id="screen-home" class="screen hidden figma-home-screen">
+      <div class="hm-inner-container">
+        
+        <!-- Header Bar: 連続学習 5日 / 通知アイコン -->
+        <header class="hm-header">
+          <div class="hm-header-spacer"></div>
+          <div class="hm-streak">連続学習 <span id="hm-streak-days">5</span>日</div>
+          <div class="hm-notification-wrap" id="hm-btn-notification" title="お知らせ">
+            <svg class="hm-mail-icon" viewBox="0 0 24 18" fill="none" stroke="#2D3748" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="1" width="22" height="16" rx="2" fill="#FFFFFF" />
+              <polyline points="1 2 12 10 23 2" />
+            </svg>
+            <span class="hm-notif-dot"></span>
+          </div>
+        </header>
+
+        <!-- Main Scrollable Content -->
+        <div class="hm-scroll-content">
+          
+          <!-- Speech Bubble & Character -->
+          <div class="hm-hero-area">
+            <div class="hm-bubble">
+              <span id="hm-bubble-text">今日も一緒に学びましょう！</span>
+            </div>
+            <div class="hm-character-box">
+              <div class="hm-character-wf-text">
+                <span>SHOSA</span>
+                <span>キャラクター</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Exam CTA Button & Subtext -->
+          <div class="hm-exam-area">
+            <button id="btn-hm-exam" class="hm-exam-btn" type="button">
+              テストを受験する
+            </button>
+            <p class="hm-exam-subtext">3章の模擬テスト完了でアンロック</p>
+          </div>
+
+          <!-- Your Progress Card List -->
+          <div class="hm-progress-section">
+            <div class="hm-progress-tab-badge">your progress</div>
+            <div class="hm-progress-card">
+              
+              <!-- CHAPTER 0 -->
+              <div class="hm-chapter-row" id="hm-row-ch0">
+                <div class="hm-chapter-info">
+                  <div class="hm-chapter-title">CHAPTER0 : チュートリアル・診断</div>
+                </div>
+                <button id="btn-hm-ch0-action" class="hm-action-btn hm-btn-resume" type="button">続きから再開</button>
+              </div>
+
+              <!-- CHAPTER 1 (Active Highlight) -->
+              <div class="hm-chapter-row hm-chapter-active" id="hm-row-ch1">
+                <div class="hm-chapter-info">
+                  <div class="hm-chapter-title">CHAPTER1 : Omotenashi Mindset</div>
+                </div>
+                <button id="btn-hm-ch1-action" class="hm-action-btn hm-btn-start" type="button">START</button>
+              </div>
+
+              <!-- CHAPTER 2 (Locked) -->
+              <div class="hm-chapter-row hm-chapter-locked" id="hm-row-ch2">
+                <div class="hm-chapter-info">
+                  <div class="hm-chapter-title">CHAPTER2 : Omotenasi Style診断</div>
+                  <div class="hm-chapter-sub">1章クリアで解放</div>
+                </div>
+                <div class="hm-right-action-wrap">
+                  <span class="hm-lock-icon">🔒</span>
+                  <button id="btn-hm-ch2-action" class="hm-action-btn hm-btn-disabled" type="button" disabled>START</button>
+                </div>
+              </div>
+
+              <!-- CHAPTER 3 (Coming Soon) -->
+              <div class="hm-chapter-row hm-chapter-locked" id="hm-row-ch3">
+                <div class="hm-chapter-info">
+                  <div class="hm-chapter-title">CHAPTER3 : HOTEL SKILLS</div>
+                  <div class="hm-chapter-sub">COMING SOON</div>
+                </div>
+                <button id="btn-hm-ch3-action" class="hm-action-btn hm-btn-disabled" type="button" disabled>準備中</button>
+              </div>
+
+            </div>
+          </div>
+
         </div>
-        <div class="ob-chat-bubble"><p>レッスンを続ける目標日数を決めよう！</p></div>
+
+        <!-- Bottom Tab Bar -->
+        <nav class="hm-bottom-nav">
+          <button class="hm-tab-item active" id="hm-tab-home" type="button">
+            <span class="hm-tab-circle">アイコン</span>
+            <span class="hm-tab-label">ホーム</span>
+          </button>
+          <button class="hm-tab-item" id="hm-tab-chapter" type="button">
+            <span class="hm-tab-circle">アイコン</span>
+            <span class="hm-tab-label">CHAPTER</span>
+          </button>
+          <button class="hm-tab-item" id="hm-tab-column" type="button">
+            <span class="hm-tab-circle">アイコン</span>
+            <span class="hm-tab-label">コラム</span>
+          </button>
+          <button class="hm-tab-item" id="hm-tab-log" type="button">
+            <span class="hm-tab-circle">アイコン</span>
+            <span class="hm-tab-label">学習ログ</span>
+          </button>
+          <button class="hm-tab-item" id="hm-tab-settings" type="button">
+            <span class="hm-tab-circle">アイコン</span>
+            <span class="hm-tab-label">設定</span>
+          </button>
+        </nav>
+
       </div>
-      <div class="ob-options" id="ob-schedule-goal-options"></div>
-      <button id="btn-ob-schedule-goal-next" class="primary-btn" disabled>Let's start！</button>
     </section>
 
     <!-- SETTINGS / プロフィール編集（あとからいつでも呼び出せる） -->
     <section id="screen-settings" class="screen hidden">
+      <button class="figma-header-back-btn figma-back-btn-floating" title="戻る" aria-label="戻る" onclick="goBack();">
+        <img src="assets/images/btn_header_back.png" alt="戻る" class="figma-header-back-icon">
+      </button>
       <h2 style="font-size:16px;color:#2d3748;margin-bottom:14px;">プロフィール設定</h2>
       <div class="ob-form-group">
         <label>性別</label>
@@ -373,9 +898,8 @@
         <details class="dev-jump-details">
           <summary>🧭 画面ジャンプ（開発用）</summary>
           <div class="dev-jump-grid" id="dev-jump-grid">
+            <button class="secondary-btn" data-jump="home" style="grid-column: 1 / -1; background: #e2e8f0; font-weight: 700;">🏠 ホーム画面（HM-TOP＋MY：案B）</button>
             <button class="secondary-btn" data-jump="storycover">ホテルスタッフ体験（導入カバー）</button>
-            <button class="secondary-btn" data-jump="level">SHOSA Ready CHECK（日本語レベル確認）</button>
-            <button class="secondary-btn" data-jump="recommend">おすすめ言語設定</button>
             <button class="secondary-btn" data-jump="langselect">言語設定選択</button>
             <button class="secondary-btn" data-jump="intro">キャラクター紹介カルーセル</button>
             <button class="secondary-btn" data-jump="character">AIチューター挨拶</button>
@@ -384,35 +908,393 @@
             <button class="secondary-btn" data-jump="profile1">プロフィール入力01</button>
             <button class="secondary-btn" data-jump="profile2">プロフィール入力02</button>
             <button class="secondary-btn" data-jump="passport">SHOSAパスポート</button>
-            <button class="secondary-btn" data-jump="scheduletime">スケジュール:時間帯</button>
-            <button class="secondary-btn" data-jump="scheduledays">スケジュール:曜日</button>
-            <button class="secondary-btn" data-jump="schedulegoal">スケジュール:目標</button>
-            <button class="secondary-btn" data-jump="daystart1">DAY1（開始カードから）</button>
-            <button class="secondary-btn" data-jump="daystart2">DAY2（開始カードから）</button>
-            <button class="secondary-btn" data-jump="daystart3">DAY3（開始カードから）</button>
-            <button class="secondary-btn" data-jump="day1">DAY1（イベント導入から）</button>
-            <button class="secondary-btn" data-jump="day2">DAY2（イベント導入から）</button>
-            <button class="secondary-btn" data-jump="day3">DAY3（イベント導入から）</button>
+            <button class="secondary-btn" data-jump="scheduletime">学習スケジュール設定</button>
+            <button class="secondary-btn" data-jump="ch101">CHAPTER 101（おもてなしマインドセット）</button>
+            <button class="secondary-btn" data-jump="daystart1">DAY1（旧体験）</button>
             <button class="secondary-btn" data-jump="hub">メニュー（Day選択）</button>
           </div>
         </details>
       </div>
     </section>
 
-    <!-- 2. DAY SUMMARY (recap after clearing a day) -->
-    <section id="screen-day-summary" class="screen hidden">
-      <div class="day-banner">
-        <h2 id="summary-day-title">DAY 1</h2>
-        <p id="summary-day-desc">-</p>
+    <!-- =========================================================
+         CHAPTER 101: OMOTENASHI MINDSET (Figma Implementation)
+         ========================================================= -->
+
+    <!-- 1. Chapter 101 Intro Screen (CH1-GUIDE) -->
+    <section id="screen-ch101-intro" class="screen hidden ch101-intro-screen">
+      <button class="btn-en-toggle figma-en-btn-floating" id="btn-ch101-intro-en" title="Translate / 言語切り替え">
+    <div class="reproduced-lang-chip">
+      <svg class="reload-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" />
+        <polyline points="21 3 21 8 16 8" />
+      </svg>
+      <span class="lang-text">EN</span>
+    </div>
+      </button>
+      <div class="ch101-intro-container">
+        <!-- Arched Card with Gold Trim -->
+        <div class="ch101-arch-card">
+          <!-- Top Arched Header SVG -->
+          <div class="ch101-arch-header">
+            <svg class="ch101-arch-svg" viewBox="0 0 350 115" preserveAspectRatio="none">
+              <!-- Background fill matching card with no bottom stroke -->
+              <path d="M 0,115 L 0,44 C 18,44 32,38 50,42 C 78,48 110,14 175,14 C 240,14 272,48 300,42 C 318,38 332,44 350,44 L 350,115 Z" fill="#FAF7F2" stroke="none" />
+              <!-- Outer Gold Trim (top and sides only, NO bottom line!) -->
+              <path d="M 1,115 L 1,44 C 18,44 32,38 50,42 C 78,48 110,14 175,14 C 240,14 272,48 300,42 C 318,38 332,44 349,44 L 349,115" fill="none" stroke="#C4A265" stroke-width="2.5" />
+              <!-- Inner Gold Hairline -->
+              <path d="M 6,115 L 6,48 C 22,48 35,43 52,46 C 78,52 108,20 175,20 C 242,20 272,52 298,46 C 315,43 328,48 344,48 L 344,115" fill="none" stroke="#D8C39D" stroke-width="1.2" />
+            </svg>
+            <div class="ch101-arch-badge-content">
+              <div class="ch101-badge-number">101</div>
+              <h1 class="ch101-badge-title" id="ch101-intro-title" data-i18n="ch101_guide_title">1章：Omotenashi Mindset</h1>
+              <p class="ch101-badge-subtitle" id="ch101-intro-subtitle" data-i18n="ch101_guide_subtitle">ホテルの一日に寄り添う「プロの思考と選択」</p>
+            </div>
+          </div>
+
+          <!-- Card Body -->
+          <div class="ch101-arch-body">
+            <div class="ch101-intro-mascot-wrap">
+              <img src="assets/images/_レイヤー_1.png" alt="SHOSA" class="ch101-intro-mascot-img">
+            </div>
+
+            <!-- Description Box with Gold Corner Flourishes -->
+            <div class="ch101-desc-card">
+              <svg class="ch101-flourish flourish-tl" viewBox="0 0 24 24"><path d="M 3,3 C 10,5 15,10 17,17 C 10,15 5,10 3,3 Z M 3,3 L 12,4 M 3,3 L 4,12" fill="#C4A265" stroke="#C4A265" stroke-width="1"/></svg>
+              <svg class="ch101-flourish flourish-tr" viewBox="0 0 24 24"><path d="M 21,3 C 14,5 9,10 7,17 C 14,15 19,10 21,3 Z M 21,3 L 12,4 M 21,3 L 20,12" fill="#C4A265" stroke="#C4A265" stroke-width="1"/></svg>
+              <svg class="ch101-flourish flourish-bl" viewBox="0 0 24 24"><path d="M 3,21 C 10,19 15,14 17,7 C 10,9 5,14 3,21 Z M 3,21 L 12,20 M 3,21 L 4,12" fill="#C4A265" stroke="#C4A265" stroke-width="1"/></svg>
+              <svg class="ch101-flourish flourish-br" viewBox="0 0 24 24"><path d="M 21,21 C 14,19 9,14 7,7 C 14,9 19,14 21,21 Z M 21,21 L 12,20 M 21,21 L 20,12" fill="#C4A265" stroke="#C4A265" stroke-width="1"/></svg>
+
+              <p class="ch101-desc-para" data-i18n="ch101_guide_p1">
+                「<span class="ch101-hl-purple">おもてなし</span>」とは、特別な演出のことだけではありません。<br>
+                それは、ゲストが言葉にする前に求めるものを察し、次の展開を先回りして準備する「<span class="ch101-hl-purple">姿勢</span>」そのものです。
+              </p>
+              <p class="ch101-desc-para" style="margin-top: 14px;" data-i18n="ch101_guide_p2">
+                この章では、あるホテルの1日をゲストの滞在体験を見ながら、日本の宿泊業の現場で求められる『<span class="ch101-hl-purple">目配り・気配り・手配り</span>』の判断軸を身につけていきます。プロの<span class="ch101-hl-purple">Omotenashi Mindset</span>をインストールしましょう！
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Action Button -->
+        <div class="ch101-intro-bottom">
+          <button id="btn-ch101-intro-next" class="ch101-cta-btn" data-i18n="start">START</button>
+        </div>
       </div>
-      <div class="stars-rating" id="summary-stars">
-        <span class="star empty">★</span><span class="star empty">★</span><span class="star empty">★</span>
+    </section>
+
+    <!-- 2. Situation 1 Screen -->
+    <section id="screen-ch101-sit1" class="screen hidden ch101-play-screen">
+      <div class="ch101-header-bar">
+        <button class="ch101-close-btn" id="btn-ch101-sit1-close" aria-label="閉じる">✕</button>
+        <div class="ch101-progress-track">
+          <div class="ch101-progress-fill" id="ch101-sit1-progress" style="width: 10%;"></div>
+        </div>
+        <button class="btn-en-toggle" id="btn-ch101-sit1-en" title="Translate / 言語切り替え">
+    <div class="reproduced-lang-chip">
+      <svg class="reload-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" />
+        <polyline points="21 3 21 8 16 8" />
+      </svg>
+      <span class="lang-text">EN</span>
+    </div>
+        </button>
       </div>
-      <div class="high-score-box">
-        <div>HIGH-SCORE: <span id="high-score-val">0</span></div>
-        <div>完了回数: <span id="completed-days-val">0</span> / 3</div>
+
+      <div class="ch101-scene-container">
+        <div class="ch101-illustration-wrap">
+          <img src="assets/images/img.png" alt="姿見の前で身だしなみチェック" class="ch101-scene-img" id="ch101-sit1-img">
+        </div>
+
+        <div class="ch101-card-panel">
+          <svg class="ch101-flourish flourish-tl" viewBox="0 0 24 24"><path d="M 3,3 C 10,5 15,10 17,17 C 10,15 5,10 3,3 Z M 3,3 L 12,4 M 3,3 L 4,12" fill="#C4A265" stroke="#C4A265" stroke-width="1"/></svg>
+          <svg class="ch101-flourish flourish-tr" viewBox="0 0 24 24"><path d="M 21,3 C 14,5 9,10 7,17 C 14,15 19,10 21,3 Z M 21,3 L 12,4 M 21,3 L 20,12" fill="#C4A265" stroke="#C4A265" stroke-width="1"/></svg>
+
+          <div class="ch101-card-label">SITUATION</div>
+          <div class="ch101-lesson-meta" id="ch101-sit1-meta">L01 • 12:45 • 出勤前の身だしなみチェック</div>
+
+          <div class="ch101-narrative-text" id="ch101-sit1-text">
+            <p>時刻は12:45。午後のシフトインを前に、バックヤードの姿見の前へ。</p>
+          </div>
+
+          <button class="ch101-advance-btn" id="btn-ch101-sit1-advance" aria-label="進む">
+            <svg viewBox="0 0 32 32" class="ch101-advance-icon">
+              <circle cx="16" cy="16" r="14" fill="#FFFFFF" stroke="#C4A265" stroke-width="1.5"/>
+              <path d="M 12,16 L 20,16 M 16,11 L 20.5,16 L 16,21" fill="none" stroke="#C4A265" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M 12,13.5 C 13,15 13,17 12,18.5" fill="none" stroke="#C4A265" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
       </div>
-      <button id="btn-day-continue" class="primary-btn">NEXT</button>
+    </section>
+
+    <!-- 3. Situation 2 Screen -->
+    <section id="screen-ch101-sit2" class="screen hidden ch101-play-screen">
+      <div class="ch101-header-bar">
+        <button class="ch101-close-btn" id="btn-ch101-sit2-close" aria-label="閉じる">✕</button>
+        <div class="ch101-progress-track">
+          <div class="ch101-progress-fill" id="ch101-sit2-progress" style="width: 20%;"></div>
+        </div>
+        <button class="btn-en-toggle" id="btn-ch101-sit2-en" title="Translate / 言語切り替え">
+    <div class="reproduced-lang-chip">
+      <svg class="reload-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" />
+        <polyline points="21 3 21 8 16 8" />
+      </svg>
+      <span class="lang-text">EN</span>
+    </div>
+        </button>
+      </div>
+
+      <div class="ch101-scene-container">
+        <div class="ch101-illustration-wrap">
+          <img src="assets/images/img.png" alt="姿見の前で身だしなみチェック" class="ch101-scene-img" id="ch101-sit2-img">
+        </div>
+
+        <div class="ch101-card-panel">
+          <svg class="ch101-flourish flourish-tl" viewBox="0 0 24 24"><path d="M 3,3 C 10,5 15,10 17,17 C 10,15 5,10 3,3 Z M 3,3 L 12,4 M 3,3 L 4,12" fill="#C4A265" stroke="#C4A265" stroke-width="1"/></svg>
+          <svg class="ch101-flourish flourish-tr" viewBox="0 0 24 24"><path d="M 21,3 C 14,5 9,10 7,17 C 14,15 19,10 21,3 Z M 21,3 L 12,4 M 21,3 L 20,12" fill="#C4A265" stroke="#C4A265" stroke-width="1"/></svg>
+
+          <div class="ch101-card-label">SITUATION</div>
+
+          <div class="ch101-narrative-text" id="ch101-sit2-text">
+            <p class="ch101-speaker-name">フロントスタッフ：</p>
+            <p style="margin-top: 18px;">（勤務開始まであと15分。持ち物よし、最後は身だしなみチェック。）</p>
+          </div>
+
+          <button class="ch101-advance-btn" id="btn-ch101-sit2-advance" aria-label="進む">
+            <svg viewBox="0 0 32 32" class="ch101-advance-icon">
+              <circle cx="16" cy="16" r="14" fill="#FFFFFF" stroke="#C4A265" stroke-width="1.5"/>
+              <path d="M 12,16 L 20,16 M 16,11 L 20.5,16 L 16,21" fill="none" stroke="#C4A265" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M 12,13.5 C 13,15 13,17 12,18.5" fill="none" stroke="#C4A265" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Question Screen -->
+    <section id="screen-ch101-question" class="screen hidden ch101-play-screen">
+      <div class="ch101-header-bar">
+        <button class="ch101-close-btn" id="btn-ch101-question-close" aria-label="閉じる">✕</button>
+        <div class="ch101-progress-track">
+          <div class="ch101-progress-fill" id="ch101-question-progress" style="width: 30%;"></div>
+        </div>
+        <button class="btn-en-toggle" id="btn-ch101-question-en" title="Translate / 言語切り替え">
+    <div class="reproduced-lang-chip">
+      <svg class="reload-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" />
+        <polyline points="21 3 21 8 16 8" />
+      </svg>
+      <span class="lang-text">EN</span>
+    </div>
+        </button>
+      </div>
+
+      <div class="ch101-scene-container">
+        <div class="ch101-illustration-wrap">
+          <img src="assets/images/img.png" alt="姿見の前で身だしなみチェック" class="ch101-scene-img" id="ch101-question-img">
+        </div>
+
+        <div class="ch101-card-panel ch101-question-panel">
+          <svg class="ch101-flourish flourish-tl" viewBox="0 0 24 24"><path d="M 3,3 C 10,5 15,10 17,17 C 10,15 5,10 3,3 Z M 3,3 L 12,4 M 3,3 L 4,12" fill="#C4A265" stroke="#C4A265" stroke-width="1"/></svg>
+          <svg class="ch101-flourish flourish-tr" viewBox="0 0 24 24"><path d="M 21,3 C 14,5 9,10 7,17 C 14,15 19,10 21,3 Z M 21,3 L 12,4 M 21,3 L 20,12" fill="#C4A265" stroke="#C4A265" stroke-width="1"/></svg>
+
+          <div class="ch101-card-label">QUESTION</div>
+          <div class="ch101-situation-tag" id="ch101-question-tag">姿見の鏡前で身だしなみの最終確認中</div>
+
+          <p class="ch101-question-text" id="ch101-question-text">出社前に身だしなみを整える際、『匂い』についてプロとして正しい配慮はどちらですか？</p>
+
+          <div class="ch101-choices-stack">
+            <button class="ch101-scalloped-choice-btn" id="btn-ch101-choice-a" data-choice="A">
+              <span class="ch101-choice-text" id="ch101-choice-a-text">お客様に良い印象を与えるため、ほのかに香る爽やかな香水を少量つけておく</span>
+            </button>
+            <button class="ch101-scalloped-choice-btn" id="btn-ch101-choice-b" data-choice="B">
+              <span class="ch101-choice-text" id="ch101-choice-b-text">香水や柔軟剤の強い香りを避け、無香（匂いを残さないこと）を徹底する</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Result & Explanation Screen (Image 1) -->
+    <section id="screen-ch101-result" class="screen hidden ch101-play-screen ch101-result-screen">
+      <div class="ch101-header-bar ch101-result-header-bar">
+        <button class="ch101-close-btn" id="btn-ch101-result-close" aria-label="閉じる">✕</button>
+        <div class="ch101-progress-track">
+          <div class="ch101-progress-fill" id="ch101-result-progress" style="width: 30%;"></div>
+        </div>
+        <button class="btn-en-toggle" id="btn-ch101-result-en" title="Translate / 言語切り替え">
+    <div class="reproduced-lang-chip">
+      <svg class="reload-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" />
+        <polyline points="21 3 21 8 16 8" />
+      </svg>
+      <span class="lang-text">EN</span>
+    </div>
+        </button>
+      </div>
+
+      <div class="ch101-result-scroll-wrap">
+        <!-- Top Teal Card with explanation and mascot -->
+        <div class="ch101-teal-result-card">
+          <div class="ch101-result-status-row">
+            <span class="ch101-result-check-badge" id="ch101-result-badge">✔</span>
+            <span class="ch101-result-status-title" id="ch101-result-title">正解！</span>
+          </div>
+
+          <p class="ch101-result-explanation-text" id="ch101-result-explanation">
+            良い香り（A）も良かれと思いがちですが、強い香りはホテルの非日常感を損なうため、無香を保つ配慮（B）がプロの鉄則です。
+          </p>
+
+          <div class="ch101-result-mascot-row">
+            <img src="assets/images/mascot_shosa_standing.png" alt="SHOSA Mascot" class="ch101-result-mascot-img">
+            <div class="ch101-mascot-floor-shadow"></div>
+          </div>
+
+          <!-- Fleur-de-lis corner ornaments at bottom of teal card -->
+          <svg class="ch101-teal-flourish flourish-bl" viewBox="0 0 24 24" width="22" height="22">
+            <path d="M 2,22 C 8,20 12,16 14,10 C 8,12 4,16 2,22 Z M 2,22 L 10,21 M 2,22 L 3,14" fill="#E6D8BD" stroke="#E6D8BD" stroke-width="1.2"/>
+          </svg>
+          <svg class="ch101-teal-flourish flourish-br" viewBox="0 0 24 24" width="22" height="22">
+            <path d="M 22,22 C 16,20 12,16 10,10 C 16,12 20,16 22,22 Z M 22,22 L 14,21 M 22,22 L 21,14" fill="#E6D8BD" stroke="#E6D8BD" stroke-width="1.2"/>
+          </svg>
+        </div>
+
+        <!-- Lower Section on Mint Background -->
+        <div class="ch101-result-lower-panel">
+          <div class="ch101-result-bubble">
+            <div class="ch101-bubble-pointer-up"></div>
+            <p class="ch101-bubble-text" id="ch101-result-bubble">
+              海外と日本では『香り』の感覚が違うんだ。プロが大切にする『無香』の意味、知ってる？
+            </p>
+          </div>
+
+          <button class="ch101-focus-action-btn" id="btn-ch101-focus">
+            <img src="assets/images/icon_focus.png" alt="Focus" class="ch101-focus-icon-img">
+            <span class="ch101-focus-label" data-i18n="ch101_focus_btn">SHOSA Focus</span>
+          </button>
+
+          <button class="ch101-cta-btn" id="btn-ch101-result-next" data-i18n="next">NEXT</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SHOSA FOCUS MODAL (Image 2) -->
+    <div id="modal-ch101-focus" class="modal-backdrop ch101-focus-modal-backdrop hidden">
+      <div class="ch101-focus-modal-card">
+        <!-- Close button on top right -->
+        <button id="btn-ch101-focus-modal-close" class="ch101-focus-modal-close" aria-label="閉じる">✕</button>
+
+        <!-- Magnifying Glass badge overlapping top-left -->
+        <div class="ch101-focus-modal-magnifier">
+          <img src="assets/images/icon_focus.png" alt="" class="ch101-focus-badge-img">
+        </div>
+
+        <!-- Header: Title -->
+        <div class="ch101-focus-modal-header">
+          <h3 class="ch101-focus-modal-title" data-i18n="ch101_focus_title">SHOSA FOCUS</h3>
+        </div>
+
+        <!-- Gold diamond divider -->
+        <div class="ch101-focus-gold-divider">
+          <svg viewBox="0 0 240 12" width="220" height="10">
+            <line x1="8" y1="6" x2="86" y2="6" stroke="#DCC79B" stroke-width="1.2"/>
+            <polygon points="92,6 95,3 98,6 95,9" fill="#DCC79B"/>
+            <polygon points="102,6 106,2 110,6 106,10" fill="#DCC79B"/>
+            <polygon points="115,6 120,1 125,6 120,11" fill="#DCC79B"/>
+            <polygon points="130,6 134,2 138,6 134,10" fill="#DCC79B"/>
+            <polygon points="142,6 145,3 148,6 145,9" fill="#DCC79B"/>
+            <line x1="154" y1="6" x2="232" y2="6" stroke="#DCC79B" stroke-width="1.2"/>
+          </svg>
+        </div>
+
+        <!-- Explanation text -->
+        <div class="ch101-focus-modal-body" id="ch101-focus-body">
+          <p class="ch101-focus-p">多くの国では、良い香水を身につけることは『相手を歓迎するマナー』とされます。</p>
+          <p class="ch101-focus-p">しかし、日本のホテル現場では『無香（匂いを残さないこと）』が最高の身だしなみです。さまざまな文化を持つゲストが寛ぐ空間では、どんなに良い香りでも『刺激』になり得ます。</p>
+          <p class="ch101-focus-p">自身の好みを抑え、空間の快適さを守る『引き算の配慮』がプロの基準です。</p>
+        </div>
+
+        <!-- Bottom Card (Frame 342 with _レイヤー_4) -->
+        <div class="ch101-focus-checklist-card">
+          <div class="ch101-checklist-img-wrap">
+            <img src="assets/images/_レイヤー_4.png" alt="Checklist" class="ch101-checklist-img">
+          </div>
+          <p class="ch101-checklist-caption" id="ch101-focus-caption" data-i18n="ch101_checklist_caption">
+            <span class="hl-purple">「視覚・清潔感」</span>だけでなく<br>
+            <span class="hl-purple">「嗅覚・無香」</span>までカバーする<br>
+            プロの身だしなみチェックシート
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAPTER 1 COMPLETE SCREEN (Image 3: 1章 学習完了！ / CH1-END) -->
+    <section id="screen-ch101-complete" class="screen hidden ch101-complete-screen">
+      <button class="btn-en-toggle figma-en-btn-floating" id="btn-ch101-complete-en" title="Translate / 言語切り替え">
+    <div class="reproduced-lang-chip">
+      <svg class="reload-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" />
+        <polyline points="21 3 21 8 16 8" />
+      </svg>
+      <span class="lang-text">EN</span>
+    </div>
+      </button>
+      <!-- Background Sunburst Rays -->
+      <div class="ch101-complete-sunburst">
+        <img src="assets/images/figma/sunburst_ch19.svg" alt="" class="ch101-sunburst-img">
+      </div>
+
+      <div class="ch101-complete-content">
+        <!-- Top Filigree & Heading -->
+        <div class="ch101-complete-header-wrap">
+          <img src="assets/images/figma/decor_filigree_top.png" alt="" class="ch101-complete-filigree ch101-complete-filigree-top">
+          <h1 class="ch101-complete-title" data-i18n="ch101_complete_title">1章 学習完了！</h1>
+          <img src="assets/images/figma/decor_filigree_bottom.png" alt="" class="ch101-complete-filigree ch101-complete-filigree-bottom">
+        </div>
+
+        <!-- Center Trophy (medal-2.png) with soft glow -->
+        <div class="ch101-complete-trophy-wrap">
+          <div class="ch101-complete-trophy-halo"></div>
+          <img src="assets/images/medal-2.png" alt="Trophy" class="ch101-complete-trophy-img">
+        </div>
+
+        <!-- Announcement Section -->
+        <div class="ch101-complete-announcement">
+          <h2 class="ch101-complete-unlocked-title" data-i18n="ch101_complete_unlocked">
+            2章：JOB診断 が<br>解放されました
+          </h2>
+
+          <div class="ch101-complete-divider-wrap">
+            <svg viewBox="0 0 240 12" width="220" height="10">
+              <line x1="8" y1="6" x2="86" y2="6" stroke="rgba(255,255,255,0.7)" stroke-width="1.2"/>
+              <polygon points="92,6 95,3 98,6 95,9" fill="rgba(255,255,255,0.95)"/>
+              <polygon points="102,6 106,2 110,6 106,10" fill="rgba(255,255,255,0.95)"/>
+              <polygon points="115,6 120,1 125,6 120,11" fill="rgba(255,255,255,0.95)"/>
+              <polygon points="130,6 134,2 138,6 134,10" fill="rgba(255,255,255,0.95)"/>
+              <polygon points="142,6 145,3 148,6 145,9" fill="rgba(255,255,255,0.95)"/>
+              <line x1="154" y1="6" x2="232" y2="6" stroke="rgba(255,255,255,0.7)" stroke-width="1.2"/>
+            </svg>
+          </div>
+
+          <p class="ch101-complete-desc" data-i18n="ch101_complete_desc">
+            プロの仕事を観察し、<br>
+            日本の宿泊業の現場で求められる<br>
+            Omotenashi Mindsetを<br>
+            体験することができました！
+          </p>
+
+          <p class="ch101-complete-subnote" data-i18n="ch101_complete_review">
+            ※いつでもホーム画面から全レッスンの振り返りが可能です
+          </p>
+        </div>
+
+        <!-- Bottom START Button -->
+        <div class="ch101-complete-bottom-area">
+          <button id="btn-ch101-complete-start" class="ch101-complete-start-btn" data-i18n="start">START</button>
+        </div>
+      </div>
     </section>
 
     <!-- 2b. DAY START CARD（Hubから各Dayに入る前の確認画面。Figma「DAY1 07:20」に対応） -->
@@ -421,7 +1303,7 @@
       <div class="character-preview">
       </div>
       <span class="ob-card-badge day-start-tag" id="day-start-tag">考えて選ぶ</span>
-      <h2 id="day-start-title" class="day-start-title">DAY1　07:45</h2>
+      <h2 id="day-start-title" class="day-start-title">DAY1　07:20</h2>
       <div class="question-header">
         <div class="q-label">Scene</div>
         <button id="btn-translate-day-start" class="translate-btn">English ></button>
@@ -615,10 +1497,10 @@
 </div>
 </div>
 
-<script src="js/game_data.js"></script>
-<script src="js/onboarding_data.js"></script>
-<script src="js/app.js"></script>
-<script src="js/onboarding.js"></script>
-<script src="js/dev_overview.js"></script>
+<script src="js/game_data.js?v=25"></script>
+<script src="js/onboarding_data.js?v=27"></script>
+<script src="js/app.js?v=41"></script>
+<script src="js/onboarding.js?v=36"></script>
+<script src="js/dev_overview.js?v=21"></script>
 </body>
 </html>

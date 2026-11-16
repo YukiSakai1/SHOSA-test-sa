@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 355 120" width="355" height="120" fill="none">
+  <!-- Gradient for curl shadow -->
+  <defs>
+    <linearGradient id="curlShadow" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35" />
+      <stop offset="60%" stop-color="#000000" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="curlFlap" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E2DFD8" />
+      <stop offset="50%" stop-color="#F2EFE9" />
+      <stop offset="100%" stop-color="#FFFFFF" />
+    </linearGradient>
+  </defs>
+  <!-- Curled Shadow (v1) -->
+  <path d="M0.00,0.00L0.00,19.95C0.70,46.04 6.13,103.00 40.25,103.00L325.00,103.00C341.57,103.00 355.00,89.57 355.00,73.00L355.00,0.00L0.00,0.00" fill="url(#curlShadow)" transform="translate(0, 0)" />
+  <!-- Curled White Flap (v2) -->
+  <path d="M329.91,0.00L37.68,0.00C37.68,0.00 41.41,75.00 0.00,75.00L292.24,75.00C333.65,75.00 329.91,0.00 329.91,0.00" fill="url(#curlFlap)" transform="translate(40, 28)" />
+</svg>

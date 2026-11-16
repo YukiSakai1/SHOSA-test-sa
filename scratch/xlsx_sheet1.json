@@ -1,0 +1,891 @@
+[
+  {
+    "画面ID": "CH0-01",
+    "フィールド名": "画面上部",
+    "内容（入力欄）": "Toward the future of working in Japan",
+    "内容（EN)": "Toward the future of working in Japan",
+    "_row": 2
+  },
+  {
+    "画面ID": "CH0-01",
+    "フィールド名": "アプリタイトル",
+    "内容（入力欄）": "SHOSA",
+    "内容（EN)": "SHOSA",
+    "_row": 3
+  },
+  {
+    "画面ID": "CH0-01",
+    "フィールド名": "ボタン",
+    "内容（入力欄）": "START",
+    "内容（EN)": "START",
+    "_row": 4
+  },
+  {
+    "画面ID": "CH0-02",
+    "フィールド名": "吹き出し",
+    "内容（入力欄）": "Please select \nyour language setting.",
+    "内容（EN)": "Please select \nyour language setting.",
+    "_row": 5
+  },
+  {
+    "画面ID": "CH0-02",
+    "フィールド名": "選択ボタン；日本語",
+    "内容（入力欄）": "Japanese",
+    "内容（EN)": "Japanese",
+    "_row": 6
+  },
+  {
+    "画面ID": "CH0-02",
+    "フィールド名": "選択ボタン：英語",
+    "内容（入力欄）": "English",
+    "内容（EN)": "English",
+    "_row": 7
+  },
+  {
+    "画面ID": "CH0-02",
+    "フィールド名": "下部ボタン",
+    "内容（入力欄）": "NEXT",
+    "内容（EN)": "NEXT",
+    "_row": 8
+  },
+  {
+    "画面ID": "CH0-03",
+    "フィールド名": "中央テキスト",
+    "内容（入力欄）": "Welcome to SHOSA  日本のホテルで\nはたらく未来のために いっしょに学ぼう。",
+    "内容（EN)": "Welcome to SHOSA\n\nLet's learn together\nfor a future working\nin Japanese hotels.",
+    "_row": 9
+  },
+  {
+    "画面ID": "CH0-03",
+    "フィールド名": "下部ボタン",
+    "内容（入力欄）": "START",
+    "内容（EN)": "START",
+    "_row": 10
+  },
+  {
+    "画面ID": "CH0-04",
+    "フィールド名": "最上部テキスト",
+    "内容（入力欄）": "日本のホテルで働くための Skill・ConfidenceをGET！",
+    "内容（EN)": "Gain the Skills and Confidence\nto work in a Japanese hotel!",
+    "_row": 11
+  },
+  {
+    "画面ID": "CH0-04",
+    "フィールド名": "中央テキスト",
+    "内容（入力欄）": "SHOSA PASSPORTは、\n接客用語・Hospitality\nを学びながら、\n\nあなたに合ったpositionや 成長ポイントを見つけられる アプリケーションです。",
+    "内容（EN)": "SHOSA PASSPORT is an app where you\nlearn hotel service language and Hospitality,\n\nwhile discovering the position that suits you\nand the areas where you can grow.",
+    "_row": 12
+  },
+  {
+    "画面ID": "CH0-04",
+    "フィールド名": "枠内テキスト",
+    "内容（入力欄）": "✓ AIチューター\n✓ ロールプレイ練習\n✓ ホテル接客トレーニング\n✓ 日本語応対学習",
+    "内容（EN)": "✓ AI Tutor\n✓ Role-play practice\n✓ Hotel service training\n✓ Japanese for guest service",
+    "_row": 13
+  },
+  {
+    "画面ID": "CH0-04",
+    "フィールド名": "下部ボタン",
+    "内容（入力欄）": "NEXT",
+    "内容（EN)": "NEXT",
+    "_row": 14
+  },
+  {
+    "画面ID": "CH0-05",
+    "フィールド名": "最上部テキスト",
+    "内容（入力欄）": "学ぶ→練習する→成長する",
+    "内容（EN)": "Learn → Practice → Grow",
+    "_row": 15
+  },
+  {
+    "画面ID": "CH0-05",
+    "フィールド名": "枠内ポイント1",
+    "内容（入力欄）": "診断・・自分に合った学習方法を知る",
+    "内容（EN)": "Assess: Find your best way to learn",
+    "_row": 16
+  },
+  {
+    "画面ID": "CH0-05",
+    "フィールド名": "枠内ポイント2",
+    "内容（入力欄）": "学習・・ホテル接客を学ぶ",
+    "内容（EN)": "Learn: Hotel service",
+    "_row": 17
+  },
+  {
+    "画面ID": "CH0-05",
+    "フィールド名": "枠内ポイント3",
+    "内容（入力欄）": "ロールプレイ・・AIと実践練習",
+    "内容（EN)": "Role-play: Practice with AI",
+    "_row": 18
+  },
+  {
+    "画面ID": "CH0-05",
+    "フィールド名": "枠内ポイント4",
+    "内容（入力欄）": "スコア化・・強みと課題をレポート",
+    "内容（EN)": "Scoring: Strengths & challenges",
+    "_row": 19
+  },
+  {
+    "画面ID": "CH0-05",
+    "フィールド名": "中央テキスト",
+    "内容（入力欄）": "あなた専用の学習プランを作成し、 苦手な部分をトレーニングします。",
+    "内容（EN)": "We'll create your personal study plan\nand train you on your weak spots.",
+    "_row": 20
+  },
+  {
+    "画面ID": "CH0-05",
+    "フィールド名": "下部ボタン",
+    "内容（入力欄）": "NEXT",
+    "内容（EN)": "NEXT",
+    "_row": 21
+  },
+  {
+    "画面ID": "CH0-06",
+    "フィールド名": "最上部ボタン",
+    "内容（入力欄）": "学びを活かして、検定受験\n日本での就職をサポート",
+    "内容（EN)": "Take the exam and get\nsupport for jobs in Japan",
+    "_row": 22
+  },
+  {
+    "画面ID": "CH0-06",
+    "フィールド名": "中央テキスト",
+    "内容（入力欄）": "検定の結果は、あなたの\n✓ 強み ✓ 成長ログ ✓ 向いている職種\nをReport.\n\n学ぶだけではなく、  「できる」を証明する。\nそれがSHOSAです。",
+    "内容（EN)": "Your exam results become your Report on\n✓ Strengths\n✓ Growth log\n✓ Best-fit roles\n\nDon't just learn.\nProve what you can do.\nThat's SHOSA.",
+    "_row": 23
+  },
+  {
+    "画面ID": "CH0-06",
+    "フィールド名": "下部ボタン",
+    "内容（入力欄）": "START",
+    "内容（EN)": "START",
+    "_row": 24
+  },
+  {
+    "画面ID": "CH0-07",
+    "フィールド名": "吹き出しテキスト",
+    "内容（入力欄）": "はじめまして！[名前]だよ。\n\n学習をサポートするために\nまずは君のことを教えてね。",
+    "内容（EN)": "Nice to meet you! I'm [Name].\n\nTo help you learn,\nfirst tell me a little about yourself.",
+    "_row": 25
+  },
+  {
+    "画面ID": "CH0-07",
+    "フィールド名": "下部ボタン",
+    "内容（入力欄）": "NEXT",
+    "内容（EN)": "NEXT",
+    "_row": 26
+  },
+  {
+    "画面ID": "CH0-08",
+    "フィールド名": "吹き出しテキスト",
+    "内容（入力欄）": "これまでに経験した\n接客業を教えてね！",
+    "内容（EN)": "Tell me about the service jobs\nyou've done before!",
+    "_row": 27
+  },
+  {
+    "画面ID": "CH0-08",
+    "フィールド名": "選択肢1",
+    "内容（入力欄）": "接客アルバイト",
+    "内容（EN)": "Part-time service job",
+    "_row": 28
+  },
+  {
+    "画面ID": "CH0-08",
+    "フィールド名": "選択肢2",
+    "内容（入力欄）": "レストラン",
+    "内容（EN)": "Restaurant",
+    "_row": 29
+  },
+  {
+    "画面ID": "CH0-08",
+    "フィールド名": "選択肢3",
+    "内容（入力欄）": "ホテル",
+    "内容（EN)": "Hotel",
+    "_row": 30
+  },
+  {
+    "画面ID": "CH0-08",
+    "フィールド名": "選択肢4",
+    "内容（入力欄）": "コールセンター",
+    "内容（EN)": "Call center",
+    "_row": 31
+  },
+  {
+    "画面ID": "CH0-08",
+    "フィールド名": "選択肢5",
+    "内容（入力欄）": "未経験",
+    "内容（EN)": "No experience",
+    "_row": 32
+  },
+  {
+    "画面ID": "CH0-08",
+    "フィールド名": "下部ボタン",
+    "内容（入力欄）": "NEXT",
+    "内容（EN)": "NEXT",
+    "_row": 33
+  },
+  {
+    "画面ID": "CH0-09",
+    "フィールド名": "吹き出しテキスト",
+    "内容（入力欄）": "日本でどんな働き方を\nしてみたい？",
+    "内容（EN)": "What kind of work would you\nlike to try in Japan?",
+    "_row": 34
+  },
+  {
+    "画面ID": "CH0-09",
+    "フィールド名": "選択肢1",
+    "内容（入力欄）": "Front Deskに立ちたい",
+    "内容（EN)": "I want to work at the Front Desk",
+    "_row": 35
+  },
+  {
+    "画面ID": "CH0-09",
+    "フィールド名": "選択肢2",
+    "内容（入力欄）": "Housekeepingをしたい",
+    "内容（EN)": "I want to do Housekeeping",
+    "_row": 36
+  },
+  {
+    "画面ID": "CH0-09",
+    "フィールド名": "選択肢3",
+    "内容（入力欄）": "Restaurant で働きたい",
+    "内容（EN)": "I want to work in a Restaurant",
+    "_row": 37
+  },
+  {
+    "画面ID": "CH0-09",
+    "フィールド名": "選択肢4",
+    "内容（入力欄）": "Back Officeで働きたい",
+    "内容（EN)": "I want to work in the Back Office",
+    "_row": 38
+  },
+  {
+    "画面ID": "CH0-09",
+    "フィールド名": "選択肢5",
+    "内容（入力欄）": "優秀なホテリエになりたい",
+    "内容（EN)": "I want to be an excellent hotelier",
+    "_row": 39
+  },
+  {
+    "画面ID": "CH0-09",
+    "フィールド名": "選択肢6",
+    "内容（入力欄）": "まだ決まってない",
+    "内容（EN)": "I haven't decided yet",
+    "_row": 40
+  },
+  {
+    "画面ID": "CH0-09",
+    "フィールド名": "下部ボタン",
+    "内容（入力欄）": "NEXT",
+    "内容（EN)": "NEXT",
+    "_row": 41
+  },
+  {
+    "画面ID": "CH0-10",
+    "フィールド名": "吹き出しテキスト",
+    "内容（入力欄）": "どんな接客に\n興味がある？",
+    "内容（EN)": "What kind of service\ninterests you?",
+    "_row": 42
+  },
+  {
+    "画面ID": "CH0-10",
+    "フィールド名": "選択肢1",
+    "内容（入力欄）": "丁寧なおもてなし",
+    "内容（EN)": "Courteous Omotenashi",
+    "_row": 43
+  },
+  {
+    "画面ID": "CH0-10",
+    "フィールド名": "選択肢2",
+    "内容（入力欄）": "お客様との会話",
+    "内容（EN)": "Chatting with guests",
+    "_row": 44
+  },
+  {
+    "画面ID": "CH0-10",
+    "フィールド名": "選択肢3",
+    "内容（入力欄）": "高級ホテルでの接客",
+    "内容（EN)": "Service at luxury hotels",
+    "_row": 45
+  },
+  {
+    "画面ID": "CH0-10",
+    "フィールド名": "選択肢4",
+    "内容（入力欄）": "外国人対応",
+    "内容（EN)": "Serving international guests",
+    "_row": 46
+  },
+  {
+    "画面ID": "CH0-10",
+    "フィールド名": "選択肢5",
+    "内容（入力欄）": "クレーム対応",
+    "内容（EN)": "Handling complaints",
+    "_row": 47
+  },
+  {
+    "画面ID": "CH0-10",
+    "フィールド名": "選択肢6",
+    "内容（入力欄）": "日本文化",
+    "内容（EN)": "Japanese culture",
+    "_row": 48
+  },
+  {
+    "画面ID": "CH0-10",
+    "フィールド名": "下部ボタン",
+    "内容（入力欄）": "NEXT",
+    "内容（EN)": "NEXT",
+    "_row": 49
+  },
+  {
+    "画面ID": "CH0-11",
+    "フィールド名": "吹き出しテキスト",
+    "内容（入力欄）": "日本で働くことで\n不安なことはある？",
+    "内容（EN)": "Is there anything you're worried\nabout when working in Japan?",
+    "_row": 50
+  },
+  {
+    "画面ID": "CH0-11",
+    "フィールド名": "選択肢1",
+    "内容（入力欄）": "敬語表現",
+    "内容（EN)": "Keigo (polite Japanese)",
+    "_row": 51
+  },
+  {
+    "画面ID": "CH0-11",
+    "フィールド名": "選択肢2",
+    "内容（入力欄）": "クレーム表現",
+    "内容（EN)": "Phrases for handling complaints",
+    "_row": 52
+  },
+  {
+    "画面ID": "CH0-11",
+    "フィールド名": "選択肢3",
+    "内容（入力欄）": "日本文化の理解",
+    "内容（EN)": "Understanding Japanese culture",
+    "_row": 53
+  },
+  {
+    "画面ID": "CH0-11",
+    "フィールド名": "選択肢4",
+    "内容（入力欄）": "人間関係",
+    "内容（EN)": "Relationships at work",
+    "_row": 54
+  },
+  {
+    "画面ID": "CH0-11",
+    "フィールド名": "選択肢5",
+    "内容（入力欄）": "間違えること",
+    "内容（EN)": "Making mistakes",
+    "_row": 55
+  },
+  {
+    "画面ID": "CH0-11",
+    "フィールド名": "下部ボタン",
+    "内容（入力欄）": "NEXT",
+    "内容（EN)": "NEXT",
+    "_row": 56
+  },
+  {
+    "画面ID": "CH0-12",
+    "フィールド名": "フォロー内容",
+    "内容（入力欄）": "接客で必要な敬語表現を一緒に身につけよう！",
+    "内容（EN)": "Let's master the keigo you need for hospitality together!",
+    "_row": 58
+  },
+  {
+    "画面ID": "CH0-12",
+    "フィールド名": "イラスト",
+    "内容（入力欄）": "SHOSAさんが敬語を練習している様子",
+    "内容（EN)": null,
+    "_row": 59
+  },
+  {
+    "画面ID": "CH0-12",
+    "フィールド名": "フォロー内容",
+    "内容（入力欄）": "どのように対応したらいいか、的確に覚えよう！",
+    "内容（EN)": "Learn exactly how to handle each situation!",
+    "_row": 60
+  },
+  {
+    "画面ID": "CH0-12",
+    "フィールド名": "イラスト",
+    "内容（入力欄）": "SHOSAさんが謝っている様子",
+    "内容（EN)": null,
+    "_row": 61
+  },
+  {
+    "画面ID": "CH0-12",
+    "フィールド名": "フォロー内容",
+    "内容（入力欄）": "バックヤードでの日本独自のルールも体験できるよ！",
+    "内容（EN)": "Experience Japan's unique back-of-house rules, too!",
+    "_row": 62
+  },
+  {
+    "画面ID": "CH0-12",
+    "フィールド名": "イラスト",
+    "内容（入力欄）": "SHOSAさんが「お先に失礼します」と挨拶している様子",
+    "内容（EN)": null,
+    "_row": 63
+  },
+  {
+    "画面ID": "CH0-12",
+    "フィールド名": "フォロー内容",
+    "内容（入力欄）": "シュミレーションやコラムで関係性作りを学ぼう！",
+    "内容（EN)": "Learn to build relationships through simulations and columns!",
+    "_row": 64
+  },
+  {
+    "画面ID": "CH0-12",
+    "フィールド名": "イラスト",
+    "内容（入力欄）": "SHOSAさんとキャストが円滑な友好関係を築けた様子",
+    "内容（EN)": null,
+    "_row": 65
+  },
+  {
+    "画面ID": "CH0-12",
+    "フィールド名": "フォロー内容",
+    "内容（入力欄）": "アプリ内でなら、安心して何度でも失敗できるよ◎",
+    "内容（EN)": "In this app, you can make mistakes as many times as you like!",
+    "_row": 66
+  },
+  {
+    "画面ID": "CH0-12",
+    "フィールド名": "イラスト",
+    "内容（入力欄）": "SHOSAさんがスマホから出た吹き出しの中で間違えている様子",
+    "内容（EN)": null,
+    "_row": 67
+  },
+  {
+    "画面ID": "CH0-20",
+    "フィールド名": "吹き出しテキスト",
+    "内容（入力欄）": "次は学習スケジュールを\n一緒に考えよう！",
+    "内容（EN)": "Next, let's plan your\nstudy schedule together!",
+    "_row": 68
+  },
+  {
+    "画面ID": "CH0-20",
+    "フィールド名": "下部ボタン",
+    "内容（入力欄）": "NEXT",
+    "内容（EN)": "NEXT",
+    "_row": 69
+  },
+  {
+    "画面ID": "CH0-22",
+    "フィールド名": "上部タイトルテキスト",
+    "内容（入力欄）": "学習スケジュール",
+    "内容（EN)": "Study Schedule",
+    "_row": 70
+  },
+  {
+    "画面ID": "CH0-22",
+    "フィールド名": "吹き出しテキスト",
+    "内容（入力欄）": "学習の時間を決めよう！\n続けやすいタイミングを選んでね。",
+    "内容（EN)": "Let's choose your study time!\nPick a timing that's easy to keep up.",
+    "_row": 71
+  },
+  {
+    "画面ID": "CH0-22",
+    "フィールド名": "選択肢1",
+    "内容（入力欄）": "朝起きた後",
+    "内容（EN)": "After waking up",
+    "_row": 72
+  },
+  {
+    "画面ID": "CH0-22",
+    "フィールド名": "選択肢2",
+    "内容（入力欄）": "ランチタイム",
+    "内容（EN)": "Lunchtime",
+    "_row": 73
+  },
+  {
+    "画面ID": "CH0-22",
+    "フィールド名": "選択肢3",
+    "内容（入力欄）": "夕食前後",
+    "内容（EN)": "Around dinner",
+    "_row": 74
+  },
+  {
+    "画面ID": "CH0-22",
+    "フィールド名": "選択肢4",
+    "内容（入力欄）": "寝る前",
+    "内容（EN)": "Before bed",
+    "_row": 75
+  },
+  {
+    "画面ID": "CH0-22",
+    "フィールド名": "選択肢5",
+    "内容（入力欄）": "その他",
+    "内容（EN)": "Other",
+    "_row": 76
+  },
+  {
+    "画面ID": "CH0-22",
+    "フィールド名": "リマインドテキスト",
+    "内容（入力欄）": "この時間にお知らせします",
+    "内容（EN)": "We'll remind you at this time",
+    "_row": 77
+  },
+  {
+    "画面ID": "CH0-22",
+    "フィールド名": "下部ボタン",
+    "内容（入力欄）": "テキスト",
+    "内容（EN)": null,
+    "_row": 78
+  },
+  {
+    "画面ID": "CH0-15",
+    "フィールド名": "テキスト",
+    "内容（入力欄）": "あなたのプロフィールを\n入力してね。",
+    "内容（EN)": "Please fill in\nyour profile.",
+    "_row": 79
+  },
+  {
+    "画面ID": "CH0-15",
+    "フィールド名": "ボタン",
+    "内容（入力欄）": "NEXT",
+    "内容（EN)": "NEXT",
+    "_row": 80
+  },
+  {
+    "画面ID": "CH0-16'",
+    "フィールド名": "テキスト",
+    "内容（入力欄）": "プロフィールを入力してください",
+    "内容（EN)": "Please enter your profile",
+    "_row": 81
+  },
+  {
+    "画面ID": "CH0-16'",
+    "フィールド名": "性別1",
+    "内容（入力欄）": "男性",
+    "内容（EN)": "Male",
+    "_row": 82
+  },
+  {
+    "画面ID": "CH0-16'",
+    "フィールド名": "性別2",
+    "内容（入力欄）": "女性",
+    "内容（EN)": "Female",
+    "_row": 83
+  },
+  {
+    "画面ID": "CH0-16'",
+    "フィールド名": "性別3",
+    "内容（入力欄）": "その他",
+    "内容（EN)": "Other",
+    "_row": 84
+  },
+  {
+    "画面ID": "CH0-16'",
+    "フィールド名": "名前ボックス下",
+    "内容（入力欄）": "アプリ内でのあなたの名前です。10文字以内でシン\nプルな名前を設定してください。",
+    "内容（EN)": "This is your name in the app.\nPlease choose a simple name of 10 characters or fewer.",
+    "_row": 85
+  },
+  {
+    "画面ID": "CH0-16'",
+    "フィールド名": "出身国プルダウン内容",
+    "内容（入力欄）": "日本",
+    "内容（EN)": "Japan",
+    "_row": 86
+  },
+  {
+    "画面ID": "CH0-16'",
+    "フィールド名": "出身国プルダウン内容",
+    "内容（入力欄）": "ベトナム",
+    "内容（EN)": "Vietnam",
+    "_row": 87
+  },
+  {
+    "画面ID": "CH0-16'",
+    "フィールド名": "出身国プルダウン内容",
+    "内容（入力欄）": "ミャンマー",
+    "内容（EN)": "Myanmar",
+    "_row": 88
+  },
+  {
+    "画面ID": "CH0-16'",
+    "フィールド名": "出身国プルダウン内容",
+    "内容（入力欄）": "シンガポール",
+    "内容（EN)": "Singapore",
+    "_row": 89
+  },
+  {
+    "画面ID": "CH0-16'",
+    "フィールド名": "出身国プルダウン内容",
+    "内容（入力欄）": "インドネシア",
+    "内容（EN)": "Indonesia",
+    "_row": 90
+  },
+  {
+    "画面ID": "CH0-16'",
+    "フィールド名": "出身国プルダウン内容",
+    "内容（入力欄）": "ネパール",
+    "内容（EN)": "Nepal",
+    "_row": 91
+  },
+  {
+    "画面ID": "CH0-16'",
+    "フィールド名": "出身国プルダウン内容",
+    "内容（入力欄）": "フィリピン",
+    "内容（EN)": "Philippines",
+    "_row": 92
+  },
+  {
+    "画面ID": "CH0-16'",
+    "フィールド名": "出身国プルダウン内容",
+    "内容（入力欄）": "インド",
+    "内容（EN)": "India",
+    "_row": 93
+  },
+  {
+    "画面ID": "CH0-16'",
+    "フィールド名": "下部ボタン",
+    "内容（入力欄）": "NEXT",
+    "内容（EN)": "NEXT",
+    "_row": 94
+  },
+  {
+    "画面ID": "CH0-18",
+    "フィールド名": "上部テキスト",
+    "内容（入力欄）": "ホテルで働くための、あなたの学びの旅\nYOUR JOURNEY",
+    "内容（EN)": "Your learning journey to work in hotels\nYOUR JOURNEY",
+    "_row": 95
+  },
+  {
+    "画面ID": "CH0-18",
+    "フィールド名": "start吹き出し",
+    "内容（入力欄）": "✔︎ 自分を知る（適職診断）\n適性診断で、あなたに合った\n職種を見つけましょう。",
+    "内容（EN)": "✔︎ Know yourself (Career Match)\nTake the aptitude test to find\nthe role that suits you.",
+    "_row": 96
+  },
+  {
+    "画面ID": "CH0-18",
+    "フィールド名": "1章吹き出し",
+    "内容（入力欄）": "✔︎ ホテルを知る\nホテルの仕事や基本的流れを学びましょう。",
+    "内容（EN)": "✔︎ Get to know hotels\nLearn about hotel work and its basic flow.",
+    "_row": 97
+  },
+  {
+    "画面ID": "CH0-18",
+    "フィールド名": "2章吹き出し",
+    "内容（入力欄）": "✔︎ 仕事を体験し、自分の行動傾向を知る\n職種を体験しながら、\nあなたの行動傾向を診断しましょう。",
+    "内容（EN)": "✔︎ Try the work, know your tendencies\nExperience each role while we\nassess your behavior tendencies.",
+    "_row": 98
+  },
+  {
+    "画面ID": "CH0-18",
+    "フィールド名": "3章吹き出し",
+    "内容（入力欄）": "✔︎ 仕事を学ぶ\nホテルの仕事に必要な知識や\nマナーを体系的に学びましょう。",
+    "内容（EN)": "✔︎ Learn the work\nSystematically learn the knowledge and\nmanners needed for hotel work.",
+    "_row": 99
+  },
+  {
+    "画面ID": "CH0-18",
+    "フィールド名": "4章吹き出し",
+    "内容（入力欄）": "✔︎ 資格試験に挑戦する\n学んだことを確認し、\nあなたの力を証明しましょう。",
+    "内容（EN)": "✔︎ Take the certification exam\nReview what you've learned\nand prove your abilities.",
+    "_row": 100
+  },
+  {
+    "画面ID": "CH0-13",
+    "フィールド名": "中央テキスト",
+    "内容（入力欄）": "各項目について、指定された\n5段階評価で回答してね。\n\n将来なりたい自分ではなく、\n現在のあなたに最も当てはまる\n選択肢を選んでください。",
+    "内容（EN)": "Answer each item using the\n5-point scale.\n\nChoose the option that fits\nyou best right now,\nnot the person you hope to become.",
+    "_row": 101
+  },
+  {
+    "画面ID": "CH0-13",
+    "フィールド名": "ボタン",
+    "内容（入力欄）": "NEXT",
+    "内容（EN)": "NEXT",
+    "_row": 102
+  },
+  {
+    "画面ID": "CH0-14",
+    "フィールド名": "適性診断問題",
+    "内容（入力欄）": "困っている人を見ると、自分から声をかけたくなる。",
+    "内容（EN)": "When I see someone in trouble, I want to speak up and help.",
+    "_row": 104
+  },
+  {
+    "画面ID": "CH0-14",
+    "フィールド名": "適性診断問題",
+    "内容（入力欄）": "相手が安心できるように行動したいと思う。",
+    "内容（EN)": "I want to act in ways that put others at ease.",
+    "_row": 105
+  },
+  {
+    "画面ID": "CH0-14",
+    "フィールド名": "適性診断問題",
+    "内容（入力欄）": "予定が変わっても、あまり慌てない。",
+    "内容（EN)": "I don't panic much when plans change.",
+    "_row": 106
+  },
+  {
+    "画面ID": "CH0-14",
+    "フィールド名": "適性診断問題",
+    "内容（入力欄）": "急なお願いにも柔軟に対応できる方だと思う。",
+    "内容（EN)": "I think I can flexibly handle sudden requests.",
+    "_row": 107
+  },
+  {
+    "画面ID": "CH0-14",
+    "フィールド名": "適性診断問題",
+    "内容（入力欄）": "忙しい状況でも落ち着いて行動できる。",
+    "内容（EN)": "I can stay calm and act even when things are busy.",
+    "_row": 108
+  },
+  {
+    "画面ID": "CH0-14",
+    "フィールド名": "適性診断問題",
+    "内容（入力欄）": "失敗しても、すぐに気持ちを切り替えられる。",
+    "内容（EN)": "Even after a mistake, I can quickly shift my mindset.",
+    "_row": 109
+  },
+  {
+    "画面ID": "CH0-14",
+    "フィールド名": "適性診断問題",
+    "内容（入力欄）": "周りの人の様子の変化によく気づく。",
+    "内容（EN)": "I often notice changes in the people around me.",
+    "_row": 110
+  },
+  {
+    "画面ID": "CH0-14",
+    "フィールド名": "適性診断問題",
+    "内容（入力欄）": "自分の作業だけでなく、周囲の状況も自然と見ている。",
+    "内容（EN)": "Beyond my own work, I naturally keep an eye on my surroundings.",
+    "_row": 111
+  },
+  {
+    "画面ID": "CH0-14",
+    "フィールド名": "適性診断問題",
+    "内容（入力欄）": "自分のことだけでなく、その場全体の雰囲気を大切にしたい。",
+    "内容（EN)": "I care about the atmosphere of the whole place, not just myself.",
+    "_row": 112
+  },
+  {
+    "画面ID": "CH0-14",
+    "フィールド名": "適性診断問題",
+    "内容（入力欄）": "小さな声掛けや気配りは大切だと思う。",
+    "内容（EN)": "I think small words of care and thoughtful gestures matter.",
+    "_row": 113
+  },
+  {
+    "画面ID": "CH0-14",
+    "フィールド名": "適性診断問題",
+    "内容（入力欄）": "自分の仕事が終わっても、周りを手伝うことが多い。",
+    "内容（EN)": "Even after finishing my own work, I often help others.",
+    "_row": 114
+  },
+  {
+    "画面ID": "CH0-14",
+    "フィールド名": "適性診断問題",
+    "内容（入力欄）": "チーム全体がうまく回ることを大切にしたい。",
+    "内容（EN)": "I want to make sure the whole team runs smoothly.",
+    "_row": 115
+  },
+  {
+    "画面ID": "CH0-14",
+    "フィールド名": "適性診断問題",
+    "内容（入力欄）": "分からないことは、自分から質問できる。",
+    "内容（EN)": "When I don't understand something, I can ask questions on my own.",
+    "_row": 116
+  },
+  {
+    "画面ID": "CH0-14",
+    "フィールド名": "適性診断問題",
+    "内容（入力欄）": "必要だと思ったら、自分から行動する方だ。",
+    "内容（EN)": "If I think something is needed, I take action on my own.",
+    "_row": 117
+  },
+  {
+    "画面ID": "CH0-14",
+    "フィールド名": "適性診断問題",
+    "内容（入力欄）": "嫌なことがあっても、表情や態度にはあまり出さない。",
+    "内容（EN)": "Even when something upsets me, I rarely let it show.",
+    "_row": 118
+  },
+  {
+    "画面ID": "CH0-14",
+    "フィールド名": "適性診断問題",
+    "内容（入力欄）": "相手が感情的でも、自分は冷静でいられる。",
+    "内容（EN)": "Even when someone is emotional, I can stay calm.",
+    "_row": 119
+  },
+  {
+    "画面ID": "CH0-14",
+    "フィールド名": "適性診断問題",
+    "内容（入力欄）": "複数の仕事を同時に進めることは苦にならない。",
+    "内容（EN)": "I don't mind working on multiple tasks at once.",
+    "_row": 120
+  },
+  {
+    "画面ID": "CH0-14",
+    "フィールド名": "適性診断問題",
+    "内容（入力欄）": "優先順位を考えながら仕事を進めるのが得意だ。",
+    "内容（EN)": "I'm good at prioritizing as I work.",
+    "_row": 121
+  },
+  {
+    "画面ID": "CH0-19",
+    "フィールド名": "タイトル",
+    "内容（入力欄）": "適性診断完了！",
+    "内容（EN)": "Aptitude Test Complete!",
+    "_row": 122
+  },
+  {
+    "画面ID": "CH0-19",
+    "フィールド名": "枠内テキスト",
+    "内容（入力欄）": "お疲れ様でした！\nあなたの選択から、\nあなたに合った職種を紹介します。\n\n「結果を見る」から確認してみよう！",
+    "内容（EN)": "Well done!\nBased on your answers,\nwe'll introduce the roles that suit you.\n\nTap “See Results” to check them out!",
+    "_row": 123
+  },
+  {
+    "画面ID": "CH0-19",
+    "フィールド名": "ラベル",
+    "内容（入力欄）": "1章：Omotenashi Mindsetが解放されました",
+    "内容（EN)": "Chapter 1: Omotenashi Mindset has been unlocked",
+    "_row": 124
+  },
+  {
+    "画面ID": "CH0-19",
+    "フィールド名": "ボタン",
+    "内容（入力欄）": "結果を見る",
+    "内容（EN)": "See Results",
+    "_row": 125
+  },
+  {
+    "画面ID": "CH0-20'",
+    "フィールド名": "適性診断フィードバック",
+    "内容（入力欄）": "あなたにおすすめ\n🥇 Front Desk（XX%）\n\nあなたの強み\n・Service Mindset が高く、\n　 お客様への気配りを大切にできます。\n・Multi-tasking が高く、\n　 複数のことを整理しながら対応できます。\n・Stress Tolerance が高く、プレッシャーの\n　 かかる場面でも落ち着いて行動できます。",
+    "内容（EN)": "Recommended for you\n🥇 Front Desk (XX%)\n\nYour strengths\n・Your Service Mindset is high,\nso you care about attending to guests.\n・Your Multi-tasking is high,\nso you can organize and handle several things at once.\n・Your Stress Tolerance is high,\nso you stay calm even in high-pressure moments.",
+    "_row": 126
+  },
+  {
+    "画面ID": "CH0-20'",
+    "フィールド名": "適性診断フィードバック",
+    "内容（入力欄）": "あなたにおすすめ\n🥇 Bell & Door Services（XX%）\n\nあなたの強み\n・Service Mindset が高く、\n　 お客様が安心できるように行動できます。\n・Observation が高く、\n　 お客様や周囲の小さな変化に気づけます。\n・Initiative が高く、必要なことを自分から\n　 考えて行動する力を活かせます。",
+    "内容（EN)": "Recommended for you\n🥇 Bell & Door Services (XX%)\n\nYour strengths\n・Your Service Mindset is high,\nso you act to put guests at ease.\n・Your Observation is high,\nso you notice small changes in guests and their surroundings.\n・Your Initiative is high,\nso you can make use of your ability to think and act on your own.",
+    "_row": 127
+  },
+  {
+    "画面ID": "CH0-20'",
+    "フィールド名": "適性診断フィードバック",
+    "内容（入力欄）": "あなたにおすすめ\n🥇 Housekeeping（XX%）\n\nあなたの強み\n・Observation が高く、\n　 客室や周囲の小さな変化に気づけます。\n・Teamwork が高く、\n　 周囲と協力しながら仕事を進められます。\n・Service Mindset が高く、\n　 お客様が快適に過ごせることを大切にできます。",
+    "内容（EN)": "Recommended for you\n🥇 Housekeeping (XX%)\n\nYour strengths\n・Your Observation is high,\nso you notice small changes in rooms and surroundings.\n・Your Teamwork is high,\nso you work well with those around you.\n・Your Service Mindset is high,\nso you care about making guests comfortable.",
+    "_row": 128
+  },
+  {
+    "画面ID": "CH0-20'",
+    "フィールド名": "適性診断フィードバック",
+    "内容（入力欄）": "あなたにおすすめ\n🥇 Restaurant Service（XX%）\n\nあなたの強み\n・Service Mindset が高く、\n　 お客様への気配りを大切にできます。\n・Adaptability が高く、\n　 状況の変化にも柔軟に対応できます。\n・Multi-tasking が高く、\n　 忙しい場面でも複数の仕事を進められます。",
+    "内容（EN)": "Recommended for you\n🥇 Restaurant Service (XX%)\n\nYour strengths\n・Your Service Mindset is high,\nso you care about attending to guests.\n・Your Adaptability is high,\nso you respond flexibly when situations change.\n・Your Multi-tasking is high,\nso you can juggle several tasks even when it's busy.",
+    "_row": 129
+  },
+  {
+    "画面ID": "CH0-20'",
+    "フィールド名": "適性診断フィードバック",
+    "内容（入力欄）": "あなたにおすすめ\n🥇 Reservations（XX%）\n\nあなたの強み\n・Workplace Culture が高く、\n　 周囲との関わりや場の雰囲気を大切にできます。\n・Observation が高く、\n　 予約情報などの小さな違いにも気づけます。\n・Multi-tasking が高く、\n　 複数の情報を整理しながら仕事を進められます。",
+    "内容（EN)": "Recommended for you\n🥇 Reservations (XX%)\n\nYour strengths\n・Your Workplace Culture is high,\nso you value relationships and the atmosphere around you.\n・Your Observation is high,\nso you notice small differences, such as in reservation details.\n・Your Multi-tasking is high,\nso you can organize multiple pieces of information as you work.",
+    "_row": 130
+  }
+]

@@ -1,0 +1,32 @@
+{
+  "name": "shosa-game",
+  "version": "1.0.0",
+  "description": "外国人ホテルスタッフが日本の職場での「所作（SHOSA）」を、選択肢形式のショートストーリーで学ぶ アプリです。",
+  "main": "check_uploaded_images.js",
+  "scripts": {
+    "build": "tsc && node build_web.js",
+    "sync": "npm run build && npx cap sync ios",
+    "watch": "tsc --watch",
+    "dev": "tsc --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YukiSakai1/prototyping-shosa.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/YukiSakai1/prototyping-shosa/issues"
+  },
+  "homepage": "https://github.com/YukiSakai1/prototyping-shosa#readme",
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@capacitor/cli": "^8.6.2",
+    "@capacitor/core": "^8.6.2",
+    "@capacitor/ios": "^8.6.2"
+  }
+}

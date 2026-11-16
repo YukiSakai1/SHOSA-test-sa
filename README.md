@@ -7,18 +7,40 @@
 ```
 shosa-game/
 ├── index.html              HTML構造のみ（画面の骨組み）
+├── package.json            ビルドコマンド・依存関係
+├── tsconfig.json           TypeScriptコンパイラ設定
 ├── css/
-│   └── style.css           全スタイル定義
-├── js/
-│   ├── game_data.js        ゲーム本編の内容（Day1〜3のシナリオデータ）
-│   ├── onboarding_data.js  0章（登録〜SHOSAパスポート完成）の内容データ
-│   ├── app.js               ゲーム本編の画面遷移・スコア計算・音声認識ロジック
-│   └── onboarding.js        0章の画面遷移・状態管理ロジック
-│   └── dev_overview.js      開発者ビュー（全イベント俯瞰表示）の生成ロジック
+│   └── style.css           全スタイル定義（レスポンシブ・Figmaデザイン対応）
+├── src/                    ★ TypeScriptソースコード（開発時はこちらを編集）
+│   ├── types.d.ts          型定義・インターフェース一式
+│   ├── game_data.ts        ゲーム本編の内容（Day1〜3のシナリオデータ）
+│   ├── onboarding_data.ts  0章（登録〜SHOSAパスポート完成）の内容データ
+│   ├── app.ts              ゲーム本編の画面遷移・スコア計算・音声認識ロジック
+│   ├── onboarding.ts       0章の画面遷移・状態管理ロジック
+│   └── dev_overview.ts     開発者ビュー（全イベント俯瞰表示）の生成ロジック
+├── js/                     ★ tscによるコンパイル生成物（ソースマップ付き）
+│   ├── game_data.js / .map
+│   ├── onboarding_data.js / .map
+│   ├── app.js / .map
+│   ├── onboarding.js / .map
+│   └── dev_overview.js / .map
 └── assets/
     ├── images/
-    │   └── avatars/         キャラクター画像6枚（プロフィール用アバター & NPC表示に使用中）
-    └── audio/               発音サンプルの音声ファイルを追加する場合はここに配置（任意）
+    │   └── avatars/        キャラクター画像（プロフィールアバター & NPC）
+    └── audio/              BGM・効果音
+```
+
+## TypeScript ビルド・開発方法
+本プロジェクトは **TypeScript（`.ts`）前提** で構成されています。コードの編集・保守は `src/` 配下の `.ts` ファイルに対して行い、以下のコマンドでビルドします。
+
+```bash
+# 1回コンパイル
+npm run build
+
+# 変更を監視して自動コンパイル
+npm run watch
+# または
+npm run dev
 ```
 
 ## 使い方

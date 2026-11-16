@@ -1,0 +1,274 @@
+=== SHEET1 ROWS 65-100 ===
+ 65 | CH0-12       | イラスト               | JA='SHOSAさんとキャストが円滑な友好関係を築けた様子' | EN=''
+ 66 | CH0-12       | フォロー内容             | JA='アプリ内でなら、安心して何度でも失敗できるよ◎' | EN='In this app, you can make mistakes as many times as you like!'
+ 67 | CH0-12       | イラスト               | JA='SHOSAさんがスマホから出た吹き出しの中で間違えている様子' | EN=''
+ 68 | CH0-20       | 吹き出しテキスト           | JA='次は学習スケジュールを\n一緒に考えよう！' | EN="Next, let's plan your\nstudy schedule together!"
+ 69 | CH0-20       | 下部ボタン              | JA='NEXT' | EN='NEXT'
+ 70 | CH0-22       | 上部タイトルテキスト         | JA='学習スケジュール' | EN='Study Schedule'
+ 71 | CH0-22       | 吹き出しテキスト           | JA='学習の時間を決めよう！\n続けやすいタイミングを選んでね。' | EN="Let's choose your study time!\nPick a timing that's easy to keep up."
+ 72 | CH0-22       | 選択肢1               | JA='朝起きた後' | EN='After waking up'
+ 73 | CH0-22       | 選択肢2               | JA='ランチタイム' | EN='Lunchtime'
+ 74 | CH0-22       | 選択肢3               | JA='夕食前後' | EN='Around dinner'
+ 75 | CH0-22       | 選択肢4               | JA='寝る前' | EN='Before bed'
+ 76 | CH0-22       | 選択肢5               | JA='その他' | EN='Other'
+ 77 | CH0-22       | リマインドテキスト          | JA='この時間にお知らせします' | EN="We'll remind you at this time"
+ 78 | CH0-22       | 下部ボタン              | JA='テキスト' | EN=''
+ 79 | CH0-15       | テキスト               | JA='あなたのプロフィールを\n入力してね。' | EN='Please fill in\nyour profile.'
+ 80 | CH0-15       | ボタン                | JA='NEXT' | EN='NEXT'
+ 81 | CH0-16'      | テキスト               | JA='プロフィールを入力してください' | EN='Please enter your profile'
+ 82 | CH0-16'      | 性別1                | JA='男性' | EN='Male'
+ 83 | CH0-16'      | 性別2                | JA='女性' | EN='Female'
+ 84 | CH0-16'      | 性別3                | JA='その他' | EN='Other'
+ 85 | CH0-16'      | 名前ボックス下            | JA='アプリ内でのあなたの名前です。10文字以内でシン\nプルな名前を設定してください。' | EN='This is your name in the app.\nPlease choose a simple name of 10 characters or fewer.'
+ 86 | CH0-16'      | 出身国プルダウン内容         | JA='日本' | EN='Japan'
+ 87 | CH0-16'      | 出身国プルダウン内容         | JA='ベトナム' | EN='Vietnam'
+ 88 | CH0-16'      | 出身国プルダウン内容         | JA='ミャンマー' | EN='Myanmar'
+ 89 | CH0-16'      | 出身国プルダウン内容         | JA='シンガポール' | EN='Singapore'
+ 90 | CH0-16'      | 出身国プルダウン内容         | JA='インドネシア' | EN='Indonesia'
+ 91 | CH0-16'      | 出身国プルダウン内容         | JA='ネパール' | EN='Nepal'
+ 92 | CH0-16'      | 出身国プルダウン内容         | JA='フィリピン' | EN='Philippines'
+ 93 | CH0-16'      | 出身国プルダウン内容         | JA='インド' | EN='India'
+ 94 | CH0-16'      | 下部ボタン              | JA='NEXT' | EN='NEXT'
+ 95 | CH0-18       | 上部テキスト             | JA='ホテルで働くための、あなたの学びの旅\nYOUR JOURNEY' | EN='Your learning journey to work in hotels\nYOUR JOURNEY'
+ 96 | CH0-18       | start吹き出し          | JA='✔︎ 自分を知る（適職診断）\n適性診断で、あなたに合った\n職種を見つけましょう。' | EN='✔︎ Know yourself (Career Match)\nTake the aptitude test to find\nthe role that suits you.'
+ 97 | CH0-18       | 1章吹き出し             | JA='✔︎ ホテルを知る\nホテルの仕事や基本的流れを学びましょう。' | EN='✔︎ Get to know hotels\nLearn about hotel work and its basic flow.'
+ 98 | CH0-18       | 2章吹き出し             | JA='✔︎ 仕事を体験し、自分の行動傾向を知る\n職種を体験しながら、\nあなたの行動傾向を診断しましょう。' | EN='✔︎ Try the work, know your tendencies\nExperience each role while we\nassess your behavior tendencies.'
+ 99 | CH0-18       | 3章吹き出し             | JA='✔︎ 仕事を学ぶ\nホテルの仕事に必要な知識や\nマナーを体系的に学びましょう。' | EN='✔︎ Learn the work\nSystematically learn the knowledge and\nmanners needed for hotel work.'
+100 | CH0-18       | 4章吹き出し             | JA='✔︎ 資格試験に挑戦する\n学んだことを確認し、\nあなたの力を証明しましょう。' | EN="✔︎ Take the certification exam\nReview what you've learned\nand prove your abilities."
+
+=== SHEET2 ALL ROWS ===
+  2 |                | 【12:45】L01：出勤前の身だしなみチェック |                      | JA='' | EN=''
+  3 | CH1-L01-01     | テンプレ1：場面転換       | 時刻                   | JA='12:45' | EN=''
+  4 | CH1-L01-01     | テンプレ1：場面転換       | タイトル                 | JA='出勤前の身だしなみチェック' | EN='Pre-Shift Grooming Check'
+  5 | CH1-L01-01     | テンプレ1：場面転換       | ナレーション               | JA='時刻は12:45。午後のシフトインを前に、バックヤードの姿見の前へ。' | EN="It's 12:45. Before your afternoon shift begins, you head to the full-length mirror in the back-of-house area."
+  6 | CH1-L01-02     | テンプレ2：状況説明       | [画像]キャラクター（1・2ターン目）  | JA='CH1-CHAR-FRONT-LATE-GROOMING' | EN=''
+  7 | CH1-L01-02     | テンプレ2：状況説明       | [画像]SHOSAさん（2ターン目）   | JA='COMMON-CHAR-SHOSA-NORMAL' | EN=''
+  8 | CH1-L01-02     | テンプレ2：状況説明       | セリフ（1ターン目）発話者名       | JA='フロントスタッフ' | EN='Front Desk Staff'
+  9 | CH1-L01-02     | テンプレ2：状況説明       | セリフ（1ターン目）           | JA='（勤務開始まであと15分。持ち物よし、最後は身だしなみチェック。）' | EN='(15 minutes until my shift. Belongings checked. Last step: a final grooming check.)'
+ 10 | CH1-L01-02     | テンプレ2：状況説明       | セリフ（2ターン目・任意）        | JA='勤務開始直前の最終点検ですね。プロは鏡に映る姿だけでなく、目に見えない部分まで配慮を行き届かせます。' | EN="This is your last check before the shift begins. Professionals attend not only to what the mirror shows, but also to what can't be seen."
+ 11 | CH1-L01-03     | テンプレ3：選択問題       | [画像]キャラクター           | JA='テンプレ2と同じ' | EN=''
+ 12 | CH1-L01-03     | テンプレ3：選択問題       | Situationタグ          | JA='姿見の鏡前で身だしなみの最終確認中' | EN='Doing a final grooming check in front of the mirror'
+ 13 | CH1-L01-03     | テンプレ3：選択問題       | 問いかけ                 | JA='出社前に身だしなみを整える際、『匂い』についてプロとして正しい配慮はどちらですか？' | EN="When preparing for work, which is the correct, professional way to handle 'scent'?"
+ 14 | CH1-L01-03     | テンプレ3：選択問題       | 選択肢A                 | JA='お客様に良い印象を与えるため、ほのかに香る爽やかな香水を少量つけておく' | EN='Wear a small amount of light, fresh perfume to make a good impression on guests'
+ 15 | CH1-L01-03     | テンプレ3：選択問題       | 選択肢B                 | JA='香水や柔軟剤の強い香りを避け、無香（匂いを残さないこと）を徹底する' | EN='Avoid strong perfume/softener scents; stay fully fragrance-free (no lingering scent)'
+ 16 | CH1-L01-03     | テンプレ3：選択問題       | 正解（A/B）              | JA='B' | EN=''
+ 17 | CH1-L01-04     | テンプレ4：結果解説       | [画像]SHOSAさん（ミニ）      | JA='COMMON-CHAR-SHOSA-NORMAL' | EN=''
+ 18 | CH1-L01-04     | テンプレ4：結果解説       | 1段階目：シンプル理由          | JA='良い香り（A）も良かれと思いがちですが、強い香りはホテルの非日常感を損なうため、無香を保つ配慮（B）がプロの鉄則です。' | EN="A nice scent (A) may seem considerate, but strong fragrance can spoil the hotel's special atmosphere. Staying fragrance-free (B) is the professional rule."
+ 19 | CH1-L01-04     | テンプレ4：結果解説       | キャラ誘導セリフ             | JA='海外と日本では『香り』の感覚が違うんだ。プロが大切にする『無香』の意味、知ってる？' | EN='Views on scent differ between countries and Japan. Do you know why pros go fragrance-free?'
+ 20 | CH1-L01-04     | テンプレ4：結果解説       | SHOSA Focus　ボタンテキスト  | JA='多くの国では、良い香水を身につけることは『相手を歓迎するマナー』とされます。しかし、日本のホテル現場では『無香（匂いを残さないこと）』が最高の身だしなみです。さまざまな文化を持つゲストが寛ぐ空間では、どんなに良い香りでも『刺激』になり得ます。自身の好みを抑え、空間の快適さを守る『引き算の配慮』がプロの基準です。' | EN="In many countries, wearing good perfume is seen as a way of welcoming others. In Japanese hotels, however, being fragrance-free (leaving no scent behind) is the highest standard of grooming. In a space where guests from many cultures relax, even a lovely fragrance can be an irritant. Setting aside your own preferences to protect the comfort of the space – this 'less-is-more' consideration – is the professional standard."
+ 21 | CH1-L01-04     | テンプレ4：結果解説       | [画像]SHOSA Focus/静止画  | JA='香水のボトルにそっとフタをする手元' | EN=''
+ 22 |                | 【13:00】L02：引き継ぎの仕方 |                      | JA='' | EN=''
+ 23 | CH1-L02-01     | テンプレ1：場面転換       | 時刻                   | JA='13:00' | EN=''
+ 24 | CH1-L02-01     | テンプレ1：場面転換       | タイトル                 | JA='引き継ぎの心構え' | EN='The Mindset for Handovers'
+ 25 | CH1-L02-01     | テンプレ1：場面転換       | ナレーション               | JA='時刻は13:00。早番から遅番へのシフト交代。フロント部門の申し送りミーティングが始まります。' | EN="It's 13:00. The early shift hands over to the late shift, and the Front Desk handover meeting begins."
+ 26 | CH1-L02-02     | テンプレ2：状況説明       | [画像]キャラクター（1・2ターン目）  | JA='CH1-CHAR-FRONT-EARLY-NORMAL' | EN=''
+ 27 | CH1-L02-02     | テンプレ2：状況説明       | [画像]SHOSAさん（2ターン目）   | JA='COMMON-CHAR-SHOSA-NORMAL' | EN=''
+ 28 | CH1-L02-02     | テンプレ2：状況説明       | セリフ（1ターン目）発話者名       | JA='フロントスタッフ' | EN='Front Desk Staff'
+ 29 | CH1-L02-02     | テンプレ2：状況説明       | セリフ（1ターン目）           | JA='早番からの申し送り事項です。本日、アレルギー対応の新規ご予約が入っております。' | EN='Here are the handover items from the early shift. A new reservation requiring allergy accommodations has come in today.'
+ 30 | CH1-L02-02     | テンプレ2：状況説明       | セリフ（2ターン目・任意）        | JA='混雑する午後の業務を前に、限られた時間で正確に情報を手渡す『引き継ぎ』の場面です。' | EN="Before the busy afternoon, this is a 'handover' moment: passing on information accurately in limited time."
+ 31 | CH1-L02-03     | テンプレ3：選択問題       | [画像]キャラクター           | JA='テンプレ2と同じ' | EN=''
+ 32 | CH1-L02-03     | テンプレ3：選択問題       | Situationタグ          | JA='混雑前の申し送り。伝達事項が複数ある' | EN='Pre-rush handover. There are multiple items to pass on'
+ 33 | CH1-L02-03     | テンプレ3：選択問題       | 問いかけ                 | JA='限られたミーティング時間で、次のシフトへ確実に情報を引き継ぐための工夫はどちらですか？' | EN='In limited meeting time, which approach best ensures information reaches the next shift reliably?'
+ 34 | CH1-L02-03     | テンプレ3：選択問題       | 選択肢A                 | JA='漏れがないよう、発生した出来事を時系列に沿って詳しく順を追って説明する' | EN='Explain events in detail, in chronological order, so nothing is missed'
+ 35 | CH1-L02-03     | テンプレ3：選択問題       | 選択肢B                 | JA='『結論・要点・対象者』を先頭にし、優先度の高い重要案件から簡潔に伝える' | EN="Lead with conclusion, key points and who's affected; briefly cover top priorities first"
+ 36 | CH1-L02-03     | テンプレ3：選択問題       | 正解（A/B）              | JA='B' | EN=''
+ 37 | CH1-L02-04     | テンプレ4：結果解説       | [画像]SHOSAさん（ミニ）      | JA='COMMON-CHAR-SHOSA-NORMAL' | EN=''
+ 38 | CH1-L02-04     | テンプレ4：結果解説       | 1段階目：シンプル理由          | JA='時系列の説明（A）は時間がかかりポイントがぼやけるため、結論と要点から伝える（B）ことで業務の抜け漏れを防げます。' | EN='A chronological account (A) takes time and blurs the key points; starting with the conclusion and essentials (B) prevents gaps in operations.'
+ 39 | CH1-L02-04     | テンプレ4：結果解説       | キャラ誘導セリフ             | JA='忙しい現場ほど『引き継ぎの型』が命になるんだ。プロが実践する伝達のコツ、見てみよう！' | EN="On busy floors, a handover 'format' is everything. Let's see the communication tips pros use!"
+ 40 | CH1-L02-04     | テンプレ4：結果解説       | SHOSA Focus　ボタンテキスト  | JA='ホテルの現場は常に動いています。長々と経緯を話すと、最も重要な『ゲストの安全（アレルギー等）』や『緊急の対応事項』が埋もれてしまう危険があります。プロは『結論・要点・誰が対応するか』を最初に提示し、次のシフトが即座に動ける状態を作ります。短時間で正確にバトンを渡すことが、チームの安全網になります。' | EN="Hotel operations never stop. If you talk through the whole backstory, the most important points – such as guest safety (allergies, etc.) or urgent actions – can get buried. Professionals lead with the conclusion, the key points, and who will respond, so the next shift can act immediately. Passing the baton accurately in a short time becomes the team's safety net."
+ 41 | CH1-L02-04     | テンプレ4：結果解説       | [画像]SHOSA Focus/静止画  | JA='要点をまとめたメモが、バトンのように次のスタッフへ渡される手元' | EN=''
+ 42 |                | 【15:00】L03：チェックインピークの目配り |                      | JA='' | EN=''
+ 43 | CH1-L03-01     | テンプレ1：場面転換       | 時刻                   | JA='15:00' | EN=''
+ 44 | CH1-L03-01     | テンプレ1：場面転換       | タイトル                 | JA='チェックインピークの目配り' | EN='Watching the Lobby at Check-in Peak'
+ 45 | CH1-L03-01     | テンプレ1：場面転換       | ナレーション               | JA='時刻は15:00、チェックイン開始。ロビーに到着ゲストが集まり始めます。' | EN="It's 15:00 and check-in has begun. Arriving guests start to gather in the lobby."
+ 46 | CH1-L03-02     | テンプレ2：状況説明       | [画像]キャラクター（1・2ターン目）  | JA='CH1-CHAR-FRONT-LATE-SMILE' | EN=''
+ 47 | CH1-L03-02     | テンプレ2：状況説明       | [画像]SHOSAさん（2ターン目）   | JA='COMMON-CHAR-SHOSA-SMILE' | EN=''
+ 48 | CH1-L03-02     | テンプレ2：状況説明       | セリフ（1ターン目）発話者名       | JA='フロントスタッフ' | EN='Front Desk Staff'
+ 49 | CH1-L03-02     | テンプレ2：状況説明       | セリフ（1ターン目）           | JA='いらっしゃいませ。恐れ入ります、順番にご案内いたしますので少々お待ちください。' | EN="Welcome. I apologize for the wait – we'll assist everyone in order, so please bear with us for a moment."
+ 50 | CH1-L03-02     | テンプレ2：状況説明       | セリフ（2ターン目・任意）        | JA='ロビーが混雑してきました。手続き中のゲストだけでなく、列に並ぶ方々へも視線を送っていますね。' | EN="The lobby is getting crowded. You're looking not only at the guest being served, but also at the people waiting in line."
+ 51 | CH1-L03-03     | テンプレ3：選択問題       | [画像]キャラクター           | JA='テンプレ2と同じ' | EN=''
+ 52 | CH1-L03-03     | テンプレ3：選択問題       | Situationタグ          | JA='フロントに行列が発生。手続き待ちの時間が長くなっている' | EN='A line has formed at the front desk and wait times are getting longer'
+ 53 | CH1-L03-03     | テンプレ3：選択問題       | 問いかけ                 | JA='混雑するロビーで、プロのスタッフが優先して行うべき配慮はどちらですか？' | EN='In a crowded lobby, which consideration should a professional prioritize?'
+ 54 | CH1-L03-03     | テンプレ3：選択問題       | 選択肢A                 | JA='目前のゲストの手続き処理を最優先し、スピードを上げて対応する' | EN='Prioritize the guest in front of you and speed up your service'
+ 55 | CH1-L03-03     | テンプレ3：選択問題       | 選択肢B                 | JA='待っているゲストにも目配りし、アイコンタクトと一言で安心感を与える' | EN='Look out for waiting guests too, reassuring them with eye contact and a word'
+ 56 | CH1-L03-03     | テンプレ3：選択問題       | 正解（A/B）              | JA='B' | EN=''
+ 57 | CH1-L03-04     | テンプレ4：結果解説       | [画像]SHOSAさん（ミニ）      | JA='COMMON-CHAR-SHOSA-NORMAL' | EN=''
+ 58 | CH1-L03-04     | テンプレ4：結果解説       | 1段階目：シンプル理由          | JA='目の前の処理（A）に集中すると放置された不満を生むため、全体へ目配り（B）して存在を認識していると示すことがプロです。' | EN="Focusing only on the task in front of you (A) leaves others feeling ignored; a professional looks across the whole lobby (B) and shows guests they've been noticed."
+ 59 | CH1-L03-04     | テンプレ4：結果解説       | キャラ誘導セリフ             | JA='視線を送るだけでゲストの安心感が違うんだ。プロの目配り技術、見てみよう！' | EN="A simple glance can ease a guest's mind. Let's see how pros keep an eye on the lobby!"
+ 60 | CH1-L03-04     | テンプレ4：結果解説       | SHOSA Focus　ボタンテキスト  | JA='ゲストが最もストレスを感じるのは「自分が無視されている」と感じる放置時間です。プロは手続き中も視野を広く保ち、並んでいるゲストと目を合わせて会釈をしたり「少々お待ちください」と一言添えます。「あなたを認識しています」というシグナルを送ることが、不満を未然に防ぐプロの技術です。' | EN="What stresses guests most is the feeling of being ignored while they wait. Professionals keep a wide field of view even while serving someone, making eye contact and giving a nod, or adding 'Thank you for waiting, just a moment please.' Sending the signal 'We see you' is the professional skill that prevents frustration before it starts."
+ 61 | CH1-L03-04     | テンプレ4：結果解説       | [画像]SHOSA Focus/静止画  | JA='チェックインを待つ行列を横から見た図。家族（ベビーカー/抱っこ紐）、高齢者、一人旅（バックパック）、海外の人など、様々なゲストの代表者が並んでいる。それぞれの頭上に小さな「...」の吹き出しで待っている気持ちの表現をするなど' | EN=''
+ 62 |                | 【15:30】L04：アレルギー・食事制限のヒアリング管理 |                      | JA='' | EN=''
+ 63 | CH1-L04-01     | テンプレ1：場面転換       | 時刻                   | JA='15:30' | EN=''
+ 64 | CH1-L04-01     | テンプレ1：場面転換       | タイトル                 | JA='アレルギー・食事制限のヒアリング管理' | EN='Managing Allergy & Dietary Requests'
+ 65 | CH1-L04-01     | テンプレ1：場面転換       | ナレーション               | JA='時刻は15:30。チェックインの際、ゲストから予定外のアレルギー申告が入ります。' | EN="It's 15:30. During check-in, a guest unexpectedly reports an allergy."
+ 66 | CH1-L04-02     | テンプレ2：状況説明       | [画像]キャラクター（1・2ターン目）  | JA='CH1-CHAR-FRONT-LATE-INCOM' | EN=''
+ 67 | CH1-L04-02     | テンプレ2：状況説明       | [画像]SHOSAさん（2ターン目）   | JA='COMMON-CHAR-SHOSA-SMILE' | EN=''
+ 68 | CH1-L04-02     | テンプレ2：状況説明       | セリフ（1ターン目）発話者名       | JA='フロントスタッフ' | EN='Front Desk Staff'
+ 69 | CH1-L04-02     | テンプレ2：状況説明       | セリフ（1ターン目）           | JA='申告ありがとうございます。確認いたしますので少々お待ちいただけますでしょうか。' | EN='Thank you for letting us know. Could you please wait a moment while I check?'
+ 70 | CH1-L04-02     | テンプレ2：状況説明       | セリフ（2ターン目・任意）        | JA='セーフティフレーズで時間を確保し、その場で即座にインカム共有を行っていますね。' | EN='You used a safety phrase to buy time, and immediately shared the information over the headset.'
+ 71 | CH1-L04-03     | テンプレ3：選択問題       | [画像]キャラクター           | JA='テンプレ2と同じ' | EN=''
+ 72 | CH1-L04-03     | テンプレ3：選択問題       | Situationタグ          | JA='チェックイン時のアレルギー申告。カウンター混雑時の即応が求められる' | EN='A guest reports an allergy at check-in. A quick response is needed at a busy counter'
+ 73 | CH1-L04-03     | テンプレ3：選択問題       | 問いかけ                 | JA='突然のアレルギー申告を受けた際、プロが行う最も望ましい対応はどちらですか？' | EN='When you receive a sudden allergy report, which is the most desirable professional response?'
+ 74 | CH1-L04-03     | テンプレ3：選択問題       | 選択肢A                 | JA='「確認いたします」と伝え、その場で即時にインカムで情報共有する' | EN='Say “Let me check,” and share the information over the headset right away'
+ 75 | CH1-L04-03     | テンプレ3：選択問題       | 選択肢B                 | JA='「かしこまりました」とメモを残し、混雑が落ち着いてから手渡す' | EN='Say “Certainly,” jot a note, and hand it over once the rush calms down'
+ 76 | CH1-L04-03     | テンプレ3：選択問題       | 正解（A/B）              | JA='A' | EN=''
+ 77 | CH1-L04-04     | テンプレ4：結果解説       | [画像]SHOSAさん（ミニ）      | JA='COMMON-CHAR-SHOSA-NORMAL' | EN=''
+ 78 | CH1-L04-04     | テンプレ4：結果解説       | 1段階目：シンプル理由          | JA='メモでの後回し（B）ではなく、安全に関わる情報は即時インカム共有（A）が絶対原則です。' | EN='Leaving it as a note for later (B) is not acceptable: safety-related information must be shared immediately over the headset (A).'
+ 79 | CH1-L04-04     | テンプレ4：結果解説       | キャラ誘導セリフ             | JA='アレルギー対応は命に関わる！ インカム連携と顧客情報の更新の流れを見てみよう。' | EN='Allergies can be life or death! See how headset coordination and record updates work.'
+ 80 | CH1-L04-04     | テンプレ4：結果解説       | SHOSA Focus　ボタンテキスト  | JA='食事制限やアレルギーはゲストの安全に直結するため、後回しは厳禁です。受託時は「確認いたします」と伝えて時間を買い、即座にインカムでレストラン（厨房・ホール）へ「主語・要件・緊急度」を短く正確に伝達します。併せて予約システムの顧客カルテを更新し、全館で最新情報を共有することがプロの鉄則です。' | EN="Dietary restrictions and allergies directly affect guest safety, so never put them off. When you receive one, say 'Let me check' to buy time, then immediately tell the restaurant (kitchen and floor) over the headset – briefly and accurately – who, what, and how urgent. Also update the guest profile in the reservation system so the latest information is shared throughout the hotel. That is the professional rule."
+ 81 | CH1-L04-04     | テンプレ4：結果解説       | [画像]SHOSA Focus/静止画  | JA='インカムで連絡を受ける厨房スタッフ' | EN=''
+ 82 |                | 【16:00】L05：臨機応変な対応 |                      | JA='' | EN=''
+ 83 | CH1-L05-01     | テンプレ1：場面転換       | 時刻                   | JA='16:00' | EN=''
+ 84 | CH1-L05-01     | テンプレ1：場面転換       | タイトル                 | JA='臨機応変な対応（配慮・声かけ）' | EN='Flexible Response: Care & Kind Words'
+ 85 | CH1-L05-01     | テンプレ1：場面転換       | ナレーション               | JA='時刻は16:00。混雑の波が落ちつき、個別の状況に応じた丁寧な対応が求められます。' | EN="It's 16:00. The rush has eased, and thoughtful service tailored to each situation is called for."
+ 86 | CH1-L05-02     | テンプレ2：状況説明       | [画像]キャラクター（1・2ターン目）  | JA='CH1-CHAR-FRONT-LATE-SMILE' | EN=''
+ 87 | CH1-L05-02     | テンプレ2：状況説明       | [画像]SHOSAさん（2ターン目）   | JA='COMMON-CHAR-SHOSA-SMILE' | EN=''
+ 88 | CH1-L05-02     | テンプレ2：状況説明       | セリフ（1ターン目）発話者名       | JA='フロントスタッフ' | EN='Front Desk Staff'
+ 89 | CH1-L05-02     | テンプレ2：状況説明       | セリフ（1ターン目）           | JA='遠方より長いお時間のご移動、大変お疲れ様でございました。お部屋へご案内します。' | EN='Thank you for traveling such a long way – you must be tired. Let me show you to your room.'
+ 90 | CH1-L05-02     | テンプレ2：状況説明       | セリフ（2ターン目・任意）        | JA='定型文ではなく、長旅で疲れたゲストの文脈に寄り添った言葉を選べていますね。' | EN='Instead of a stock phrase, you chose words that fit the context of a guest tired from a long journey.'
+ 91 | CH1-L05-03     | テンプレ3：選択問題       | [画像]キャラクター           | JA='テンプレ2と同じ' | EN=''
+ 92 | CH1-L05-03     | テンプレ3：選択問題       | Situationタグ          | JA='長旅や悪天候で疲弊しているゲストのお迎え。個別の配慮が求められる' | EN='Welcoming a guest worn out by a long trip or bad weather. Individual consideration is needed'
+ 93 | CH1-L05-03     | テンプレ3：選択問題       | 問いかけ                 | JA='疲れている様子のゲストを迎える際、プロとして最も適切な対応はどちらですか？' | EN='When greeting a guest who looks tired, which is the most appropriate professional response?'
+ 94 | CH1-L05-03     | テンプレ3：選択問題       | 選択肢A                 | JA='誰に対しても均一なサービスを提供するため、定型のマニュアル文で案内する' | EN='Use a standard manual script to give everyone the same uniform service'
+ 95 | CH1-L05-03     | テンプレ3：選択問題       | 選択肢B                 | JA='天候や大荷物、移動の疲れを察し、状況に応じた労いの一言を添える' | EN='Sense the weather, heavy luggage and travel fatigue, and add a fitting kind word'
+ 96 | CH1-L05-03     | テンプレ3：選択問題       | 正解（A/B）              | JA='B' | EN=''
+ 97 | CH1-L05-04     | テンプレ4：結果解説       | [画像]SHOSAさん（ミニ）      | JA='COMMON-CHAR-SHOSA-NORMAL' | EN=''
+ 98 | CH1-L05-04     | テンプレ4：結果解説       | 1段階目：シンプル理由          | JA='一律の接客（A）ではなく、ゲストの『旅の文脈』を察した温かい一言（B）がホスピタリティです。' | EN="A uniform approach (A) isn't hospitality; a warm word that reads the guest's 'travel context' (B) is."
+ 99 | CH1-L05-04     | テンプレ4：結果解説       | キャラ誘導セリフ             | JA='プロの『雑談と気配り』、他にはどんなものがあるかな？' | EN="What other 'small talk and thoughtful touches' do the pros use?"
+100 | CH1-L05-04     | テンプレ4：結果解説       | SHOSA Focus　ボタンテキスト  | JA='雨天時の「タオルをお使いになりますか？」や大荷物への「お運びしましょうか」など、相手の状況（天候・荷物・移動）に応じた配慮がプロの技です。チェックイン中の数十秒のスキマ時間にも、プライベートに踏み込みすぎない自然な問いかけで距離を縮め、旅の疲れをほぐすホスピタリティを提供します。' | EN="Offering 'Would you like a towel?' on a rainy day, or 'May I carry that for you?' for heavy luggage – care that responds to the guest's situation (weather, luggage, travel) is a professional skill. Even in the few spare seconds during check-in, a natural question that doesn't pry into private matters closes the distance and offers hospitality that eases the fatigue of travel."
+101 | CH1-L05-04     | テンプレ4：結果解説       | [画像]SHOSA Focus/静止画  | JA='濡れた折りたたみ傘の横に、ふんわりとした白いタオル1枚' | EN=''
+102 |                | 【18:00】L06：休憩の心得 |                      | JA='' | EN=''
+103 | CH1-L06-01     | テンプレ1：場面転換       | 時刻                   | JA='18:00' | EN=''
+104 | CH1-L06-01     | テンプレ1：場面転換       | タイトル                 | JA='休憩の心得と持ち場離脱' | EN='Taking a Break & Leaving Your Post'
+105 | CH1-L06-01     | テンプレ1：場面転換       | ナレーション               | JA='時刻は18:00。日勤スタッフは夜のオペレーションに向けて順次休憩に入ります。' | EN="It's 18:00. Day-shift staff take turns going on break ahead of the evening operations."
+106 | CH1-L06-02     | テンプレ2：状況説明       | [画像]キャラクター（1・2ターン目）  | JA='CH1-CHAR-FRONT-LATE-NORMAL' | EN=''
+107 | CH1-L06-02     | テンプレ2：状況説明       | [画像]SHOSAさん（2ターン目）   | JA='COMMON-CHAR-SHOSA-SMILE' | EN=''
+108 | CH1-L06-02     | テンプレ2：状況説明       | セリフ（1ターン目）発話者名       | JA='フロントスタッフ' | EN='Front Desk Staff'
+109 | CH1-L06-02     | テンプレ2：状況説明       | セリフ（1ターン目）           | JA='先輩、混雑が落ち着きましたので、18:00より交代で休憩に入ってもよろしいでしょうか。' | EN='Senior, the rush has calmed down, so may I take my break from 18:00 in rotation?'
+110 | CH1-L06-02     | テンプレ2：状況説明       | セリフ（2ターン目・任意）        | JA='状況を確認した上で先輩に許可を得て、引き継ぎの準備を進めていますね。' | EN="You checked the situation, got your senior's permission, and are preparing the handover."
+111 | CH1-L06-03     | テンプレ3：選択問題       | [画像]キャラクター           | JA='テンプレ2と同じ' | EN=''
+112 | CH1-L06-03     | テンプレ3：選択問題       | Situationタグ          | JA='カウンターが落ち着き休憩時間になった。持ち場を離れる際の対応' | EN="The counter is quiet and it's break time. How to leave your post"
+113 | CH1-L06-03     | テンプレ3：選択問題       | 問いかけ                 | JA='勤務中に持ち場を離れる際、プロが徹底すべき行動として正しいのはどちらですか？' | EN='When leaving your post during work, which action should a professional always follow?'
+114 | CH1-L06-03     | テンプレ3：選択問題       | 選択肢A                 | JA='定刻になったら隣のスタッフに目配せをして、そのまま静かに持ち場を抜ける' | EN='At the set time, give your neighbor a glance and quietly slip away'
+115 | CH1-L06-03     | テンプレ3：選択問題       | 選択肢B                 | JA='デスクを整え、先輩へ確認後にインカムで全体へ「休憩に入ります」と共有する' | EN="Tidy your desk, get your senior's OK, then say “Going on break” over the headset"
+116 | CH1-L06-03     | テンプレ3：選択問題       | 正解（A/B）              | JA='B' | EN=''
+117 | CH1-L06-04     | テンプレ4：結果解説       | [画像]SHOSAさん（ミニ）      | JA='COMMON-CHAR-SHOSA-NORMAL' | EN=''
+118 | CH1-L06-04     | テンプレ4：結果解説       | 1段階目：シンプル理由          | JA='無言離脱（A）は現場に穴を作ります。デスク整理・確認・インカム共有（B）がチームの鉄則です。' | EN="Leaving silently (A) leaves a gap on the floor; tidying up, checking and announcing over the headset (B) is the team's golden rule."
+119 | CH1-L06-04     | テンプレ4：結果解説       | キャラ誘導セリフ             | JA='無言の離脱は現場を混乱させるんだ。インカムでの周知と復帰時の身だしなみ、見てみよう！' | EN="Leaving silently confuses the floor. Let's look at headset announcements and grooming when you return!"
+120 | CH1-L06-04     | テンプレ4：結果解説       | SHOSA Focus　ボタンテキスト  | JA='どんな短時間の離脱でも無言はNGです。デスクを整え先輩の許可を得たら、必ずインカムで全体へ「〇〇、休憩に入ります」と周知します。また休憩後は、姿見の前で髪の乱れや名札の位置など身だしなみを再確認してから現場へ復帰します。チーム全体がスムーズに動くための基本動作です。' | EN="No matter how short, leaving silently is not acceptable. Once you've tidied your desk and gotten your senior's permission, always announce to everyone over the headset: '[Name], going on break.' After your break, check your grooming in the full-length mirror – hair out of place, name tag position – before returning to the floor. These are basic actions that keep the whole team running smoothly."
+121 | CH1-L06-04     | テンプレ4：結果解説       | [画像]SHOSA Focus/静止画  | JA='姿見の前で名札の位置を直す手元' | EN=''
+122 |                | 【19:00】L07：アレルギー情報の厨房共有・ネームコール接遇 |                      | JA='' | EN=''
+123 | CH1-L07-01     | テンプレ1：場面転換       | 時刻                   | JA='19:00' | EN=''
+124 | CH1-L07-01     | テンプレ1：場面転換       | タイトル                 | JA='アレルギー情報共有・ネームコール接遇' | EN='Sharing Allergy Info & Name-Call Service'
+125 | CH1-L07-01     | テンプレ1：場面転換       | ナレーション               | JA='時刻は19:00。ディナーのピーク。特別な時間を過ごすゲストに丁寧な接遇を提供します。' | EN="It's 19:00, the dinner peak. You provide courteous service to guests enjoying a special time."
+126 | CH1-L07-02     | テンプレ2：状況説明       | [画像]キャラクター（1・2ターン目）  | JA='CH1-CHAR-RESTAURANT-SMILE' | EN=''
+127 | CH1-L07-02     | テンプレ2：状況説明       | [画像]SHOSAさん（2ターン目）   | JA='COMMON-CHAR-SHOSA-SMILE' | EN=''
+128 | CH1-L07-02     | テンプレ2：状況説明       | セリフ（1ターン目）発話者名       | JA='配膳スタッフ' | EN='Restaurant Server'
+129 | CH1-L07-02     | テンプレ2：状況説明       | セリフ（1ターン目）           | JA='〇〇様、お待たせいたしました。こちら本日のお魚料理でございます。' | EN="Thank you for waiting, Mr./Ms. ○○. Here is today's fish dish."
+130 | CH1-L07-02     | テンプレ2：状況説明       | セリフ（2ターン目・任意）        | JA='事前に引き継いだアレルギー情報を確認し、配膳の準備を進めていますね。' | EN='You checked the allergy information handed over beforehand and are preparing to serve.'
+131 | CH1-L07-03     | テンプレ3：選択問題       | [画像]キャラクター           | JA='テンプレ2と同じ' | EN=''
+132 | CH1-L07-03     | テンプレ3：選択問題       | Situationタグ          | JA='ディナーの料理提供。他部署からアレルギー情報の引き継ぎが入っている' | EN='Serving dinner. Allergy information has been handed over from another department'
+133 | CH1-L07-03     | テンプレ3：選択問題       | 問いかけ                 | JA='アレルギー配慮料理を提供する際、プロが最も重視する接遇動作はどちらですか？' | EN='When serving an allergy-conscious dish, which service action do professionals value most?'
+134 | CH1-L07-03     | テンプレ3：選択問題       | 選択肢A                 | JA='厨房と二重確認し、ネームコール（お名前呼び）でアレルギー除去を伝えて提供する' | EN='Double-check with the kitchen; serve by name (name-call), noting the allergen is removed'
+135 | CH1-L07-03     | テンプレ3：選択問題       | 選択肢B                 | JA='引き継がれたアレルギー情報をそのまま信じ、お客様にはお伝えせず料理を提供する' | EN='Trust the handed-over allergy info as is and serve without telling the guest'
+136 | CH1-L07-03     | テンプレ3：選択問題       | 正解（A/B）              | JA='A' | EN=''
+137 | CH1-L07-04     | テンプレ4：結果解説       | [画像]SHOSAさん（ミニ）      | JA='COMMON-CHAR-SHOSA-NORMAL' | EN=''
+138 | CH1-L07-04     | テンプレ4：結果解説       | 1段階目：シンプル理由          | JA='無言で出す（B）のは不安を与えます。厨房での二重確認と提示時の明確な言葉（A）が安心を生みます。' | EN='Serving silently (B) causes unease; a double-check in the kitchen and clear words when serving (A) create peace of mind.'
+139 | CH1-L07-04     | テンプレ4：結果解説       | キャラ誘導セリフ             | JA='言葉で伝える配慮が安心感をつくるんだ。アレルギー提供における『二重確認』、見てみよう！' | EN="Care expressed in words brings reassurance. Let's see the 'double-check' for serving allergy meals!"
+140 | CH1-L07-04     | テンプレ4：結果解説       | SHOSA Focus　ボタンテキスト  | JA='アレルギー対応は厨房の正確な調理と、ホールの確実な伝達で完成します。ホールスタッフは提供前に厨房と伝票を二重確認します。提供時は「〇〇様、エビを除去したお料理です」とネームコール（お名前を添えた案内）で提示することで、ゲストは自分のために配慮された料理だと確信し、安心して食事を楽しめます。' | EN="Allergy care is completed by accurate cooking in the kitchen and reliable communication on the floor. Before serving, floor staff double-check the order slip with the kitchen. When serving, present the dish with a name-call (addressing the guest by name), such as 'Mr./Ms. ○○, this dish has the shrimp removed.' This lets the guest feel sure the dish was prepared with them in mind, and enjoy their meal with peace of mind."
+141 | CH1-L07-04     | テンプレ4：結果解説       | [画像]SHOSA Focus/静止画  | JA='提供前の二重確認：厨房のカウンター越しに、伝票を指さして確認し合うシェフとホールスタッフの手元（解説文の「二重確認」に対応）' | EN=''
+142 |                | 【23:00】L08：閑散時間帯の振る舞い |                      | JA='' | EN=''
+143 | CH1-L08-01     | テンプレ1：場面転換       | 時刻                   | JA='23:00' | EN=''
+144 | CH1-L08-01     | テンプレ1：場面転換       | タイトル                 | JA='深夜帯のプロとしての振る舞い' | EN='Professional Conduct Late at Night'
+145 | CH1-L08-01     | テンプレ1：場面転換       | ナレーション               | JA='時刻は23:00。館内が静まり返る深夜帯は、ホテル全体の安全と静寂を守る緊張感のある時間です。' | EN="It's 23:00. When the hotel falls silent late at night, it's a tense time to protect the safety and calm of the entire hotel."
+146 | CH1-L08-02     | テンプレ2：状況説明       | [画像]キャラクター（1・2ターン目）  | JA='CH1-CHAR-FRONT-NIGHT-SERIOUS' | EN=''
+147 | CH1-L08-02     | テンプレ2：状況説明       | [画像]SHOSAさん（2ターン目）   | JA='COMMON-CHAR-SHOSA-SMILE' | EN=''
+148 | CH1-L08-02     | テンプレ2：状況説明       | セリフ（1ターン目）発話者名       | JA='フロントスタッフ' | EN='Front Desk Staff'
+149 | CH1-L08-02     | テンプレ2：状況説明       | セリフ（1ターン目）           | JA='（カウンター作業を進めつつ、定期的にロビー全体やエントランスに視線を配ろう）' | EN='(While working at the counter, glance regularly across the whole lobby and entrance.)'
+150 | CH1-L08-02     | テンプレ2：状況説明       | セリフ（2ターン目・任意）        | JA='ゲストの姿がない時間帯でも、私語を慎み、高い緊張感を保っていますね。' | EN='Even with no guests around, you refrain from chatting and keep a high level of focus.'
+151 | CH1-L08-03     | テンプレ3：選択問題       | [画像]キャラクター           | JA='テンプレ2と同じ' | EN=''
+152 | CH1-L08-03     | テンプレ3：選択問題       | Situationタグ          | JA='閑散とした深夜時間帯での対応。プロとして求められる姿勢' | EN='Handling the quiet late-night hours. The attitude expected of a professional'
+153 | CH1-L08-03     | テンプレ3：選択問題       | 問いかけ                 | JA='ゲストがいない閑散とした深夜帯での立ち振る舞いとして、最も適切なのはどちらですか？' | EN='Which is the most appropriate way to conduct yourself in the quiet late-night hours with no guests?'
+154 | CH1-L08-03     | テンプレ3：選択問題       | 選択肢A                 | JA='作業中も私語を慎み、姿勢を正して定期的にエントランスへ視線を配る' | EN='Stay quiet while working, keep good posture, and regularly look toward the entrance'
+155 | CH1-L08-03     | テンプレ3：選択問題       | 選択肢B                 | JA='ゲストがいないため手元の作業に集中し、同僚との会話を楽しむ' | EN='Since no guests are around, focus on your task and enjoy chatting with coworkers'
+156 | CH1-L08-03     | テンプレ3：選択問題       | 正解（A/B）              | JA='A' | EN=''
+157 | CH1-L08-04     | テンプレ4：結果解説       | [画像]SHOSAさん（ミニ）      | JA='COMMON-CHAR-SHOSA-NORMAL' | EN=''
+158 | CH1-L08-04     | テンプレ4：結果解説       | 1段階目：シンプル理由          | JA='私語や作業への没頭（B）はNG。深夜であってもロビーは常に見られている意識を持つ（A）ことがプロです。' | EN='Chatting or being absorbed in work (B) is a no. Even late at night, staying aware that the lobby is always being seen (A) is what makes a pro.'
+159 | CH1-L08-04     | テンプレ4：結果解説       | キャラ誘導セリフ             | JA='誰もいないロビーこそプロの姿勢が出るんだ。深夜の目配りと緊張感の理由、見てみよう！' | EN="A pro's attitude shows in an empty lobby. Let's see why late-night vigilance and focus matter!"
+160 | CH1-L08-04     | テンプレ4：結果解説       | SHOSA Focus　ボタンテキスト  | JA='ホテルは非日常を演出・提供する空間です。たとえ深夜の閑散としたロビーであっても手元での作業や締め業務を進める際も私語を慎み、定期的に視線を上げてロビー全体やエントランスに目を配ることで、急な来客や不審者、異変に即座に気づくことができます。また、未完了のタスクは明示して翌朝の早番へ確実に引き継ぎます。' | EN='A hotel is a space that creates and delivers a special, out-of-the-ordinary experience. Even in a quiet lobby late at night, you refrain from chatting while doing desk work or closing tasks, and regularly look up to scan the whole lobby and entrance, so you can immediately notice sudden visitors, suspicious people, or anything unusual. Also, clearly mark unfinished tasks and reliably hand them over to the early shift the next morning.'
+161 | CH1-L08-04     | テンプレ4：結果解説       | [画像]SHOSA Focus/静止画  | JA='照明を落としたロビーで、カウンターのライトだけが灯っている' | EN=''
+162 |                | 【08:00】L09：急ぐお客様への気配り |                      | JA='' | EN=''
+163 | CH1-L09-01     | テンプレ1：場面転換       | 時刻                   | JA='08:00' | EN=''
+164 | CH1-L09-01     | テンプレ1：場面転換       | タイトル                 | JA='急ぐお客様への気配り' | EN='Attending to Guests in a Hurry'
+165 | CH1-L09-01     | テンプレ1：場面転換       | ナレーション               | JA='朝がきました。チェックアウトに向けてホテルもお客様も動き出します。' | EN='Morning has come. The hotel and its guests start moving toward check-out.'
+166 | CH1-L09-02     | テンプレ2：状況説明       | [画像]キャラクター（1・2ターン目）  | JA='CH1-CHAR-RESTAURANT-GUIDE' | EN=''
+167 | CH1-L09-02     | テンプレ2：状況説明       | [画像]SHOSAさん（2ターン目）   | JA='COMMON-CHAR-SHOSA-SMILE' | EN=''
+168 | CH1-L09-02     | テンプレ2：状況説明       | セリフ（1ターン目）発話者名       | JA='レストランスタッフ' | EN='Restaurant Staff'
+169 | CH1-L09-02     | テンプレ2：状況説明       | セリフ（1ターン目）           | JA='おはようございます。恐れ入ります、お急ぎでございますか？' | EN='Good morning. Excuse me – are you in a hurry?'
+170 | CH1-L09-02     | テンプレ2：状況説明       | セリフ（2ターン目・任意）        | JA='ゲストの様子から急ぎかを見極め、所要時間の案内や代替案の準備をしていますね。' | EN="You read the guest's manner to judge whether they're rushed, and prepare an estimated wait and alternatives."
+171 | CH1-L09-03     | テンプレ3：選択問題       | [画像]キャラクター           | JA='テンプレ2と同じ' | EN=''
+172 | CH1-L09-03     | テンプレ3：選択問題       | Situationタグ          | JA='朝食会場の混雑帯。ゆっくりしたいゲストと出発を急ぐゲストが混在' | EN='Breakfast venue at its busiest. Guests who want to relax and guests rushing to depart are mixed together'
+173 | CH1-L09-03     | テンプレ3：選択問題       | 問いかけ                 | JA='出発を急ぐ様子のゲストが並んでいる際、プロとして最も適切な対応はどちらですか？' | EN='When guests who look to be in a hurry to leave are waiting in line, which response is most appropriate for a professional?'
+174 | CH1-L09-03     | テンプレ3：選択問題       | 選択肢A                 | JA='順番通りに案内するため、特に声をかけずそのまま並んで待ってもらう' | EN='To seat people in order, say nothing and simply have them wait in line'
+175 | CH1-L09-03     | テンプレ3：選択問題       | 選択肢B                 | JA='急ぎか確認し、案内までの見通しやテイクアウトなどの代替案を提案する' | EN="Check if they're in a hurry, and offer a wait estimate or alternatives like takeout"
+176 | CH1-L09-03     | テンプレ3：選択問題       | 正解（A/B）              | JA='B' | EN=''
+177 | CH1-L09-04     | テンプレ4：結果解説       | [画像]SHOSAさん（ミニ）      | JA='COMMON-CHAR-SHOSA-NORMAL' | EN=''
+178 | CH1-L09-04     | テンプレ4：結果解説       | 1段階目：シンプル理由          | JA='単に順番を待たせる（A）のではなく、ゲストの状況を察して見通しや選択肢を示す（B）のがプロです。' | EN="Simply making guests wait their turn (A) isn't enough; a pro reads the situation and offers a time outlook and options (B)."
+179 | CH1-L09-04     | テンプレ4：結果解説       | キャラ誘導セリフ             | JA='相手の仕草から『時間の焦り』を読み取るんだ。朝のニーズ見極めのコツ、見てみよう！' | EN="Read the 'rush' in a guest's gestures. Let's see the tips for spotting morning needs!"
+180 | CH1-L09-04     | テンプレ4：結果解説       | SHOSA Focus　ボタンテキスト  | JA='朝の朝食会場には「ゆっくりしたいゲスト」と「出発を急ぐゲスト」が混在します。時計を見る・荷物を気にするなどの仕草からニーズを瞬時に察し、「ご案内まで約5分ですがお急ぎでしょうか」と声をかける判断が重要です。所要時間を示したり、施設によってはテイクアウトの提案をすることで、出発前のストレスを最小限に抑えられます。' | EN="At the breakfast venue in the morning, guests who want to relax and guests rushing to leave are mixed together. Quickly sense their needs from gestures such as checking a watch or glancing at luggage, and judge when to ask, 'It will be about 5 minutes until we can seat you – are you in a hurry?' Giving a wait time and, where the venue allows, suggesting takeout keeps stress before departure to a minimum."
+181 | CH1-L09-04     | テンプレ4：結果解説       | [画像]SHOSA Focus/静止画  | JA='キャリーケースの持ち手に添えられた「搭乗券/乗車券」（急ぐ人を表現）' | EN=''
+182 |                | 【10:00】L10：立ち振る舞い（見送り余韻） |                      | JA='' | EN=''
+183 | CH1-L10-01     | テンプレ1：場面転換       | 時刻                   | JA='10:00' | EN=''
+184 | CH1-L10-01     | テンプレ1：場面転換       | タイトル                 | JA='チェックアウトと見送りの所作' | EN='Check-out and Farewell Manners'
+185 | CH1-L10-01     | テンプレ1：場面転換       | ナレーション               | JA='時刻は10:00。チェックアウトピークのフロント。滞在の最後の印象を決定づける時間です。' | EN="It's 10:00. The front desk is at check-out peak – the time that shapes the final impression of a stay."
+186 | CH1-L10-02     | テンプレ2：状況説明       | [画像]キャラクター（1・2ターン目）  | JA='CH1-CHAR-FRONT-EARLY-RECEIPT' | EN=''
+187 | CH1-L10-02     | テンプレ2：状況説明       | [画像]SHOSAさん（2ターン目）   | JA='COMMON-CHAR-SHOSA-SMILE' | EN=''
+188 | CH1-L10-02     | テンプレ2：状況説明       | セリフ（1ターン目）発話者名       | JA='フロントスタッフ' | EN='Front Desk Staff'
+189 | CH1-L10-02     | テンプレ2：状況説明       | セリフ（1ターン目）           | JA='領収書でございます。いってらっしゃいませ。(語先後礼＝言葉を先に、お辞儀は後で行う所作)' | EN='Here is your receipt. Please have a safe journey. (Gosen-goree: speak first, then bow)'
+190 | CH1-L10-02     | テンプレ2：状況説明       | セリフ（2ターン目・任意）        | JA='両手で丁寧にお渡しし、お見送り後もゲストの姿が見えなくなるまで視線を残していますね。' | EN="You hand it over with both hands, and even after the farewell, keep your eyes on the guest until they're out of sight."
+191 | CH1-L10-03     | テンプレ3：選択問題       | [画像]キャラクター           | JA='テンプレ2と同じ' | EN=''
+192 | CH1-L10-03     | テンプレ3：選択問題       | Situationタグ          | JA='チェックアウト手続きの完了時。精算を終えてゲストが出発する' | EN='Check-out complete. The guest has settled the bill and is departing'
+193 | CH1-L10-03     | テンプレ3：選択問題       | 問いかけ                 | JA='手続き終了後の「お見送り」の所作として、プロが行う最も望ましい対応はどちらですか？' | EN='After the procedure, which farewell etiquette is most desirable for a professional?'
+194 | CH1-L10-03     | テンプレ3：選択問題       | 選択肢A                 | JA='語先後礼でお辞儀をし、姿が見えなくなるまで心を込めて見送る' | EN="Bow with gosen-goree, and see the guest off sincerely until they're out of sight"
+195 | CH1-L10-03     | テンプレ3：選択問題       | 選択肢B                 | JA='領収書を渡したらすぐに次のゲストの呼び出しやPC作業に戻る' | EN='Hand over the receipt, then go straight back to the next guest or computer work'
+196 | CH1-L10-03     | テンプレ3：選択問題       | 正解（A/B）              | JA='A' | EN=''
+197 | CH1-L10-04     | テンプレ4：結果解説       | [画像]SHOSAさん（ミニ）      | JA='COMMON-CHAR-SHOSA-NORMAL' | EN=''
+198 | CH1-L10-04     | テンプレ4：結果解説       | 1段階目：シンプル理由          | JA='事務的な切り替え（B）は印象を下げます。姿が見えなくなるまで視線を送る余韻（A）が記憶に残ります。' | EN="Switching to business mode right away (B) lowers the impression; the lingering gaze until the guest is out of sight (A) is what's remembered."
+199 | CH1-L10-04     | テンプレ4：結果解説       | キャラ誘導セリフ             | JA='最後の数秒の姿勢でホテルの記憶が変わるんだ。プロの『見送り余韻』の所作、見てみよう！' | EN="Your posture in the final seconds shapes the guest's memory. Let's see the 'lingering farewell'!"
+200 | CH1-L10-04     | テンプレ4：結果解説       | SHOSA Focus　ボタンテキスト  | JA='ゲストは滞在の「最後」の印象を強く記憶します。物の両手渡しや「言葉を述べてからお辞儀をする（語先後礼）」といった基本所作はもちろん、お辞儀をした後にすぐ作業に戻らず、姿が見えなくなるまで視線を配る「余韻」が重要です。この丁寧な最後の一コマが、リピートに繋がる最高の思い出を作ります。' | EN="Guests strongly remember the 'last' impression of their stay. Beyond basics like handing items with both hands and 'speaking first, then bowing' (gosen-goree), what matters is the 'lingering farewell': after bowing, don't go straight back to work, but keep your eyes on the guest until they're out of sight. This courteous final moment creates the wonderful memory that brings guests back."
+201 | CH1-L10-04     | テンプレ4：結果解説       | [画像]SHOSA Focus/静止画  | JA='エントランスの扉の向こうへ、小さく遠ざかっていく人影' | EN=''
+202 |                | 【11:00】L11：清掃時の忘れ物発見対応 |                      | JA='' | EN=''
+203 | CH1-L11-01     | テンプレ1：場面転換       | 時刻                   | JA='11:00' | EN=''
+204 | CH1-L11-01     | テンプレ1：場面転換       | タイトル                 | JA='清掃時の忘れ物発見対応' | EN='Handling Lost Items While Cleaning'
+205 | CH1-L11-01     | テンプレ1：場面転換       | ナレーション               | JA='時刻は11:00。客室清掃中、出発後の部屋で貴重品の忘れ物を発見します。' | EN="It's 11:00. While cleaning a room after departure, you find a valuable item left behind."
+206 | CH1-L11-02     | テンプレ2：状況説明       | [画像]キャラクター（1・2ターン目）  | JA='CH1-CHAR-HOUSEKEEPING-NOTICE' | EN=''
+207 | CH1-L11-02     | テンプレ2：状況説明       | [画像]SHOSAさん（2ターン目）   | JA='COMMON-CHAR-SHOSA-SMILE' | EN=''
+208 | CH1-L11-02     | テンプレ2：状況説明       | セリフ（1ターン目）発話者名       | JA='-（セリフではないので記載なし）' | EN=''
+209 | CH1-L11-02     | テンプレ2：状況説明       | セリフ（1ターン目）           | JA='205号室のベッド脇にて指輪発見。部屋番号・場所・時刻を即時連絡します。' | EN='Ring found beside the bed in Room 205. Reporting room number, location, and time immediately.'
+210 | CH1-L11-02     | テンプレ2：状況説明       | セリフ（2ターン目・任意）        | JA='発見した瞬間に手を止め、正確な記録とフロントへの即時共有を行えていますね。' | EN='You stopped the moment you found it, recorded it accurately, and shared it with the Front Desk right away.'
+211 | CH1-L11-03     | テンプレ3：選択問題       | [画像]キャラクター           | JA='テンプレ2と同じ' | EN=''
+212 | CH1-L11-03     | テンプレ3：選択問題       | Situationタグ          | JA='客室清掃中の忘れ物発見。迅速な引き継ぎが求められる' | EN='Found a lost item while cleaning. A prompt handover is needed'
+213 | CH1-L11-03     | テンプレ3：選択問題       | 問いかけ                 | JA='出発後の客室で忘れ物を発見した際、清掃スタッフが最初にとるべき行動はどちらですか？' | EN='When you find a lost item in a room after the guest departs, what should cleaning staff do first?'
+214 | CH1-L11-03     | テンプレ3：選択問題       | 選択肢A                 | JA='清掃作業がすべて完了してから、まとめてワゴンに乗せてフロントへ届ける' | EN='Finish all cleaning first, then bring it to the Front Desk with the cart'
+215 | CH1-L11-03     | テンプレ3：選択問題       | 選択肢B                 | JA='部屋番号・場所・時間を記録し、その場ですぐにフロントへ連絡・連携する' | EN='Record the room number, location and time, and contact the Front Desk on the spot'
+216 | CH1-L11-03     | テンプレ3：選択問題       | 正解（A/B）              | JA='B' | EN=''
+217 | CH1-L11-04     | テンプレ4：結果解説       | [画像]SHOSAさん（ミニ）      | JA='COMMON-CHAR-SHOSA-NORMAL' | EN=''
+218 | CH1-L11-04     | テンプレ4：結果解説       | 1段階目：シンプル理由          | JA='まとめて報告（A）ではゲストが遠くへ離れてしまいます。発見即時の正確な共有（B）が鉄則です。' | EN='Reporting everything together (A) lets the guest get farther away; accurate sharing the instant you find it (B) is the rule.'
+219 | CH1-L11-04     | テンプレ4：結果解説       | キャラ誘導セリフ             | JA='1分の遅れで手遅れになることもあるんだ。客室清掃における『拾得物対応』、見てみよう！' | EN="A one-minute delay can be too late! Let's see how to handle 'found items' during room cleaning."
+220 | CH1-L11-04     | テンプレ4：結果解説       | SHOSA Focus　ボタンテキスト  | JA='忘れ物はゲストの大切な個人資産であり、発見時のスピードが命です。後回しにせず「部屋番号・発見場所・品名・時間」を正確に記録し、即座にフロントへ即時連絡します。また、客室清掃は前客の気配（髪の毛・指紋・匂い）を完全に消し去り、完璧な非日常空間を再生産するプロの誇りある仕事です。' | EN="A lost item is a guest's precious personal property, and speed is everything once you find it. Don't put it off: accurately record the room number, where it was found, the item, and the time, and contact the Front Desk immediately. Also, room cleaning is proud, professional work that completely erases all traces of the previous guest – hair, fingerprints, scent – and recreates a perfect, special space."
+221 | CH1-L11-04     | テンプレ4：結果解説       | [画像]SHOSA Focus/静止画  | JA='ベッドサイドに置かれた忘れ物の指輪（強調線などで、忘れ物だという気づきの演出）' | EN=''
+222 |                | ▼固有画面（テンプレ以外・画面ごとに個別仕様） |                      | JA='' | EN=''
+223 | CH1-GUIDE      | 固有画面             | メインタイトル              | JA='1章：Omotenashi Mindset' | EN='Chapter 1: Omotenashi Mindset'
+224 | CH1-GUIDE      | 固有画面             | サブタイトル               | JA='ホテルの一日に寄り添う「プロの思考と選択」' | EN="Follow a hotel day through a pro's thinking and choices"
+225 | CH1-GUIDE      | 固有画面             | 本文                   | JA='「おもてなし」とは、特別な演出のことだけではありません。それは、ゲストが言葉にする前に求めるものを察し、次の展開を先回りして準備する「姿勢」そのものです。この章では、あるホテルの1日をゲストの滞在体験を見ながら、日本の宿泊業の現場で求められる『目配り・気配り・手配り』の判断軸を身につけていきます。プロのOmotenashi Mindsetをインストールしましょう！' | EN="Omotenashi isn't only about special touches. It's an attitude: sensing what guests want before they say it, and preparing for what comes next. In this chapter, you'll follow one day at a hotel through the guest's stay experience and learn the judgment standards demanded on the floor of Japan's hospitality industry: 'mekubari, kikubari, tehaibari' (watchful eyes, thoughtful care, and well-prepared arrangements). Let's install a pro's Omotenashi Mindset!"
+226 | CH1-GUIDE      | 固有画面             | ボタンテキスト              | JA='START' | EN='START'
+227 | CH1-END        | 固有画面             | メインタイトル              | JA='1章 学習完了！' | EN='Chapter 1 Complete!'
+228 | CH1-END        | 固有画面             | 本文                   | JA='プロの仕事を観察し、日本の宿泊業の現場で求められるOmotenashi Mindsetを体験することができました！' | EN="You observed the work of pros and experienced the Omotenashi Mindset required in Japan's hospitality industry!"
+229 | CH1-END        | 固有画面             | 補足                   | JA='※いつでもホーム画面から全レッスンの振り返りが可能です' | EN='*You can review all lessons anytime from the Home screen'
+230 | CH1-END        | 固有画面             | 2章解放ラベル              | JA='2章：JOB診断 が解放されました' | EN='Chapter 2: JOB Assessment has been unlocked'
+231 | CH1-END        | 固有画面             | ボタンテキスト              | JA='START' | EN='START'
+232 |                | ▼レッスン共通見出し       |                      | JA='' | EN=''
+233 | CH1-COMMON-Q   | テンプレ3：選択問題       | 正解（A/B）              | JA='正解 or 不正解' | EN='Correct or Incorrect'
+234 | CH1-COMMON-SITU | テンプレ1：場面転換
+テンプレ2：状況説明 | SITUATION            | JA='SITUATION' | EN=''
+235 | CH1-COMMON-QUES | テンプレ3：選択問題       | QUESTION             | JA='QUESTION' | EN=''

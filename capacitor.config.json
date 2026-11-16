@@ -1,0 +1,12 @@
+{
+  "appId": "jp.framelaunch.shosa",
+  "appName": "SHOSA",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "ios": {
+    "contentInset": "always",
+    "preferredContentMode": "mobile"
+  }
+}

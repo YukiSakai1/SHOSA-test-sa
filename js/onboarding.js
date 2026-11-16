@@ -1,3 +1,4 @@
+"use strict";
 /* =========================================================
    ONBOARDING CONTROLLER — 0章「登録開始〜SHOSAパスポート完成」
    の画面遷移・状態管理。シナリオ内容は onboarding_data.js を参照。
@@ -5,7 +6,6 @@
    「戻る」を押すと入力内容・選択済みの回答が復元された状態で
    前の画面に戻れる。
    ========================================================= */
-
 /* =========================================================
    プロフィールの永続化（localStorage）
    一度入力したプロフィールはブラウザに保存され、次回以降は
@@ -13,24 +13,23 @@
    保存に失敗する環境（プライベートモード等）でもエラーにならないようフォールバックする。
    ========================================================= */
 const PROFILE_KEY = 'shosa_game_profile';
-
 function loadSavedProfile() {
-  try {
-    const raw = localStorage.getItem(PROFILE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch (e) {
-    return null;
-  }
+    try {
+        const raw = localStorage.getItem(PROFILE_KEY);
+        return raw ? JSON.parse(raw) : null;
+    }
+    catch (e) {
+        return null;
+    }
 }
-
 function saveProfile(profile) {
-  try {
-    localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
-  } catch (e) {
-    /* storage unavailable — ignore */
-  }
+    try {
+        localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+    }
+    catch (e) {
+        /* storage unavailable — ignore */
+    }
 }
-
 /* =========================================================
    ヒアリング・適性診断の永続化（localStorage）
    一度回答すると、次回以降は自動でスキップされる。
@@ -39,701 +38,1199 @@ function saveProfile(profile) {
    ========================================================= */
 const HEARING_KEY = 'shosa_game_hearing_answers';
 const APTITUDE_KEY = 'shosa_game_aptitude_scores';
-
 function loadSavedHearingAnswers() {
-  try {
-    const raw = localStorage.getItem(HEARING_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch (e) {
-    return null;
-  }
+    try {
+        const raw = localStorage.getItem(HEARING_KEY);
+        return raw ? JSON.parse(raw) : null;
+    }
+    catch (e) {
+        return null;
+    }
 }
 function saveHearingAnswers(answers) {
-  try { localStorage.setItem(HEARING_KEY, JSON.stringify(answers)); } catch (e) { /* ignore */ }
+    try {
+        localStorage.setItem(HEARING_KEY, JSON.stringify(answers));
+    }
+    catch (e) { /* ignore */ }
 }
 function isHearingComplete(answers) {
-  return !!answers && ONBOARDING_DATA.hearings.every(h => !!answers[h.key]);
+    return !!answers && ONBOARDING_DATA.hearings.every(h => !!answers[h.key]);
 }
-
+function getAptitudeQuestionKey(q) {
+    return q && q.id != null ? `q${q.id}` : (q.dimension || '');
+}
+function getQuestionAptitudeScore(scores, q) {
+    if (!scores)
+        return undefined;
+    const val = scores[getAptitudeQuestionKey(q)];
+    return val != null ? val : undefined;
+}
 function loadSavedAptitudeScores() {
-  try {
-    const raw = localStorage.getItem(APTITUDE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch (e) {
-    return null;
-  }
+    try {
+        const raw = localStorage.getItem(APTITUDE_KEY);
+        return raw ? JSON.parse(raw) : null;
+    }
+    catch (e) {
+        return null;
+    }
 }
 function saveAptitudeScores(scores) {
-  try { localStorage.setItem(APTITUDE_KEY, JSON.stringify(scores)); } catch (e) { /* ignore */ }
+    try {
+        localStorage.setItem(APTITUDE_KEY, JSON.stringify(scores));
+    }
+    catch (e) { /* ignore */ }
 }
 function isAptitudeComplete(scores) {
-  return !!scores && ONBOARDING_DATA.aptitudeQuestions.every(q => scores[q.dimension] != null);
+    if (!scores)
+        return false;
+    const hasPerQuestionKeys = ONBOARDING_DATA.aptitudeQuestions.some(q => scores[getAptitudeQuestionKey(q)] != null);
+    if (hasPerQuestionKeys) {
+        return ONBOARDING_DATA.aptitudeQuestions.every(q => getQuestionAptitudeScore(scores, q) != null);
+    }
+    return ONBOARDING_DATA.aptitudeQuestions.every(q => scores[q.dimension] != null);
 }
-
 function isProfileComplete(p) {
-  return !!(p && p.gender && p.name && p.birthdate && p.avatar);
+    return !!(p && p.gender && p.name && p.birthdate);
 }
-
 /* =========================================================
    学習スケジュール設定の永続化（localStorage）
    ========================================================= */
 const SCHEDULE_KEY = 'shosa_game_schedule';
-
 function loadSavedSchedule() {
-  try {
-    const raw = localStorage.getItem(SCHEDULE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch (e) {
-    return null;
-  }
+    try {
+        const raw = localStorage.getItem(SCHEDULE_KEY);
+        return raw ? JSON.parse(raw) : null;
+    }
+    catch (e) {
+        return null;
+    }
 }
 function saveSchedule(schedule) {
-  try { localStorage.setItem(SCHEDULE_KEY, JSON.stringify(schedule)); } catch (e) { /* ignore */ }
+    try {
+        localStorage.setItem(SCHEDULE_KEY, JSON.stringify(schedule));
+    }
+    catch (e) { /* ignore */ }
 }
-
+/* =========================================================
+   完全リセット（タイトル画面の「最初からやり直す」用）
+   プロフィール・ヒアリング回答・適性診断・学習スケジュール・
+   ゲーム進捗（PROGRESS_KEY, app.js側）をすべて削除し、
+   初回ログイン時と同じまっさらな状態に戻す。
+   ハイスコア（HIGH_SCORE_KEY）は個人の実績なので、
+   ここではリセット対象に含めない。
+   ========================================================= */
+function resetAllSavedData() {
+    try {
+        localStorage.removeItem(PROFILE_KEY);
+        localStorage.removeItem(HEARING_KEY);
+        localStorage.removeItem(APTITUDE_KEY);
+        localStorage.removeItem(SCHEDULE_KEY);
+        if (typeof PROGRESS_KEY !== 'undefined')
+            localStorage.removeItem(PROGRESS_KEY);
+    }
+    catch (e) {
+        /* storage unavailable — ignore */
+    }
+}
 const obState = {
-  japaneseLevel: null,
-  languageSetting: "easy", // 推奨設定の初期値
-  slideIndex: 0,
-  hearingIndex: 0,
-  aptitudeIndex: 0,
-  answers: { touchpoint: null, purpose: null, interest: null, concern: null },
-  aptitudeScores: {},
-  profile: { gender: null, name: "", country: "", birthdate: "", avatar: null, voiceType: "A" },
-  schedule: {
-    preferredTime: null,
-    notifyTime: "20:00",
-    notifyEnabled: true,
-    lessonsPerDay: 1,
-    days: { mon: true, tue: true, wed: true, thu: true, fri: true, sat: false, sun: false },
-    streakGoal: null
-  }
+    languageSetting: null,
+    slideIndex: 0,
+    hearingIndex: 0,
+    aptitudeIndex: 0,
+    answers: { touchpoint: null, purpose: null, interest: null, concern: null },
+    aptitudeScores: {},
+    profile: { gender: null, name: "", country: "", birthdate: "", avatar: null, voiceType: "A" },
+    schedule: {
+        preferredTime: null,
+        notifyTime: "10:30",
+        notifyEnabled: true,
+        lessonsPerDay: 1,
+        days: { mon: true, tue: true, wed: true, thu: true, fri: true, sat: false, sun: false },
+        streakGoal: null
+    }
 };
-
 /* ---------- 0b. STORY COVER（プログラム全体の導入。Figma「ホテルスタッフ体験」に対応） ---------- */
 function loadStoryCover() {
-  showScreen('screen-story-cover');
+    showScreen('screen-story-cover');
 }
-$('btn-story-cover-next').addEventListener('click', () => goTo(loadLevelCheck));
-
-/* ---------- 1b/1c. SHOSA Ready CHECK ＋ 日本語レベル確認（統合済み） ---------- */
-
-function loadLevelCheck() {
-  const wrap = $('ob-level-options');
-  wrap.innerHTML = '';
-  const nextBtn = $('btn-ob-level-next');
-  ONBOARDING_DATA.japaneseLevels.forEach(level => {
-    const btn = document.createElement('button');
-    btn.className = 'ob-option-btn' + (level === obState.japaneseLevel ? ' selected' : '');
-    btn.textContent = level;
-    btn.addEventListener('click', () => {
-      wrap.querySelectorAll('.ob-option-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      obState.japaneseLevel = level;
-      nextBtn.disabled = false;
-    });
-    wrap.appendChild(btn);
-  });
-  nextBtn.disabled = !obState.japaneseLevel;
-  showScreen('screen-ob-level');
-}
-$('btn-ob-level-next').addEventListener('click', () => goTo(loadRecommend));
-
-/* ---------- 1d/1e. 言語表示設定 ---------- */
-function loadRecommend() {
-  showScreen('screen-ob-recommend');
-}
-
-$('btn-ob-recommend-next').addEventListener('click', () => {
-  obState.languageSetting = obState.languageSetting || 'easy';
-  goTo(loadIntroSlide, 0);
-});
-$('btn-ob-recommend-change').addEventListener('click', () => goTo(loadLangSelect));
-
+$('btn-story-cover-next').addEventListener('click', () => goTo(loadLangSelect));
+/* ---------- 1e. 言語表示設定 (Figma CH0-08) ---------- */
 function loadLangSelect() {
-  const list = $('ob-lang-list');
-  list.innerHTML = '';
-  const nextBtn = $('btn-ob-langselect-next');
-  ONBOARDING_DATA.languageOptions.forEach(opt => {
-    const row = document.createElement('div');
-    row.className = 'ob-lang-item' + (opt.id === obState.languageSetting ? ' selected' : '');
-    row.innerHTML = `
-      <div class="ob-lang-item-main">
-        <span class="ob-lang-icon">${opt.icon}</span>
-        <span>${opt.label}</span>
-      </div>
-      <span class="ob-select-badge">S</span>`;
-    row.addEventListener('click', () => {
-      list.querySelectorAll('.ob-lang-item').forEach(r => r.classList.remove('selected'));
-      row.classList.add('selected');
-      obState.languageSetting = opt.id;
-      nextBtn.disabled = false;
+    const list = $('ob-lang-list');
+    list.innerHTML = '';
+    const nextBtn = $('btn-ob-langselect-next');
+    nextBtn.textContent = 'NEXT';
+    // Figma CH0-08 では初期状態で NORMAL JAPANESE が選択されている
+    if (!obState.languageSetting) {
+        obState.languageSetting = 'normal';
+    }
+    const flags = {
+        normal: 'assets/images/icon_flag_japan.png',
+        english: 'assets/images/icon_flag_usa.png'
+    };
+    ONBOARDING_DATA.languageOptions.forEach(opt => {
+        const isSelected = opt.id === obState.languageSetting;
+        const card = document.createElement('div');
+        card.className = 'langselect-ticket-card' + (isSelected ? ' selected' : '');
+        card.dataset.id = opt.id;
+        const flagSrc = flags[opt.id] || (opt.flag === 'jp' ? 'assets/images/icon_flag_japan.png' : 'assets/images/icon_flag_usa.png');
+        card.innerHTML = `
+      <img src="${flagSrc}" alt="${opt.label}" class="ticket-flag-img">
+      <span class="ticket-label">${opt.label}</span>
+    `;
+        card.addEventListener('click', () => {
+            list.querySelectorAll('.langselect-ticket-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            obState.languageSetting = opt.id;
+            const chosenLang = opt.id === 'english' ? 'en' : 'ja';
+            if (window.currentAppLang !== chosenLang) {
+                window.currentAppLang = chosenLang;
+                if (typeof applyAppLanguage === 'function')
+                    applyAppLanguage(chosenLang);
+            }
+            nextBtn.disabled = false;
+        });
+        list.appendChild(card);
     });
-    list.appendChild(row);
-  });
-  nextBtn.disabled = !obState.languageSetting;
-  showScreen('screen-ob-langselect');
+    nextBtn.disabled = !obState.languageSetting;
+    showScreen('screen-ob-langselect');
 }
-$('btn-ob-langselect-next').addEventListener('click', () => goTo(loadIntroSlide, 0));
-
-/* ---------- 1f. キャラクター紹介カルーセル ---------- */
-function renderObDots(container, total, activeIndex) {
-  container.innerHTML = '';
-  for (let i = 0; i < total; i++) {
-    const d = document.createElement('span');
-    d.className = 'ob-dot' + (i === activeIndex ? ' active' : '');
-    container.appendChild(d);
-  }
-}
-
+$('btn-ob-langselect-next').addEventListener('click', () => {
+    const chosenLang = obState.languageSetting === 'english' ? 'en' : 'ja';
+    if (window.currentAppLang !== chosenLang) {
+        window.currentAppLang = chosenLang;
+        if (typeof applyAppLanguage === 'function')
+            applyAppLanguage(chosenLang);
+    }
+    goTo(loadIntroSlide, 0);
+});
+/* ---------- 1f. キャラクター紹介カルーセル (Figma CH0-03 〜 CH0-06) ---------- */
 function loadIntroSlide(i) {
-  obState.slideIndex = i;
-  const slide = ONBOARDING_DATA.introSlides[i];
-  const content = $('ob-intro-content');
-  content.innerHTML = '';
-
-  if (slide.type === 'collage') {
-    content.innerHTML = `
-      <div class="ob-collage-diagonal">
-        <div class="panel panel-top" style="background-image:url('https://images.pexels.com/photos/3771087/pexels-photo-3771087.jpeg?auto=compress&cs=tinysrgb&h=500&fit=crop&w=900');">
-          <span class="panel-caption">アプリ内学習の場面1</span>
+    obState.slideIndex = i;
+    const slide = ONBOARDING_DATA.introSlides[i];
+    const content = $('ob-intro-content');
+    content.innerHTML = '';
+    const isEn = window.currentAppLang === 'en';
+    const goldDividerSvg = `
+    <div class="intro-gold-divider">
+      <svg viewBox="0 0 200 10" width="180" height="10">
+        <line x1="8" y1="5" x2="72" y2="5" stroke="#E6D3A3" stroke-width="1.2"/>
+        <polygon points="78,5 81,2 84,5 81,8" fill="#E6D3A3"/>
+        <polygon points="87,5 91,1.5 95,5 91,8.5" fill="#E6D3A3"/>
+        <polygon points="98,5 103,0.5 108,5 103,9.5" fill="#E6D3A3"/>
+        <polygon points="111,5 115,1.5 119,5 115,8.5" fill="#E6D3A3"/>
+        <polygon points="122,5 125,2 128,5 125,8" fill="#E6D3A3"/>
+        <line x1="134" y1="5" x2="192" y2="5" stroke="#E6D3A3" stroke-width="1.2"/>
+      </svg>
+    </div>`;
+    const isWelcome = slide.type === 'welcome';
+    const backBtnHtml = isWelcome ? '' : `
+    <button class="figma-header-back-btn" type="button" title="戻る" aria-label="戻る" onclick="goBack();">
+      <img src="assets/images/btn_header_back.png" alt="戻る" class="figma-header-back-icon">
+    </button>`;
+    const langLabel = isEn ? 'JP' : 'EN';
+    const langBtnHtml = `
+    <div class="intro-top-bar ${isWelcome ? 'welcome-top-bar' : ''}">
+      ${backBtnHtml}
+      <button class="btn-en-toggle intro-lang-pill" type="button" title="Switch language / 言語切り替え">
+        <div class="reproduced-lang-chip">
+          <svg class="reload-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" />
+            <polyline points="21 3 21 8 16 8" />
+          </svg>
+          <span class="lang-text">${langLabel}</span>
         </div>
-        <div class="panel panel-bottom" style="background-image:url('https://images.pexels.com/photos/7820321/pexels-photo-7820321.jpeg?auto=compress&cs=tinysrgb&h=500&fit=crop&w=900');">
-          <span class="panel-caption">アプリ内学習の場面2</span>
+      </button>
+    </div>`;
+    const title = isEn && slide.titleEn ? slide.titleEn : slide.title;
+    const buttonLabel = isEn && slide.buttonLabelEn ? slide.buttonLabelEn : slide.buttonLabel;
+    if (slide.type === 'welcome') {
+        // Figma CH0-03
+        content.innerHTML = `
+      <div class="intro-slide slide-welcome">
+        ${langBtnHtml}
+        <div class="intro-top-header ch03-header">
+          <span class="intro-welcome-to">${isEn && slide.badgeTextEn ? slide.badgeTextEn : slide.badgeText}</span>
+          <img src="${slide.logoImg}" alt="SHOSA" class="intro-logo-img">
         </div>
-      </div>
-      <h2 style="font-size:20px;color:#2d3748;font-weight:900;text-align:center;margin-bottom:10px;">${slide.title}</h2>
-      <p class="ob-tagline">${slide.text.replace(/\n/g, '<br>')}</p>`;
-  } else if (slide.type === 'checklist') {
-    content.innerHTML = `
-      <h2 style="font-size:17px;color:#2d3748;font-weight:900;text-align:center;margin-bottom:12px;">${slide.title.replace(/\n/g, '<br>')}</h2>
-      <div class="ob-image-collage">
-        <img class="img-main" src="https://images.pexels.com/photos/14036250/pexels-photo-14036250.jpeg?auto=compress&cs=tinysrgb&h=400&fit=crop&w=700" alt="ホテルフロントのイメージ">
-        <img class="img-sub" src="https://images.pexels.com/photos/5378703/pexels-photo-5378703.jpeg?auto=compress&cs=tinysrgb&h=300&fit=crop&w=500" alt="ホテル接客のイメージ">
-      </div>
-      <p class="ob-tagline" style="text-align:left;">${slide.body.replace(/\n/g, '<br>')}</p>
-      <ul class="ob-checklist">${slide.checklist.map(c => `<li>${c}</li>`).join('')}</ul>`;
-  } else if (slide.type === 'steps') {
-    content.innerHTML = `
-      <h2 style="font-size:18px;color:#2d3748;font-weight:900;text-align:center;margin-bottom:14px;">${slide.title}</h2>
-      <div class="ob-steps timeline">${slide.steps.map((s, idx) => `
-        <div class="ob-step"><div class="ob-step-num">${idx + 1}</div><div class="ob-step-body"><strong>${s.label}</strong><span>${s.desc}</span></div></div>`).join('')}</div>
-      <p class="ob-tagline" style="margin-bottom:14px;">${slide.footer}</p>
-      <div class="character-preview compact">
-        <div class="avatar-circle small">🤖</div>
-        <div class="avatar-label">${slide.avatarLabel}</div>
+        <div class="intro-arch-card">
+          <div class="intro-phone-mockup-wrap">
+            <img src="${slide.heroImg}" alt="SHOSA Mobile" class="intro-phone-mockup-img">
+          </div>
+          <div class="intro-card-body">
+            <p class="intro-card-title">${title.replace(/\n/g, '<br>')}</p>
+            <button id="btn-slide-action" class="intro-action-btn btn-purple">${buttonLabel}</button>
+          </div>
+        </div>
       </div>`;
-  } else if (slide.type === 'certification') {
-    content.innerHTML = `
-      <h2 style="font-size:18px;color:#2d3748;font-weight:900;text-align:center;margin-bottom:12px;">${slide.title.replace(/\n/g, '<br>')}</h2>
-      <img class="ob-image-placeholder large" style="object-fit:cover;" src="https://images.pexels.com/photos/9829324/pexels-photo-9829324.jpeg?auto=compress&cs=tinysrgb&h=500&fit=crop&w=800" alt="検定・修了証のイメージ">
-      <ul class="ob-checklist" style="margin-top:14px;">${slide.checklist.map(c => `<li>${c}</li>`).join('')}</ul>
-      <p class="ob-tagline">${slide.footer}</p>`;
-  }
-
-  renderObDots($('ob-intro-dots'), ONBOARDING_DATA.introSlides.length, i);
-  const isLast = i === ONBOARDING_DATA.introSlides.length - 1;
-  $('btn-ob-intro-next').textContent = isLast ? (slide.buttonLabel || 'START') : 'NEXT';
-  showScreen('screen-ob-intro');
+    }
+    else if (slide.type === 'features') {
+        // Figma CH0-04
+        const bodyLead = isEn && slide.bodyLeadEn ? slide.bodyLeadEn : slide.bodyLead;
+        const bodySub = isEn && slide.bodySubEn ? slide.bodySubEn : slide.bodySub;
+        const visualHtml = isEn && slide.featuresEn
+            ? `<div class="intro-features-en-scene">
+           <img src="assets/images/intro_slide_1_hero.png" alt="SHOSA Phone" class="intro-features-phone-en">
+           <div class="intro-features-bubbles-grid">
+             <div class="intro-feature-bubble">${devEscSafe(slide.featuresEn[0] || '')}</div>
+             <div class="intro-feature-bubble">${devEscSafe(slide.featuresEn[1] || '')}</div>
+             <div class="intro-feature-bubble">${devEscSafe(slide.featuresEn[2] || '')}</div>
+             <div class="intro-feature-bubble">${devEscSafe(slide.featuresEn[3] || '')}</div>
+           </div>
+         </div>`
+            : `<img src="${slide.heroImg}" alt="SHOSA Features" class="intro-features-img">`;
+        content.innerHTML = `
+      <div class="intro-slide slide-features">
+        ${langBtnHtml}
+        <div class="intro-top-header">
+          <h2 class="intro-header-title">${title.replace(/\n/g, '<br>')}</h2>
+          ${goldDividerSvg}
+        </div>
+        <div class="intro-arch-card">
+          <div class="intro-visual-wrap">
+            ${visualHtml}
+          </div>
+          <div class="intro-card-body">
+            <p class="intro-body-lead">${bodyLead.replace(/\n/g, '<br>')}</p>
+            <p class="intro-body-sub">${bodySub.replace(/\n/g, '<br>')}</p>
+            <button id="btn-slide-action" class="intro-action-btn btn-turquoise">${buttonLabel}</button>
+          </div>
+        </div>
+      </div>`;
+    }
+    else if (slide.type === 'steps') {
+        // Figma CH0-05
+        const desc = isEn && slide.descEn ? slide.descEn : slide.desc;
+        const stepIcons = ['📱', '🛎️', '✏️', '📋'];
+        const visualStepsHtml = isEn && slide.stepsEn
+            ? `<div class="intro-steps-en-card">
+           ${slide.stepsEn.map((st, idx) => {
+                const colonIdx = st.indexOf(':');
+                const head = colonIdx > -1 ? st.slice(0, colonIdx) : '';
+                const tail = colonIdx > -1 ? st.slice(colonIdx + 1).trim() : st;
+                return `<div class="intro-step-en-row">
+               <span class="intro-step-en-badge">${stepIcons[idx] || '✓'}</span>
+               <span class="intro-step-en-text">${head ? `<strong>${devEscSafe(head)}</strong>: ` : ''}${devEscSafe(tail)}</span>
+             </div>`;
+            }).join('')}
+         </div>`
+            : `<img src="${slide.heroImg}" alt="SHOSA Steps" class="intro-steps-img">`;
+        content.innerHTML = `
+      <div class="intro-slide slide-steps">
+        ${langBtnHtml}
+        <div class="intro-top-header">
+          <h2 class="intro-header-title">${title.replace(/\n/g, '<br>')}</h2>
+          ${goldDividerSvg}
+        </div>
+        <div class="intro-arch-card">
+          <div class="intro-visual-wrap">
+            ${visualStepsHtml}
+          </div>
+          <div class="intro-card-body">
+            <p class="intro-body-sub" style="margin-top: 14px;">${desc.replace(/\n/g, '<br>')}</p>
+            <button id="btn-slide-action" class="intro-action-btn btn-turquoise">${buttonLabel}</button>
+          </div>
+        </div>
+      </div>`;
+    }
+    else if (slide.type === 'certification') {
+        // Figma CH0-06
+        const checkIconSvg = `<svg class="badge-check-svg" viewBox="0 0 16 16" width="16" height="16"><path d="M2.5 8.5l3.5 3.5 7.5-7.5" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        const reportLead = isEn && slide.reportLeadEn ? slide.reportLeadEn : slide.reportLead;
+        const badges = isEn && slide.badgesEn ? slide.badgesEn : slide.badges;
+        const reportTail = isEn ? (slide.reportTailEn || '') : slide.reportTail;
+        const desc = isEn && slide.descEn ? slide.descEn : slide.desc;
+        content.innerHTML = `
+      <div class="intro-slide slide-certification">
+        ${langBtnHtml}
+        <div class="intro-top-header">
+          <h2 class="intro-header-title">${title.replace(/\n/g, '<br>')}</h2>
+          ${goldDividerSvg}
+        </div>
+        <div class="intro-arch-card">
+          <div class="intro-visual-wrap ch06-report-wrap">
+            <img src="${slide.heroImg}" alt="SHOSA Report" class="intro-report-img">
+          </div>
+          <div class="intro-card-body ch06-body">
+            <p class="intro-report-lead">${reportLead}</p>
+            <div class="intro-badges-row">
+              ${badges.map((b) => `<span class="intro-badge-pill">${checkIconSvg} ${b}</span>`).join('')}
+            </div>
+            ${reportTail ? `<p class="intro-report-tail">${reportTail}</p>` : ''}
+            <p class="intro-report-footer">${desc.replace(/\n/g, '<br>')}</p>
+            <button id="btn-slide-action" class="intro-action-btn btn-turquoise">${buttonLabel}</button>
+          </div>
+        </div>
+      </div>`;
+    }
+    const actionBtn = $('btn-slide-action');
+    if (actionBtn) {
+        actionBtn.addEventListener('click', () => {
+            if (obState.slideIndex < ONBOARDING_DATA.introSlides.length - 1) {
+                goTo(loadIntroSlide, obState.slideIndex + 1);
+            }
+            else {
+                goTo(loadCharacterGreet);
+            }
+        });
+    }
+    showScreen('screen-ob-intro');
 }
-
-$('btn-ob-intro-next').addEventListener('click', () => {
-  if (obState.slideIndex < ONBOARDING_DATA.introSlides.length - 1) {
-    goTo(loadIntroSlide, obState.slideIndex + 1);
-  } else {
-    goTo(loadCharacterGreet);
-  }
-});
-
-/* ---------- 1g. AIチューター挨拶 ---------- */
+/* ---------- 1g. AIチューター挨拶 (Figma CH0-07) ---------- */
 function loadCharacterGreet() {
-  showScreen('screen-ob-character');
+    const isEn = window.currentAppLang === 'en';
+    const greetText = $('ob-greet-text');
+    if (greetText) {
+        greetText.innerHTML = isEn
+            ? "Nice to meet you! I'm SHOSA.<br><br>To help you learn,<br>first tell me a little about yourself."
+            : "はじめまして！SHOSAだよ。<br><br>学習をサポートするために<br>まずは君のことを教えてね。";
+    }
+    showScreen('screen-ob-character');
 }
-
-// キャラクター挨拶の後：ヒアリングに回答済みならスキップして先へ
-function goPastCharacterGreet() {
-  if (isHearingComplete(obState.answers)) {
-    goPastHearings();
-  } else {
-    goTo(loadHearing, 0);
-  }
-}
-$('btn-ob-character-next').addEventListener('click', goPastCharacterGreet);
-
-/* ---------- 1h. ヒアリング（4問） ---------- */
+$('btn-ob-character-next').addEventListener('click', () => goTo(loadHearing, 0));
+/* ---------- 1h. ヒアリング（4問: Figma Frame 248 / CH0-08〜11） ---------- */
 function loadHearing(i) {
-  obState.hearingIndex = i;
-  const h = ONBOARDING_DATA.hearings[i];
-  $('ob-hearing-progress').textContent = h.label;
-  const total = ONBOARDING_DATA.hearings.length;
-  $('ob-hearing-progress-fill').style.width = Math.round(((i + 1) / total) * 100) + '%';
-  $('ob-hearing-question').textContent = h.question;
-  const optWrap = $('ob-hearing-options');
-  optWrap.innerHTML = '';
-  const nextBtn = $('btn-ob-hearing-next');
-  const currentAnswer = obState.answers[h.key];
-  h.options.forEach(opt => {
-    const btn = document.createElement('button');
-    btn.className = 'ob-list-row' + (opt === currentAnswer ? ' selected' : '');
-    btn.innerHTML = `<span class="ob-list-icon">●</span><span>${devEscSafe(opt)}</span>`;
-    btn.addEventListener('click', () => {
-      optWrap.querySelectorAll('.ob-list-row').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      obState.answers[h.key] = opt;
-      nextBtn.disabled = false;
+    obState.hearingIndex = i;
+    const h = ONBOARDING_DATA.hearings[i];
+    const isEn = window.currentAppLang === 'en';
+    const total = ONBOARDING_DATA.hearings.length;
+    const progressPercent = Math.round(((i + 1) / total) * 100);
+    const fillBar = $('ob-hearing-progress-fill');
+    if (fillBar)
+        fillBar.style.width = progressPercent + '%';
+    const qText = isEn && h.questionEn ? h.questionEn : h.question;
+    const qEl = $('ob-hearing-question');
+    if (qEl)
+        qEl.innerHTML = devEscSafe(qText).replace(/\n/g, '<br>');
+    const optWrap = $('ob-hearing-options');
+    optWrap.innerHTML = '';
+    optWrap.className = 'frame248-options-list';
+    const nextBtn = $('btn-ob-hearing-next');
+    nextBtn.textContent = 'NEXT';
+    const currentAnswer = obState.answers[h.key];
+    let hasValidAnswer = false;
+    h.options.forEach(opt => {
+        const isObj = typeof opt === 'object';
+        const rawLabel = isObj ? opt.label : opt;
+        const displayLabel = isObj ? (isEn && opt.labelEn ? opt.labelEn : opt.label) : opt;
+        const optIcon = isObj && opt.icon ? opt.icon : 'assets/images/icon_hotel.png';
+        const hasInput = isObj && opt.hasInput;
+        const isOther = hasInput || rawLabel === 'その他';
+        const isSelected = (rawLabel === currentAnswer || (isOther && typeof currentAnswer === 'string' && currentAnswer.startsWith('その他')));
+        const card = document.createElement('div');
+        card.className = 'frame248-option-btn' +
+            (isOther ? ' frame248-option-other' : '') +
+            (isSelected ? ' selected' : '');
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        let otherInitialVal = '';
+        if (isOther && isSelected && typeof currentAnswer === 'string' && currentAnswer.startsWith('その他: ')) {
+            otherInitialVal = currentAnswer.replace('その他: ', '');
+        }
+        card.innerHTML = `
+      <div class="frame248-opt-row">
+        <div class="frame248-opt-icon-wrap">
+          <img src="${optIcon}" alt="" class="frame248-opt-icon">
+        </div>
+        <span class="frame248-opt-label">${devEscSafe(displayLabel)}</span>
+      </div>
+      ${isOther ? `
+        <div class="frame248-other-input-wrap ${isSelected ? '' : 'hidden'}">
+          <textarea class="frame248-other-textarea" placeholder="${isEn ? 'Please enter' : '入力してください'}" rows="3">${devEscSafe(otherInitialVal)}</textarea>
+        </div>
+      ` : ''}
+    `;
+        const optRow = card.querySelector('.frame248-opt-row');
+        const textarea = card.querySelector('.frame248-other-textarea');
+        if (isSelected) {
+            if (isOther) {
+                if (otherInitialVal.trim())
+                    hasValidAnswer = true;
+            }
+            else {
+                hasValidAnswer = true;
+            }
+        }
+        const selectThisOption = () => {
+            optWrap.querySelectorAll('.frame248-option-btn').forEach(b => {
+                b.classList.remove('selected');
+                const inp = b.querySelector('.frame248-other-input-wrap');
+                if (inp)
+                    inp.classList.add('hidden');
+            });
+            card.classList.add('selected');
+            if (isOther) {
+                const inpWrap = card.querySelector('.frame248-other-input-wrap');
+                if (inpWrap)
+                    inpWrap.classList.remove('hidden');
+                if (textarea) {
+                    textarea.focus();
+                    const val = textarea.value.trim();
+                    if (val) {
+                        obState.answers[h.key] = 'その他: ' + val;
+                        nextBtn.disabled = false;
+                    }
+                    else {
+                        obState.answers[h.key] = 'その他';
+                        nextBtn.disabled = true;
+                    }
+                }
+            }
+            else {
+                obState.answers[h.key] = rawLabel;
+                nextBtn.disabled = false;
+            }
+            saveHearingAnswers(obState.answers);
+            if (h.key === 'concern')
+                renderHearingFollowup(rawLabel);
+        };
+        optRow.addEventListener('click', (e) => {
+            e.stopPropagation();
+            selectThisOption();
+        });
+        if (textarea) {
+            textarea.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+            textarea.addEventListener('input', () => {
+                const val = textarea.value.trim();
+                if (val) {
+                    obState.answers[h.key] = 'その他: ' + val;
+                    nextBtn.disabled = false;
+                }
+                else {
+                    obState.answers[h.key] = 'その他';
+                    nextBtn.disabled = true;
+                }
+                saveHearingAnswers(obState.answers);
+            });
+        }
+        optWrap.appendChild(card);
     });
-    optWrap.appendChild(btn);
-  });
-  nextBtn.disabled = !currentAnswer;
-  showScreen('screen-ob-hearing');
+    if (h.key === 'concern' && currentAnswer) {
+        renderHearingFollowup(currentAnswer);
+    }
+    else {
+        renderHearingFollowup(null);
+    }
+    nextBtn.disabled = !hasValidAnswer;
+    showScreen('screen-ob-hearing');
 }
-
-// 簡易HTMLエスケープ（onboarding.js内だけで使う小さなヘルパー）
+// Q4（心配事）フォローアップ表示（CH0-12）
+function renderHearingFollowup(concernKey) {
+    const optWrap = $('ob-hearing-options');
+    if (!optWrap)
+        return;
+    let noteEl = document.getElementById('ob-hearing-followup');
+    const map = ONBOARDING_DATA.q4Followup;
+    const entry = concernKey && map ? map[concernKey] : null;
+    if (!entry) {
+        if (noteEl)
+            noteEl.remove();
+        return;
+    }
+    const isEn = window.currentAppLang === 'en';
+    const msg = isEn ? entry.textEn : entry.textJa;
+    if (!noteEl) {
+        noteEl = document.createElement('div');
+        noteEl.id = 'ob-hearing-followup';
+        noteEl.className = 'frame248-followup-banner';
+        optWrap.insertAdjacentElement('afterend', noteEl);
+    }
+    noteEl.innerHTML = `<span class="followup-icon">💡</span><span>${devEscSafe(msg)}</span>`;
+}
+// 簡易HTMLエスケープ
 function devEscSafe(str) {
-  if (str === undefined || str === null) return '';
-  const div = document.createElement('div');
-  div.textContent = String(str);
-  return div.innerHTML;
+    if (str === undefined || str === null)
+        return '';
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
 }
-
-// ヒアリングの後：適性診断に回答済みならスキップして先へ
-function goPastHearings() {
-  if (isAptitudeComplete(obState.aptitudeScores)) {
-    goPastAptitude();
-  } else {
-    goTo(loadAptitudeIntro);
-  }
-}
-
 $('btn-ob-hearing-next').addEventListener('click', () => {
-  if (obState.hearingIndex < ONBOARDING_DATA.hearings.length - 1) {
-    goTo(loadHearing, obState.hearingIndex + 1);
-  } else {
-    saveHearingAnswers(obState.answers);
-    goPastHearings();
-  }
+    if (obState.hearingIndex < ONBOARDING_DATA.hearings.length - 1) {
+        goTo(loadHearing, obState.hearingIndex + 1);
+    }
+    else {
+        saveHearingAnswers(obState.answers);
+        goTo(loadScheduleTime);
+    }
 });
-
-/* ---------- 1i/1j. 適性診断 ---------- */
+if ($('btn-ob-cheer-next')) {
+    $('btn-ob-cheer-next').addEventListener('click', () => goTo(loadScheduleTime));
+}
+/* ---------- 1i/1j. 適性診断 (Figma CH0-13 & CH0-14) ---------- */
 function loadAptitudeIntro() {
-  $('ob-aptitude-intro-text').innerHTML = ONBOARDING_DATA.aptitudeIntro;
-  showScreen('screen-ob-aptitude-intro');
+    showScreen('screen-ob-aptitude-intro');
 }
 $('btn-ob-aptitude-intro-next').addEventListener('click', () => goTo(loadAptitude));
-
-// 適性診断：全問を1画面にまとめてスクロール表示し、すべて回答したらNEXTが押せる
-function updateAptitudeProgress() {
-  const questions = ONBOARDING_DATA.aptitudeQuestions;
-  const answered = questions.filter(q => obState.aptitudeScores[q.dimension] != null).length;
-  $('ob-aptitude-progress').textContent = `適性診断 ${answered}/${questions.length}`;
-  $('ob-aptitude-progress-fill').style.width = Math.round((answered / questions.length) * 100) + '%';
-  $('btn-ob-aptitude-next').disabled = answered < questions.length;
-  $('ob-aptitude-scroll-hint').classList.toggle('hidden', answered >= questions.length);
+const APTITUDE_PAGE_SIZE = 3; // 1画面に3項目（全18問＝6画面）
+function updateAptitudeProgress(pageIndex = 0) {
+    const allQuestions = ONBOARDING_DATA.aptitudeQuestions;
+    const startIndex = pageIndex * APTITUDE_PAGE_SIZE;
+    const currentQuestions = allQuestions.slice(startIndex, startIndex + APTITUDE_PAGE_SIZE);
+    const totalAnswered = allQuestions.filter(q => getQuestionAptitudeScore(obState.aptitudeScores, q) != null).length;
+    const isEn = window.currentAppLang === 'en';
+    const progEl = $('ob-aptitude-progress');
+    if (progEl)
+        progEl.textContent = `${isEn ? 'Aptitude Test' : '適性診断'} ${totalAnswered}/${allQuestions.length}`;
+    const fillEl = $('ob-aptitude-progress-fill');
+    if (fillEl)
+        fillEl.style.width = Math.round((totalAnswered / allQuestions.length) * 100) + '%';
+    const isPageComplete = currentQuestions.every(q => getQuestionAptitudeScore(obState.aptitudeScores, q) != null);
+    const nextBtn = $('btn-ob-aptitude-next');
+    if (nextBtn)
+        nextBtn.disabled = !isPageComplete;
 }
-
-function loadAptitude() {
-  const questions = ONBOARDING_DATA.aptitudeQuestions;
-  const list = $('ob-aptitude-list');
-  list.innerHTML = questions.map((q, qi) => `
-    <div class="aptitude-block" data-dimension="${q.dimension}">
-      <div class="ob-likert-question">${devEscSafe(q.text)}</div>
-      <div class="ob-likert-row" data-dimension="${q.dimension}">
-        ${[1, 2, 3, 4, 5].map(v => `<button type="button" class="ob-likert-btn" data-value="${v}">${v}</button>`).join('')}
-      </div>
-      <div class="ob-likert-labels"><span>そう思わない</span><span>とてもそう思う</span></div>
-    </div>`).join('');
-
-  questions.forEach(q => {
-    const row = list.querySelector(`.ob-likert-row[data-dimension="${q.dimension}"]`);
-    const currentVal = obState.aptitudeScores[q.dimension];
-    row.querySelectorAll('.ob-likert-btn').forEach(btn => {
-      if (Number(btn.dataset.value) === currentVal) btn.classList.add('selected');
-      btn.addEventListener('click', () => {
-        row.querySelectorAll('.ob-likert-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        obState.aptitudeScores[q.dimension] = Number(btn.dataset.value);
-        updateAptitudeProgress();
-      });
+function loadAptitude(pageIndex = 0) {
+    obState.aptitudePageIndex = pageIndex;
+    const allQuestions = ONBOARDING_DATA.aptitudeQuestions;
+    const startIndex = pageIndex * APTITUDE_PAGE_SIZE;
+    const currentQuestions = allQuestions.slice(startIndex, startIndex + APTITUDE_PAGE_SIZE);
+    const isEn = window.currentAppLang === 'en';
+    const list = $('ob-aptitude-list');
+    list.innerHTML = currentQuestions.map(q => {
+        const qText = isEn && q.textEn ? q.textEn : q.text;
+        return `
+      <div class="aptitude-block" data-question-id="${q.id}" data-dimension="${q.dimension}">
+        <div class="ob-likert-question">${devEscSafe(qText).replace(/\n/g, '<br>')}</div>
+        <div class="ob-likert-row" data-question-id="${q.id}" data-dimension="${q.dimension}">
+          ${[1, 2, 3, 4, 5].map(v => `<button type="button" class="ob-likert-btn val-${v}" data-value="${v}"></button>`).join('')}
+        </div>
+        <div class="ob-likert-labels">
+          <span>${isEn ? 'Disagree' : 'そう思わない'}</span>
+          <span>${isEn ? 'Agree' : 'とてもそう思う'}</span>
+        </div>
+      </div>`;
+    }).join('');
+    currentQuestions.forEach(q => {
+        const qKey = getAptitudeQuestionKey(q);
+        const row = list.querySelector(`.ob-likert-row[data-question-id="${q.id}"]`);
+        if (!row)
+            return;
+        const currentVal = getQuestionAptitudeScore(obState.aptitudeScores, q);
+        row.querySelectorAll('.ob-likert-btn').forEach(btn => {
+            if (Number(btn.dataset.value) === currentVal)
+                btn.classList.add('selected');
+            btn.addEventListener('click', () => {
+                row.querySelectorAll('.ob-likert-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                obState.aptitudeScores[qKey] = Number(btn.dataset.value);
+                updateAptitudeProgress(pageIndex);
+            });
+        });
     });
-  });
-
-  updateAptitudeProgress();
-  showScreen('screen-ob-aptitude');
+    // Scroll to top when changing page
+    const scrollArea = document.querySelector('.ch14-scroll-area');
+    if (scrollArea)
+        scrollArea.scrollTop = 0;
+    updateAptitudeProgress(pageIndex);
+    showScreen('screen-ob-aptitude');
 }
-
-// アプティテュード診断の後：プロフィール入力が済んでいればスキップしてパスポート完成へ
-function goPastAptitude() {
-  if (isProfileComplete(obState.profile)) {
-    goTo(finalizeOnboarding);
-  } else {
-    goTo(loadProfile1);
-  }
-}
-
 $('btn-ob-aptitude-next').addEventListener('click', () => {
-  saveAptitudeScores(obState.aptitudeScores);
-  goPastAptitude();
+    const pageIndex = obState.aptitudePageIndex || 0;
+    const allQuestions = ONBOARDING_DATA.aptitudeQuestions;
+    const totalPages = Math.ceil(allQuestions.length / APTITUDE_PAGE_SIZE);
+    if (pageIndex < totalPages - 1) {
+        goTo(loadAptitude, pageIndex + 1);
+    }
+    else {
+        saveAptitudeScores(obState.aptitudeScores);
+        goTo(finalizeAptitudeCelebration);
+    }
 });
-
-/* ---------- 1k. プロフィール入力01 ---------- */
+function finalizeAptitudeCelebration() {
+    showScreen('screen-ob-passport');
+}
+/* ---------- 1k-0. プロフィール導入 (Figma CH0-15) ---------- */
+function loadProfileIntro() {
+    showScreen('screen-ob-profile-intro');
+}
+$('btn-ob-profile-intro-next').addEventListener('click', () => goTo(loadProfile1));
+/* ---------- TRANSLATION SYSTEM (EN <-> JP Toggle) ---------- */
+window.currentAppLang = window.currentAppLang || 'ja';
+function updateAllLangToggleButtons(lang) {
+    const label = lang === 'en' ? 'JP' : 'EN';
+    const title = lang === 'en' ? 'Switch to Japanese / 日本語に切り替え' : 'Switch to English / 英語に切り替え';
+    document.querySelectorAll('.btn-en-toggle, .intro-lang-pill').forEach(btn => {
+        btn.setAttribute('title', title);
+        btn.setAttribute('aria-label', title);
+        btn.classList.add('spinning');
+        setTimeout(() => {
+            btn.classList.remove('spinning');
+        }, 380);
+        const textEl = btn.querySelector('.lang-text');
+        if (textEl) {
+            textEl.textContent = label;
+        }
+        else {
+            btn.innerHTML = `
+        <div class="reproduced-lang-chip">
+          <svg class="reload-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" />
+            <polyline points="21 3 21 8 16 8" />
+          </svg>
+          <span class="lang-text">${label}</span>
+        </div>
+      `;
+        }
+    });
+}
+function toggleAppLanguage() {
+    window.currentAppLang = window.currentAppLang === 'ja' ? 'en' : 'ja';
+    applyAppLanguage(window.currentAppLang);
+}
+function applyAppLanguage(lang) {
+    const dict = ONBOARDING_DATA.i18n && ONBOARDING_DATA.i18n[lang];
+    if (!dict)
+        return;
+    updateAllLangToggleButtons(lang);
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (key && dict[key]) {
+            el.innerHTML = dict[key];
+        }
+    });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+        const key = el.getAttribute('data-i18n-ph');
+        if (key && dict[key]) {
+            el.setAttribute('placeholder', dict[key]);
+        }
+    });
+    // Country select dropdown
+    const countrySelect = $('ob-country-input');
+    if (countrySelect) {
+        const countriesJa = {
+            "日本": "日本",
+            "ベトナム": "ベトナム",
+            "ミャンマー": "ミャンマー",
+            "シンガポール": "シンガポール",
+            "インドネシア": "インドネシア",
+            "ネパール": "ネパール",
+            "フィリピン": "フィリピン",
+            "インド": "インド",
+            "中国": "中国",
+            "韓国": "韓国",
+            "その他": "その他"
+        };
+        const countriesEn = {
+            "日本": "Japan",
+            "ベトナム": "Vietnam",
+            "ミャンマー": "Myanmar",
+            "シンガポール": "Singapore",
+            "インドネシア": "Indonesia",
+            "ネパール": "Nepal",
+            "フィリピン": "Philippines",
+            "インド": "India",
+            "中国": "China",
+            "韓国": "South Korea",
+            "その他": "Other"
+        };
+        const map = lang === 'en' ? countriesEn : countriesJa;
+        Array.from(countrySelect.options).forEach(opt => {
+            if (opt.value && map[opt.value])
+                opt.textContent = map[opt.value];
+        });
+    }
+    // Active screens re-render
+    const introScreen = $('screen-ob-intro');
+    if (introScreen && !introScreen.classList.contains('hidden')) {
+        loadIntroSlide(obState.slideIndex || 0);
+    }
+    const greetScreen = $('screen-ob-character');
+    if (greetScreen && !greetScreen.classList.contains('hidden')) {
+        loadCharacterGreet();
+    }
+    const hearingScreen = $('screen-ob-hearing');
+    if (hearingScreen && !hearingScreen.classList.contains('hidden')) {
+        loadHearing(obState.hearingIndex || 0);
+    }
+    const scheduleScreen = $('screen-ob-schedule-time');
+    if (scheduleScreen && !scheduleScreen.classList.contains('hidden')) {
+        loadScheduleTime();
+    }
+    const journeyScreen = $('screen-ob-journey');
+    if (journeyScreen && !journeyScreen.classList.contains('hidden')) {
+        renderJourneySteps();
+    }
+    const aptitudeScreen = $('screen-ob-aptitude');
+    if (aptitudeScreen && !aptitudeScreen.classList.contains('hidden')) {
+        loadAptitude(obState.aptitudePageIndex || 0);
+    }
+    const resultScreen = $('screen-ob-result');
+    if (resultScreen && !resultScreen.classList.contains('hidden')) {
+        updateDiagnosisResultModal();
+    }
+    if (typeof window.renderActiveCh101Screen === 'function') {
+        window.renderActiveCh101Screen();
+    }
+}
+document.addEventListener('click', (e) => {
+    const enBtn = e.target?.closest?.('.btn-en-toggle, .intro-lang-pill');
+    if (enBtn) {
+        e.preventDefault();
+        toggleAppLanguage();
+    }
+});
+/* ---------- 1k. プロフィール入力 (Figma CH0-16') ---------- */
+function updateProfile1Validity() {
+    const nameVal = $('ob-name-input').value.trim();
+    const countryVal = $('ob-country-input').value;
+    const birthVal = $('ob-birthdate-input').value;
+    const isGenderChosen = !!obState.profile.gender;
+    const isValid = isGenderChosen && nameVal.length > 0 && !!countryVal && !!birthVal;
+    const nextBtn = $('btn-ob-profile1-next');
+    if (nextBtn)
+        nextBtn.disabled = !isValid;
+}
 function loadProfile1() {
-  document.querySelectorAll('#ob-gender-row .ob-pill').forEach(p => {
-    p.classList.toggle('selected', p.dataset.value === obState.profile.gender);
-  });
-  $('ob-name-input').value = obState.profile.name || '';
-  $('ob-country-input').value = obState.profile.country || '';
-  $('ob-birthdate-input').value = obState.profile.birthdate || '';
-  validateProfile1();
-  showScreen('screen-ob-profile1');
+    if (!obState.profile.gender)
+        obState.profile.gender = '男性';
+    const genderButtons = document.querySelectorAll('#ob-gender-row .figma-gender-btn');
+    genderButtons.forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.value === obState.profile.gender);
+    });
+    const saved = loadSavedProfile();
+    if (saved && !obState.profile.name) {
+        obState.profile.name = saved.name || '';
+        obState.profile.country = saved.country || '';
+        obState.profile.birthdate = saved.birthdate || '';
+        obState.profile.gender = saved.gender || obState.profile.gender;
+    }
+    $('ob-name-input').value = obState.profile.name || '';
+    $('ob-country-input').value = obState.profile.country || '';
+    $('ob-birthdate-input').value = obState.profile.birthdate || '2000-01-01';
+    applyAppLanguage(window.currentAppLang || 'ja');
+    updateProfile1Validity();
+    showScreen('screen-ob-profile1');
 }
-
-function validateProfile1() {
-  const ok = obState.profile.gender && $('ob-name-input').value.trim().length > 0 && $('ob-birthdate-input').value;
-  $('btn-ob-profile1-next').disabled = !ok;
-}
-$('ob-country-input').addEventListener('change', () => {
-  obState.profile.country = $('ob-country-input').value;
+// Gender buttons click
+document.querySelectorAll('#ob-gender-row .figma-gender-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('#ob-gender-row .figma-gender-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        obState.profile.gender = btn.dataset.value || null;
+        updateProfile1Validity();
+    });
 });
-
-document.querySelectorAll('#ob-gender-row .ob-pill').forEach(pill => {
-  pill.addEventListener('click', () => {
-    document.querySelectorAll('#ob-gender-row .ob-pill').forEach(p => p.classList.remove('selected'));
-    pill.classList.add('selected');
-    obState.profile.gender = pill.dataset.value;
-    validateProfile1();
-  });
-});
-$('ob-name-input').addEventListener('input', validateProfile1);
-$('ob-birthdate-input').addEventListener('change', validateProfile1);
-
+$('ob-name-input').addEventListener('input', updateProfile1Validity);
+$('ob-country-input').addEventListener('change', updateProfile1Validity);
+$('ob-birthdate-input').addEventListener('change', updateProfile1Validity);
 $('btn-ob-profile1-next').addEventListener('click', () => {
-  obState.profile.name = $('ob-name-input').value.trim();
-  obState.profile.country = $('ob-country-input').value;
-  obState.profile.birthdate = $('ob-birthdate-input').value;
-  goTo(loadProfile2);
+    obState.profile.name = $('ob-name-input').value.trim() || 'SHOSA';
+    obState.profile.country = $('ob-country-input').value || '日本';
+    obState.profile.birthdate = $('ob-birthdate-input').value || '2000-01-01';
+    saveProfile(obState.profile);
+    window.PLAYER_NAME = obState.profile.name;
+    goTo(loadJourney);
 });
-
-/* ---------- 1l. プロフィール入力02（アバター設定） ---------- */
-function loadProfile2() {
-  const grid = $('ob-avatar-grid');
-  grid.innerHTML = '';
-  ONBOARDING_DATA.avatarOptions.forEach(av => {
-    const cell = document.createElement('div');
-    cell.className = 'ob-avatar-cell' + (av.path === obState.profile.avatar ? ' selected' : '');
-    renderAvatar(cell, av.path);
-    cell.addEventListener('click', () => {
-      grid.querySelectorAll('.ob-avatar-cell').forEach(c => c.classList.remove('selected'));
-      cell.classList.add('selected');
-      obState.profile.avatar = av.path;
-      $('btn-ob-profile2-next').disabled = false;
-    });
-    grid.appendChild(cell);
-  });
-  document.querySelectorAll('#ob-voice-row .ob-voice-btn').forEach(b => {
-    b.classList.toggle('selected', b.dataset.value === obState.profile.voiceType);
-  });
-  $('btn-ob-profile2-next').disabled = !obState.profile.avatar;
-  showScreen('screen-ob-profile2');
+/* ---------- 1k-2. YOUR JOURNEY (Figma CH0-18) ---------- */
+function renderJourneySteps() {
+    const list = $('ob-journey-list');
+    if (!list)
+        return;
+    const isEn = window.currentAppLang === 'en';
+    // Render from 401 down to 000 (reverse order)
+    const steps = [...ONBOARDING_DATA.journeySteps].reverse();
+    list.innerHTML = steps.map(s => {
+        const title = isEn && s.titleEn ? s.titleEn : s.title;
+        const desc = isEn && s.descEn ? s.descEn : s.desc;
+        return `
+      <div class="journey-step-row ${s.isOpen ? 'is-open' : 'is-locked'}">
+        <div class="journey-dot-col">
+          <div class="journey-dot ${s.isOpen ? 'is-active' : ''}"></div>
+        </div>
+        <div class="journey-door-col">
+          <img src="${s.doorImg}" alt="${s.doorNumber ? s.doorNumber + 'ドア' : 'Open Door'}" class="journey-door-img">
+        </div>
+        <div class="journey-card-bubble">
+          ${s.isLocked && s.lockImg ? `<img src="${s.lockImg}" alt="Locked" class="journey-card-lock">` : ''}
+          <h3 class="journey-card-title">${title}</h3>
+          <p class="journey-card-desc">${desc}</p>
+        </div>
+      </div>
+    `;
+    }).join('');
 }
-
-document.querySelectorAll('#ob-voice-row .ob-voice-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('#ob-voice-row .ob-voice-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-    obState.profile.voiceType = btn.dataset.value;
-  });
-});
-
-$('btn-ob-voice-sample').addEventListener('click', () => {
-  if (!('speechSynthesis' in window)) return;
-  const name = obState.profile.name || 'ゲスト';
-  const utter = new SpeechSynthesisUtterance(`こんにちは、${name}です。よろしくお願いします。`);
-  utter.lang = 'ja-JP';
-  const voiceType = ONBOARDING_DATA.voiceTypes.find(v => v.id === obState.profile.voiceType);
-  if (voiceType) { utter.rate = voiceType.rate; utter.pitch = voiceType.pitch; }
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(utter);
-});
-
-$('btn-ob-profile2-next').addEventListener('click', () => goTo(finalizeOnboarding));
-
-/* ---------- 1m. SHOSAパスポート完成 ---------- */
+function loadJourney() {
+    renderJourneySteps();
+    showScreen('screen-ob-journey');
+}
+$('btn-ob-journey-next').addEventListener('click', () => goTo(loadAptitudeIntro));
+/* ---------- 1m. 診断完了・1章解放 (Figma CH0-19 & CH0-20') ---------- */
 function finalizeOnboarding() {
-  window.PLAYER_NAME = obState.profile.name;
-  window.PLAYER_AVATAR = obState.profile.avatar;
-  saveProfile(obState.profile);
-
-  const card = $('ob-passport-card');
-  const dims = ['Communication', 'Observation', 'Accuracy', 'Judgement', 'Hospitality'];
-  const starsFor = d => '★'.repeat(obState.aptitudeScores[d] || 3) + '☆'.repeat(5 - (obState.aptitudeScores[d] || 3));
-  const levelLabel = obState.japaneseLevel || '-';
-  const positionLabel = obState.answers.purpose || obState.answers.interest || '-';
-  const avatarHtml = isImagePath(obState.profile.avatar)
-    ? `<img src="${obState.profile.avatar}" alt="">`
-    : (obState.profile.avatar || '🙂');
-
-  card.innerHTML = `
-    <div class="pc-avatar">${avatarHtml}</div>
-    <div class="pc-name">${obState.profile.name || 'ゲスト'}</div>
-    <div class="pc-sub">SHOSA PASSPORT</div>
-    <div class="pc-row"><span>日本語レベル</span><span>${levelLabel}</span></div>
-    <div class="pc-row"><span>興味のあるポジション</span><span>${positionLabel}</span></div>
-    <div class="pc-stats">
-      ${dims.map(d => `<div class="pc-stat-row"><span class="pc-stat-label">${d}</span><span class="pc-stat-stars">${starsFor(d)}</span></div>`).join('')}
-    </div>`;
-
-  const recommendedRole = suggestRecommendedRole(obState.answers.purpose);
-  $('ob-passport-feedback').innerHTML = `
-    <h3>適性診断フィードバック</h3>
-    <div>あなたにおすすめ職種<br><strong style="font-size:15px;">${recommendedRole}</strong></div>
-    <div class="ob-passport-badge-s">S</div>
-    <div class="ob-passport-feedback-caption">potentialタグのパラメーターを言語で表示</div>`;
-
-  $('ob-passport-reveal').classList.remove('hidden');
-  $('ob-passport-card-wrap').classList.add('hidden');
-  showScreen('screen-ob-passport');
+    showScreen('screen-ob-passport');
 }
-
-// 「興味のある働き方」の回答から、おすすめ職種をざっくり提案する
-function suggestRecommendedRole(purposeAnswer) {
-  const map = {
-    "フロントデスクに立ちたい": "フロント",
-    "ハウスキーピングをしたい": "ハウスキーピング",
-    "レストランで働きたい": "レストラン",
-    "優秀なホテリエになりたい": "オールラウンダー・ホテリエ",
-    "バックオフィスで働きたい": "バックオフィス",
-    "まだ決まってない": "フロント"
-  };
-  return map[purposeAnswer] || "フロント";
+function getDimensionAptitudeScore(scores, dimension) {
+    const dimQuestions = ONBOARDING_DATA.aptitudeQuestions.filter(q => q.dimension === dimension);
+    const values = dimQuestions
+        .map(q => getQuestionAptitudeScore(scores, q))
+        .filter((v) => v != null);
+    if (values.length > 0) {
+        return values.reduce((acc, v) => acc + v, 0) / values.length;
+    }
+    return scores[dimension] != null ? scores[dimension] : 4;
 }
-
-$('btn-ob-passport-open').addEventListener('click', () => goTo(loadPassportCardView));
-
-function loadPassportCardView() {
-  $('ob-passport-reveal').classList.add('hidden');
-  $('ob-passport-card-wrap').classList.remove('hidden');
+function calculateAptitudeResult() {
+    const scores = obState.aptitudeScores || {};
+    const roles = ONBOARDING_DATA.roleResults || {};
+    const roleKeys = Object.keys(roles);
+    let bestRoleKey = "Front Desk";
+    let maxScore = -1;
+    roleKeys.forEach(key => {
+        const r = roles[key];
+        const sum = (r.traits || []).reduce((acc, t) => acc + getDimensionAptitudeScore(scores, t), 0);
+        const avg = sum / (r.traits.length || 1);
+        if (avg > maxScore) {
+            maxScore = avg;
+            bestRoleKey = key;
+        }
+    });
+    return roles[bestRoleKey] || roles["Front Desk"];
 }
-
-$('btn-ob-passport-start').addEventListener('click', () => goTo(loadScheduleTime));
-
-/* ---------- 1n. 学習スケジュール作成 STEP1：時間帯・通知設定 ---------- */
+function updateDiagnosisResultModal() {
+    const role = calculateAptitudeResult();
+    const isEn = window.currentAppLang === 'en';
+    const jobNameEl = document.querySelector('.result-job-name');
+    const jobScoreEl = document.querySelector('.result-job-score');
+    const avatarEl = document.querySelector('.result-job-avatar');
+    const listEl = document.querySelector('.strengths-list');
+    if (jobNameEl)
+        jobNameEl.textContent = isEn ? role.nameEn : role.nameJa;
+    if (jobScoreEl) {
+        jobScoreEl.textContent = String(role.score || '95').replace('%', '');
+    }
+    if (avatarEl && role.icon) {
+        avatarEl.src = role.icon;
+    }
+    if (listEl) {
+        const strengths = isEn ? role.strengthsEn : role.strengthsJa;
+        listEl.innerHTML = strengths.map((s) => `
+      <li class="ch20-strength-item">
+        <span class="ch20-st-star">★</span>
+        <div class="ch20-st-text">
+          <span class="ch20-st-desc">${devEscSafe(s).replace(/^・/, '')}</span>
+        </div>
+      </li>
+    `).join('');
+    }
+}
+function loadDiagnosisResult() {
+    updateDiagnosisResultModal();
+    showScreen('screen-ob-result');
+}
+$('btn-ob-view-result').addEventListener('click', () => {
+    goTo(loadDiagnosisResult);
+});
+if ($('btn-result-proceed')) {
+    $('btn-result-proceed').addEventListener('click', () => {
+        goTo(startGame);
+    });
+}
+if ($('btn-result-modal-proceed')) {
+    $('btn-result-modal-proceed').addEventListener('click', () => {
+        goTo(startGame);
+    });
+}
+// 時間ドラムロール（Figma CH0-22 Frame 255）イベント設定
+let selectedHour = "10";
+let selectedMinute = "30";
+function initTimeWheelColumns() {
+    const hoursCol = $('wheel-hours');
+    const minsCol = $('wheel-minutes');
+    if (!hoursCol || !minsCol)
+        return;
+    // Populate 0-23 hours
+    hoursCol.innerHTML = '';
+    for (let h = 0; h < 24; h++) {
+        const span = document.createElement('span');
+        span.className = 'wheel-item' + (String(h) === String(parseInt(selectedHour, 10)) ? ' active' : '');
+        span.dataset.val = String(h);
+        span.textContent = String(h);
+        span.addEventListener('click', () => {
+            scrollToWheelValue(hoursCol, h, 40);
+        });
+        hoursCol.appendChild(span);
+    }
+    // Populate 0-59 minutes
+    minsCol.innerHTML = '';
+    for (let m = 0; m < 60; m++) {
+        const span = document.createElement('span');
+        const mStr = String(m).padStart(2, '0');
+        span.className = 'wheel-item' + (mStr === selectedMinute ? ' active' : '');
+        span.dataset.val = mStr;
+        span.textContent = mStr;
+        span.addEventListener('click', () => {
+            scrollToWheelValue(minsCol, m, 40);
+        });
+        minsCol.appendChild(span);
+    }
+    // Bind debounced scroll listeners for scroll-snap detection
+    let hourScrollTimer = null;
+    hoursCol.addEventListener('scroll', () => {
+        clearTimeout(hourScrollTimer);
+        hourScrollTimer = setTimeout(() => {
+            const idx = Math.round(hoursCol.scrollTop / 40);
+            const clamped = Math.max(0, Math.min(23, idx));
+            updateActiveWheelItem(hoursCol, clamped);
+            selectedHour = String(clamped);
+        }, 60);
+    });
+    let minScrollTimer = null;
+    minsCol.addEventListener('scroll', () => {
+        clearTimeout(minScrollTimer);
+        minScrollTimer = setTimeout(() => {
+            const idx = Math.round(minsCol.scrollTop / 40);
+            const clamped = Math.max(0, Math.min(59, idx));
+            updateActiveWheelItem(minsCol, clamped);
+            selectedMinute = String(clamped).padStart(2, '0');
+        }, 60);
+    });
+}
+function scrollToWheelValue(col, index, itemHeight = 40) {
+    col.scrollTo({ top: index * itemHeight, behavior: 'smooth' });
+    updateActiveWheelItem(col, index);
+}
+function updateActiveWheelItem(col, activeIndex) {
+    const items = col.querySelectorAll('.wheel-item');
+    items.forEach((item, i) => {
+        item.classList.toggle('active', i === activeIndex);
+    });
+}
+function openTimeWheelModal() {
+    const modal = $('modal-time-wheel');
+    if (!modal)
+        return;
+    const currentVal = (obState.schedule && obState.schedule.notifyTime) || $('ob-schedule-notify-time')?.value || '10:30';
+    const parts = currentVal.split(':');
+    selectedHour = parts[0] || '10';
+    selectedMinute = parts[1] || '30';
+    initTimeWheelColumns();
+    modal.classList.remove('hidden');
+    // Center the columns at current hour & minute
+    setTimeout(() => {
+        const hoursCol = $('wheel-hours');
+        const minsCol = $('wheel-minutes');
+        if (hoursCol) {
+            const hIdx = Math.max(0, Math.min(23, parseInt(selectedHour, 10)));
+            hoursCol.scrollTop = hIdx * 40;
+            updateActiveWheelItem(hoursCol, hIdx);
+        }
+        if (minsCol) {
+            const mIdx = Math.max(0, Math.min(59, parseInt(selectedMinute, 10)));
+            minsCol.scrollTop = mIdx * 40;
+            updateActiveWheelItem(minsCol, mIdx);
+        }
+    }, 20);
+}
+if ($('btn-open-time-wheel')) {
+    $('btn-open-time-wheel').addEventListener('click', (e) => {
+        e.preventDefault();
+        openTimeWheelModal();
+    });
+}
+if ($('btn-close-time-wheel')) {
+    $('btn-close-time-wheel').addEventListener('click', () => {
+        $('modal-time-wheel')?.classList.add('hidden');
+    });
+}
+if ($('modal-time-wheel')) {
+    $('modal-time-wheel').addEventListener('click', (e) => {
+        if (e.target === $('modal-time-wheel')) {
+            $('modal-time-wheel')?.classList.add('hidden');
+        }
+    });
+}
+if ($('btn-submit-time-wheel')) {
+    $('btn-submit-time-wheel').addEventListener('click', () => {
+        const formatted = `${selectedHour}:${selectedMinute}`;
+        if ($('ob-schedule-notify-time'))
+            $('ob-schedule-notify-time').value = formatted;
+        if ($('ob-schedule-notify-time-display'))
+            $('ob-schedule-notify-time-display').textContent = formatted;
+        if (obState.schedule)
+            obState.schedule.notifyTime = formatted;
+        $('modal-time-wheel')?.classList.add('hidden');
+    });
+}
+/* ---------- 1n. 学習スケジュール作成 STEP1：時間帯・通知設定 (Figma iPhone 17 - 110) ---------- */
 function loadScheduleTime() {
-  const optWrap = $('ob-schedule-time-options');
-  optWrap.innerHTML = '';
-  const nextBtn = $('btn-ob-schedule-time-next');
-  ONBOARDING_DATA.scheduleTimeOptions.forEach(opt => {
-    const btn = document.createElement('button');
-    btn.className = 'ob-list-row' + (opt.id === obState.schedule.preferredTime ? ' selected' : '');
-    btn.innerHTML = `<span class="ob-list-icon">●</span><span>${devEscSafe(opt.label)}</span>`;
-    btn.addEventListener('click', () => {
-      optWrap.querySelectorAll('.ob-list-row').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      obState.schedule.preferredTime = opt.id;
-      nextBtn.disabled = false;
+    const optWrap = $('ob-schedule-time-options');
+    optWrap.innerHTML = '';
+    const nextBtn = $('btn-ob-schedule-time-next');
+    nextBtn.textContent = 'NEXT';
+    ONBOARDING_DATA.scheduleTimeOptions.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'schedule-time-card' + (opt.id === obState.schedule.preferredTime ? ' selected' : '');
+        btn.type = 'button';
+        btn.dataset.id = opt.id;
+        const displayLabel = (window.currentAppLang === 'en' && ONBOARDING_DATA.i18n && ONBOARDING_DATA.i18n.en['schedule_' + opt.id])
+            ? ONBOARDING_DATA.i18n.en['schedule_' + opt.id]
+            : opt.label;
+        btn.innerHTML = `
+      <div class="schedule-time-icon-wrap">
+        <img src="${opt.icon}" alt="${displayLabel}" class="schedule-time-icon-img">
+      </div>
+      <span class="schedule-time-label">${devEscSafe(displayLabel)}</span>
+    `;
+        btn.addEventListener('click', () => {
+            optWrap.querySelectorAll('.schedule-time-card').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            obState.schedule.preferredTime = opt.id;
+            nextBtn.disabled = false;
+        });
+        optWrap.appendChild(btn);
     });
-    optWrap.appendChild(btn);
-  });
-  $('ob-schedule-notify-time').value = obState.schedule.notifyTime;
-  $('ob-schedule-notify-toggle').checked = obState.schedule.notifyEnabled;
-  nextBtn.disabled = !obState.schedule.preferredTime;
-  showScreen('screen-ob-schedule-time');
+    const notifyTime = obState.schedule.notifyTime || '10:30';
+    if ($('ob-schedule-notify-time'))
+        $('ob-schedule-notify-time').value = notifyTime;
+    if ($('ob-schedule-notify-time-display'))
+        $('ob-schedule-notify-time-display').textContent = notifyTime;
+    if ($('ob-schedule-notify-toggle'))
+        $('ob-schedule-notify-toggle').checked = obState.schedule.notifyEnabled ?? true;
+    nextBtn.disabled = !obState.schedule.preferredTime;
+    showScreen('screen-ob-schedule-time');
 }
-$('ob-schedule-notify-time').addEventListener('change', () => {
-  obState.schedule.notifyTime = $('ob-schedule-notify-time').value;
-});
-$('ob-schedule-notify-toggle').addEventListener('change', () => {
-  obState.schedule.notifyEnabled = $('ob-schedule-notify-toggle').checked;
-});
-$('btn-ob-schedule-time-next').addEventListener('click', () => goTo(loadScheduleDays));
-
-/* ---------- 1o. 学習スケジュール作成 STEP2：レッスン数・曜日 ---------- */
-const WEEKDAYS = [
-  { id: 'mon', label: '月曜日' }, { id: 'tue', label: '火曜日' }, { id: 'wed', label: '水曜日' },
-  { id: 'thu', label: '木曜日' }, { id: 'fri', label: '金曜日' }, { id: 'sat', label: '土曜日' },
-  { id: 'sun', label: '日曜日' }
-];
-
-function updateScheduleDaysNextState() {
-  const anyDaySelected = WEEKDAYS.some(d => obState.schedule.days[d.id]);
-  $('btn-ob-schedule-days-next').disabled = !anyDaySelected;
-}
-
-function renderLessonCountLabel() {
-  $('ob-schedule-lesson-count-label').textContent = `${obState.schedule.lessonsPerDay}レッスン／日`;
-  $('ob-schedule-days-list').querySelectorAll('.ob-weekday-row').forEach(row => {
-    const lessonEl = row.querySelector('.wd-lesson-count');
-    if (lessonEl) lessonEl.textContent = `${obState.schedule.lessonsPerDay}レッスン`;
-  });
-}
-
-function loadScheduleDays() {
-  renderLessonCountLabel();
-  const list = $('ob-schedule-days-list');
-  list.innerHTML = WEEKDAYS.map(d => `
-    <div class="ob-weekday-row${obState.schedule.days[d.id] ? ' selected' : ''}" data-day="${d.id}">
-      <span>${d.label}</span>
-      <span class="wd-right"><span class="wd-lesson-count">${obState.schedule.lessonsPerDay}レッスン</span><span class="ob-weekday-check">${obState.schedule.days[d.id] ? '✓' : ''}</span></span>
-    </div>`).join('');
-  list.querySelectorAll('.ob-weekday-row').forEach(row => {
-    row.addEventListener('click', () => {
-      const day = row.dataset.day;
-      obState.schedule.days[day] = !obState.schedule.days[day];
-      row.classList.toggle('selected', obState.schedule.days[day]);
-      row.querySelector('.ob-weekday-check').textContent = obState.schedule.days[day] ? '✓' : '';
-      updateScheduleDaysNextState();
+if ($('ob-schedule-notify-time')) {
+    $('ob-schedule-notify-time').addEventListener('change', () => {
+        if (obState.schedule)
+            obState.schedule.notifyTime = $('ob-schedule-notify-time').value;
+        if ($('ob-schedule-notify-time-display'))
+            $('ob-schedule-notify-time-display').textContent = $('ob-schedule-notify-time').value;
     });
-  });
-  updateScheduleDaysNextState();
-  showScreen('screen-ob-schedule-days');
 }
-$('btn-schedule-lesson-minus').addEventListener('click', () => {
-  obState.schedule.lessonsPerDay = Math.max(1, obState.schedule.lessonsPerDay - 1);
-  renderLessonCountLabel();
-});
-$('btn-schedule-lesson-plus').addEventListener('click', () => {
-  obState.schedule.lessonsPerDay = Math.min(5, obState.schedule.lessonsPerDay + 1);
-  renderLessonCountLabel();
-});
-$('btn-ob-schedule-days-next').addEventListener('click', () => goTo(loadScheduleGoal));
-
-/* ---------- 1p. 学習スケジュール作成 STEP3：継続目標日数（Let's start!） ---------- */
-function loadScheduleGoal() {
-  const optWrap = $('ob-schedule-goal-options');
-  optWrap.innerHTML = '';
-  const nextBtn = $('btn-ob-schedule-goal-next');
-  ONBOARDING_DATA.scheduleStreakOptions.forEach(days => {
-    const btn = document.createElement('button');
-    btn.className = 'ob-option-btn' + (days === obState.schedule.streakGoal ? ' selected' : '');
-    btn.textContent = `${days}日連続`;
-    btn.addEventListener('click', () => {
-      optWrap.querySelectorAll('.ob-option-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      obState.schedule.streakGoal = days;
-      nextBtn.disabled = false;
+if ($('ob-schedule-notify-toggle')) {
+    $('ob-schedule-notify-toggle').addEventListener('change', () => {
+        if (obState.schedule)
+            obState.schedule.notifyEnabled = $('ob-schedule-notify-toggle').checked;
     });
-    optWrap.appendChild(btn);
-  });
-  nextBtn.disabled = !obState.schedule.streakGoal;
-  showScreen('screen-ob-schedule-goal');
 }
-$('btn-ob-schedule-goal-next').addEventListener('click', () => {
-  saveSchedule(obState.schedule);
-  goTo(startGame);
+$('btn-ob-schedule-time-next').addEventListener('click', () => {
+    saveSchedule(obState.schedule);
+    goTo(loadProfileIntro);
 });
-
 /* ---------- 設定画面（あとからいつでもプロフィールを編集） ---------- */
 $('btn-open-settings').addEventListener('click', () => goTo(loadSettings));
-
 function loadSettings() {
-  document.querySelectorAll('#settings-gender-row .ob-pill').forEach(p => {
-    p.classList.toggle('selected', p.dataset.value === obState.profile.gender);
-  });
-  $('settings-name-input').value = obState.profile.name || '';
-  $('settings-birthdate-input').value = obState.profile.birthdate || '';
-
-  const grid = $('settings-avatar-grid');
-  grid.innerHTML = '';
-  ONBOARDING_DATA.avatarOptions.forEach(av => {
-    const cell = document.createElement('div');
-    cell.className = 'ob-avatar-cell' + (av.path === obState.profile.avatar ? ' selected' : '');
-    renderAvatar(cell, av.path);
-    cell.dataset.path = av.path;
-    cell.addEventListener('click', () => {
-      grid.querySelectorAll('.ob-avatar-cell').forEach(c => c.classList.remove('selected'));
-      cell.classList.add('selected');
-      validateSettings();
+    document.querySelectorAll('#settings-gender-row .ob-pill').forEach(p => {
+        p.classList.toggle('selected', p.dataset.value === obState.profile.gender);
     });
-    grid.appendChild(cell);
-  });
-
-  document.querySelectorAll('#settings-voice-row .ob-voice-btn').forEach(b => {
-    b.classList.toggle('selected', b.dataset.value === obState.profile.voiceType);
-  });
-
-  validateSettings();
-  showScreen('screen-settings');
-}
-
-function validateSettings() {
-  const genderOk = document.querySelector('#settings-gender-row .ob-pill.selected');
-  const avatarOk = document.querySelector('#settings-avatar-grid .ob-avatar-cell.selected');
-  const ok = genderOk && avatarOk && $('settings-name-input').value.trim().length > 0 && $('settings-birthdate-input').value;
-  $('btn-settings-save').disabled = !ok;
-}
-
-document.querySelectorAll('#settings-gender-row .ob-pill').forEach(pill => {
-  pill.addEventListener('click', () => {
-    document.querySelectorAll('#settings-gender-row .ob-pill').forEach(p => p.classList.remove('selected'));
-    pill.classList.add('selected');
+    $('settings-name-input').value = obState.profile.name || '';
+    $('settings-birthdate-input').value = obState.profile.birthdate || '';
+    const grid = $('settings-avatar-grid');
+    grid.innerHTML = '';
+    const avatarGroup = grid.closest('.ob-form-group');
+    if (avatarGroup) {
+        avatarGroup.classList.toggle('hidden', ONBOARDING_DATA.avatarOptions.length === 0);
+    }
+    ONBOARDING_DATA.avatarOptions.forEach(av => {
+        const cell = document.createElement('div');
+        cell.className = 'ob-avatar-cell' + (av.path === obState.profile.avatar ? ' selected' : '');
+        renderAvatar(cell, av.path);
+        cell.dataset.path = av.path;
+        cell.addEventListener('click', () => {
+            grid.querySelectorAll('.ob-avatar-cell').forEach(c => c.classList.remove('selected'));
+            cell.classList.add('selected');
+            validateSettings();
+        });
+        grid.appendChild(cell);
+    });
+    document.querySelectorAll('#settings-voice-row .ob-voice-btn').forEach(b => {
+        b.classList.toggle('selected', b.dataset.value === obState.profile.voiceType);
+    });
     validateSettings();
-  });
+    showScreen('screen-settings');
+}
+function validateSettings() {
+    const genderOk = document.querySelector('#settings-gender-row .ob-pill.selected');
+    const avatarRequired = ONBOARDING_DATA.avatarOptions.length > 0;
+    const avatarOk = !avatarRequired || !!document.querySelector('#settings-avatar-grid .ob-avatar-cell.selected');
+    const ok = genderOk && avatarOk && $('settings-name-input').value.trim().length > 0 && $('settings-birthdate-input').value;
+    $('btn-settings-save').disabled = !ok;
+}
+document.querySelectorAll('#settings-gender-row .ob-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+        document.querySelectorAll('#settings-gender-row .ob-pill').forEach(p => p.classList.remove('selected'));
+        pill.classList.add('selected');
+        validateSettings();
+    });
 });
 document.querySelectorAll('#settings-voice-row .ob-voice-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('#settings-voice-row .ob-voice-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-  });
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('#settings-voice-row .ob-voice-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+    });
 });
 $('settings-name-input').addEventListener('input', validateSettings);
 $('settings-birthdate-input').addEventListener('change', validateSettings);
-
 $('btn-settings-voice-sample').addEventListener('click', () => {
-  if (!('speechSynthesis' in window)) return;
-  const name = $('settings-name-input').value.trim() || 'ゲスト';
-  const selectedVoiceBtn = document.querySelector('#settings-voice-row .ob-voice-btn.selected');
-  const voiceTypeId = selectedVoiceBtn ? selectedVoiceBtn.dataset.value : 'A';
-  const utter = new SpeechSynthesisUtterance(`こんにちは、${name}です。よろしくお願いします。`);
-  utter.lang = 'ja-JP';
-  const voiceType = ONBOARDING_DATA.voiceTypes.find(v => v.id === voiceTypeId);
-  if (voiceType) { utter.rate = voiceType.rate; utter.pitch = voiceType.pitch; }
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(utter);
+    if (!('speechSynthesis' in window))
+        return;
+    const name = $('settings-name-input').value.trim() || 'ゲスト';
+    const selectedVoiceBtn = document.querySelector('#settings-voice-row .ob-voice-btn.selected');
+    const voiceTypeId = selectedVoiceBtn ? selectedVoiceBtn.dataset.value : 'A';
+    const utter = new SpeechSynthesisUtterance(`こんにちは、${name}です。よろしくお願いします。`);
+    utter.lang = 'ja-JP';
+    const voiceType = ONBOARDING_DATA.voiceTypes.find(v => v.id === voiceTypeId);
+    if (voiceType) {
+        utter.rate = voiceType.rate;
+        utter.pitch = voiceType.pitch;
+    }
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utter);
 });
-
 $('btn-settings-save').addEventListener('click', () => {
-  const genderBtn = document.querySelector('#settings-gender-row .ob-pill.selected');
-  const avatarCell = document.querySelector('#settings-avatar-grid .ob-avatar-cell.selected');
-  const voiceBtn = document.querySelector('#settings-voice-row .ob-voice-btn.selected');
-
-  obState.profile.gender = genderBtn ? genderBtn.dataset.value : obState.profile.gender;
-  obState.profile.name = $('settings-name-input').value.trim();
-  obState.profile.birthdate = $('settings-birthdate-input').value;
-  obState.profile.avatar = avatarCell ? avatarCell.dataset.path : obState.profile.avatar;
-  obState.profile.voiceType = voiceBtn ? voiceBtn.dataset.value : obState.profile.voiceType;
-
-  saveProfile(obState.profile);
-  window.PLAYER_NAME = obState.profile.name;
-  window.PLAYER_AVATAR = obState.profile.avatar;
-
-  // プロフィールは「どの時点の履歴に戻っても」常に最新の内容であるべきなので、
-  // 過去の履歴スナップショットにもこの変更を反映しておく
-  const updatedProfile = { ...obState.profile };
-  patchHistoryObState(os => { os.profile = { ...updatedProfile }; });
-
-  if (typeof updateHeader === 'function') updateHeader();
-  goBack(); // 設定画面を閉じて、元いた画面に戻る
+    const genderBtn = document.querySelector('#settings-gender-row .ob-pill.selected');
+    const avatarCell = document.querySelector('#settings-avatar-grid .ob-avatar-cell.selected');
+    const voiceBtn = document.querySelector('#settings-voice-row .ob-voice-btn.selected');
+    obState.profile.gender = genderBtn ? genderBtn.dataset.value : obState.profile.gender;
+    obState.profile.name = $('settings-name-input').value.trim();
+    obState.profile.birthdate = $('settings-birthdate-input').value;
+    obState.profile.avatar = avatarCell ? avatarCell.dataset.path : obState.profile.avatar;
+    obState.profile.voiceType = voiceBtn ? voiceBtn.dataset.value : obState.profile.voiceType;
+    saveProfile(obState.profile);
+    window.PLAYER_NAME = obState.profile.name;
+    window.PLAYER_AVATAR = obState.profile.avatar;
+    // プロフィールは「どの時点の履歴に戻っても」常に最新の内容であるべきなので、
+    // 過去の履歴スナップショットにもこの変更を反映しておく
+    const updatedProfile = { ...obState.profile };
+    patchHistoryObState(os => { os.profile = { ...updatedProfile }; });
+    if (typeof updateHeader === 'function')
+        updateHeader();
+    goBack(); // 設定画面を閉じて、元いた画面に戻る
 });
-
 $('btn-settings-cancel').addEventListener('click', () => goBack());
-
 $('btn-settings-retake-hearing').addEventListener('click', () => goTo(loadHearing, 0));
 $('btn-settings-retake-aptitude').addEventListener('click', () => goTo(loadAptitudeIntro));
-
 /* ---------- エントリーポイント ---------- */
 function startOnboarding() {
-  if (typeof playBgm === 'function') playBgm(BGM_TITLE_TRACK);
-  const savedProfile = loadSavedProfile();
-  const savedHearings = loadSavedHearingAnswers();
-  const savedAptitude = loadSavedAptitudeScores();
-  const savedSchedule = loadSavedSchedule();
-  obState.japaneseLevel = null;
-  obState.languageSetting = 'easy';
-  obState.slideIndex = 0;
-  obState.hearingIndex = 0;
-  obState.aptitudeIndex = 0;
-  obState.answers = savedHearings ? { ...savedHearings } : { touchpoint: null, purpose: null, interest: null, concern: null };
-  obState.aptitudeScores = savedAptitude ? { ...savedAptitude } : {};
-  obState.profile = savedProfile ? { ...savedProfile } : { gender: null, name: '', country: '', birthdate: '', avatar: null, voiceType: 'A' };
-  obState.schedule = savedSchedule ? { ...obState.schedule, ...savedSchedule } : obState.schedule;
-  loadStoryCover();
+    const savedProfile = loadSavedProfile();
+    const savedHearings = loadSavedHearingAnswers();
+    const savedAptitude = loadSavedAptitudeScores();
+    const savedSchedule = loadSavedSchedule();
+    obState.languageSetting = null;
+    obState.slideIndex = 0;
+    obState.hearingIndex = 0;
+    obState.aptitudeIndex = 0;
+    obState.answers = savedHearings ? { ...savedHearings } : { touchpoint: null, purpose: null, interest: null, concern: null };
+    obState.aptitudeScores = savedAptitude ? { ...savedAptitude } : {};
+    obState.profile = savedProfile ? { ...savedProfile } : { gender: null, name: '', country: '', birthdate: '', avatar: null, voiceType: 'A' };
+    obState.schedule = savedSchedule ? { ...obState.schedule, ...savedSchedule } : {
+        preferredTime: null,
+        notifyTime: '10:30',
+        notifyEnabled: true,
+        lessonsPerDay: 1,
+        days: { mon: true, tue: true, wed: true, thu: true, fri: true, sat: false, sun: false },
+        streakGoal: null
+    };
+    loadLangSelect();
 }
+function renderAvatarHtml(avatar) {
+    if (!avatar)
+        return '🙂';
+    if (avatar.endsWith('.jpg') || avatar.endsWith('.png') || avatar.endsWith('.svg')) {
+        return `<img src="${avatar}" alt="" style="width:100%;height:100%;object-fit:cover;">`;
+    }
+    return `<span>${avatar}</span>`;
+}
+//# sourceMappingURL=onboarding.js.map

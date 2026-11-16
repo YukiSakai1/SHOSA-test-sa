@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHOSA 学習管理画面</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo"></div>
+                <span class="logo-text">SHOSA ADMIN</span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" class="nav-item" data-page="dashboard">
+                        <span class="icon">📊</span>
+                        <span>ダッシュボード</span>
+                    </a></li>
+                    <li><a href="#" class="nav-item active" data-page="users">
+                        <span class="icon">👥</span>
+                        <span>ユーザー管理</span>
+                    </a></li>
+                    <li><a href="#" class="nav-item" data-page="progress">
+                        <span class="icon">📈</span>
+                        <span>進捗分析</span>
+                    </a></li>
+                    <li><a href="#" class="nav-item" data-page="minitest">
+                        <span class="icon">📝</span>
+                        <span>小テスト</span>
+                    </a></li>
+                    <li><a href="#" class="nav-item" data-page="test">
+                        <span class="icon">📋</span>
+                        <span>テスト</span>
+                    </a></li>
+                    <li><a href="#" class="nav-item" data-page="churn">
+                        <span class="icon">⚠️</span>
+                        <span>離脱ポイント</span>
+                    </a></li>
+                    <li><a href="#" class="nav-item" data-page="region">
+                        <span class="icon">🌍</span>
+                        <span>地域統計</span>
+                    </a></li>
+                    <li><a href="#" class="nav-item" data-page="settings">
+                        <span class="icon">⚙️</span>
+                        <span>設定</span>
+                    </a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Users Page -->
+            <div id="page-users" class="page-content">
+                <!-- Header -->
+                <header class="header">
+                    <h1>ユーザー管理</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-white">エクスポート</button>
+                        <button class="btn btn-purple">新規追加</button>
+                    </div>
+                </header>
+
+                <!-- Summary Stats -->
+                <section class="stats-container">
+                    <div class="stat-card stat-danger">
+                        <div class="stat-value" id="churnedCount">0</div>
+                        <div class="stat-label">学習中止者</div>
+                    </div>
+                    <div class="stat-card stat-success">
+                        <div class="stat-value" id="activeCount">0</div>
+                        <div class="stat-label">継続学習者</div>
+                    </div>
+                    <div class="stat-card stat-warning">
+                        <div class="stat-value" id="inactiveCount">0</div>
+                        <div class="stat-label">休止中</div>
+                    </div>
+                    <div class="stat-card stat-success">
+                        <div class="stat-value" id="avgProgress">0%</div>
+                        <div class="stat-label">平均完了レッスン率</div>
+                    </div>
+                    <div class="stat-card stat-warning">
+                        <div class="stat-value" id="painPointCount">0</div>
+                        <div class="stat-label">つまずきポイント</div>
+                    </div>
+                </section>
+
+                <!-- Filter Section -->
+                <section class="filter-section">
+                    <div class="filter-group">
+                        <input type="text" id="searchInput" placeholder="学習者名で検索..." class="search-input">
+                        <select id="countryFilter" class="filter-select">
+                            <option value="">すべての国</option>
+                            <option value="日本">日本</option>
+                            <option value="中国">中国</option>
+                            <option value="ベトナム">ベトナム</option>
+                            <option value="フィリピン">フィリピン</option>
+                            <option value="ネパール">ネパール</option>
+                            <option value="インドネシア">インドネシア</option>
+                            <option value="ミャンマー">ミャンマー</option>
+                            <option value="韓国">韓国</option>
+                            <option value="その他">その他</option>
+                        </select>
+                        <select id="statusFilter" class="filter-select">
+                            <option value="">すべてのステータス</option>
+                            <option value="active">継続中</option>
+                            <option value="inactive">休止中</option>
+                            <option value="churned">学習中止</option>
+                        </select>
+                        <input type="date" id="dateFrom" class="filter-select" placeholder="開始日">
+                        <input type="date" id="dateTo" class="filter-select" placeholder="終了日">
+                    </div>
+                </section>
+
+                <!-- Data Table -->
+                <section class="table-section">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAll"></th>
+                                <th class="sortable" data-sort="id">ID <span class="sort-icon">↕</span></th>
+                                <th class="sortable" data-sort="name">学習者名 <span class="sort-icon">↕</span></th>
+                                <th class="sortable" data-sort="progress">完了レッスン率 <span class="sort-icon">↕</span></th>
+                                <th>1章</th>
+                                <th>2章</th>
+                                <th>3章</th>
+                                <th class="sortable" data-sort="lastLogin">最終学習日 <span class="sort-icon">↕</span></th>
+                                <th class="sortable" data-sort="playTime">学習時間/日 <span class="sort-icon">↕</span></th>
+                                <th class="sortable" data-sort="country">出身国 <span class="sort-icon">↕</span></th>
+                                <th>つまずきポイント</th>
+                                <th class="sortable" data-sort="status">ステータス <span class="sort-icon">↕</span></th>
+                                <th>詳細</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Pagination -->
+                <section class="pagination">
+                    <div class="pagination-info">
+                        <span id="showingInfo">全件表示</span>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Dashboard Page -->
+            <div id="page-dashboard" class="page-content" style="display: none;">
+                <header class="header">
+                    <h1>ダッシュボード</h1>
+                </header>
+                <section class="stats-container">
+                    <div class="stat-card stat-success">
+                        <div class="stat-value" id="totalUsers">0</div>
+                        <div class="stat-label">総学習者数</div>
+                    </div>
+                    <div class="stat-card stat-success">
+                        <div class="stat-value" id="dashboardActiveCount">0</div>
+                        <div class="stat-label">継続学習者</div>
+                    </div>
+                    <div class="stat-card stat-danger">
+                        <div class="stat-value" id="dashboardChurnedCount">0</div>
+                        <div class="stat-label">学習中止者</div>
+                    </div>
+                </section>
+                <section class="table-section">
+                    <div style="padding: 40px; text-align: center; color: #999;">
+                        <p>ダッシュボードの詳細統計はここに表示されます</p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Progress Page -->
+            <div id="page-progress" class="page-content" style="display: none;">
+                <header class="header">
+                    <h1>進捗分析</h1>
+                </header>
+                <section class="stats-container">
+                    <div class="stat-card stat-success">
+                        <div class="stat-value" id="progress0-25">0</div>
+                        <div class="stat-label">0-25%</div>
+                    </div>
+                    <div class="stat-card stat-warning">
+                        <div class="stat-value" id="progress26-50">0</div>
+                        <div class="stat-label">26-50%</div>
+                    </div>
+                    <div class="stat-card stat-success">
+                        <div class="stat-value" id="progress51-75">0</div>
+                        <div class="stat-label">51-75%</div>
+                    </div>
+                    <div class="stat-card stat-success">
+                        <div class="stat-value" id="progress76-100">0</div>
+                        <div class="stat-label">76-100%</div>
+                    </div>
+                </section>
+                <section class="table-section">
+                    <h3 style="padding: 20px 20px 10px; color: #2c3e50;">完了レッスン率分布グラフ</h3>
+                    <div id="progressChart" style="padding: 20px; display: flex; align-items: flex-end; justify-content: space-around; height: 200px; border-bottom: 1px solid #e9ecef;">
+                        <!-- Chart bars will be populated by JavaScript -->
+                    </div>
+                    <div style="padding: 10px 20px; display: flex; justify-content: space-around; font-size: 12px; color: #666;">
+                        <span>0-25%</span>
+                        <span>26-50%</span>
+                        <span>51-75%</span>
+                        <span>76-100%</span>
+                    </div>
+                </section>
+                <section class="table-section">
+                    <h3 style="padding: 20px 20px 10px; color: #2c3e50;">章別平均進捗率</h3>
+                    <div id="chapterProgressChart" style="padding: 20px; display: flex; align-items: flex-end; justify-content: space-around; height: 200px; border-bottom: 1px solid #e9ecef;">
+                        <!-- Chart bars will be populated by JavaScript -->
+                    </div>
+                    <div style="padding: 10px 20px; display: flex; justify-content: space-around; font-size: 12px; color: #666;">
+                        <span>1章</span>
+                        <span>2章</span>
+                        <span>3章</span>
+                        <span>4章</span>
+                    </div>
+                </section>
+                <section class="table-section">
+                    <h3 style="padding: 20px 20px 10px; color: #2c3e50;">完了レッスン率別学習者一覧</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>学習者名</th>
+                                <th>完了レッスン率</th>
+                                <th>1章</th>
+                                <th>2章</th>
+                                <th>3章</th>
+                                <th>4章</th>
+                                <th>学習時間/日</th>
+                                <th>ステータス</th>
+                            </tr>
+                        </thead>
+                        <tbody id="progressTableBody">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+
+            <!-- Churn Page -->
+            <div id="page-churn" class="page-content" style="display: none;">
+                <header class="header">
+                    <h1>学習中止ポイント分析</h1>
+                </header>
+                <section class="stats-container">
+                    <div class="stat-card stat-danger">
+                        <div class="stat-value" id="churnPageChurnedCount">0</div>
+                        <div class="stat-label">学習中止者数</div>
+                    </div>
+                    <div class="stat-card stat-warning">
+                        <div class="stat-value" id="churnPagePainPointCount">0</div>
+                        <div class="stat-label">つまずきポイント数</div>
+                    </div>
+                </section>
+                <section class="table-section">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>学習者名</th>
+                                <th>学習中止ポイント</th>
+                                <th>つまずきポイント</th>
+                                <th>最終学習日</th>
+                            </tr>
+                        </thead>
+                        <tbody id="churnTableBody">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+
+            <!-- Region Page -->
+            <div id="page-region" class="page-content" style="display: none;">
+                <header class="header">
+                    <h1>地域統計</h1>
+                </header>
+                <section class="stats-container" id="regionStats">
+                    <!-- Region stats will be populated by JavaScript -->
+                </section>
+                <section class="table-section">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>国</th>
+                                <th>ユーザー数</th>
+                                <th>平均進捗率</th>
+                                <th>平均プレイ時間</th>
+                            </tr>
+                        </thead>
+                        <tbody id="regionTableBody">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+
+            <!-- Mini Test Page -->
+            <div id="page-minitest" class="page-content" style="display: none;">
+                <header class="header">
+                    <h1>小テスト</h1>
+                </header>
+                <section class="stats-container">
+                    <div class="stat-card stat-success">
+                        <div class="stat-value" id="minitestTotal">0</div>
+                        <div class="stat-label">総回答数</div>
+                    </div>
+                    <div class="stat-card stat-success">
+                        <div class="stat-value" id="minitestCorrect">0</div>
+                        <div class="stat-label">正解数</div>
+                    </div>
+                    <div class="stat-card stat-warning">
+                        <div class="stat-value" id="minitestRate">0%</div>
+                        <div class="stat-label">正解率</div>
+                    </div>
+                </section>
+                <section class="table-section">
+                    <h3 style="padding: 20px 20px 10px; color: #2c3e50;">小テスト結果一覧</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>学習者名</th>
+                                <th>1章</th>
+                                <th>2章</th>
+                                <th>3章</th>
+                                <th>4章</th>
+                                <th>総正解率</th>
+                                <th>最終回答日</th>
+                            </tr>
+                        </thead>
+                        <tbody id="minitestTableBody">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+
+            <!-- Test Page -->
+            <div id="page-test" class="page-content" style="display: none;">
+                <header class="header">
+                    <h1>テスト</h1>
+                </header>
+                <section class="stats-container">
+                    <div class="stat-card stat-success">
+                        <div class="stat-value" id="testTotal">0</div>
+                        <div class="stat-label">総受験数</div>
+                    </div>
+                    <div class="stat-card stat-success">
+                        <div class="stat-value" id="testPassed">0</div>
+                        <div class="stat-label">合格数</div>
+                    </div>
+                    <div class="stat-card stat-warning">
+                        <div class="stat-value" id="testRate">0%</div>
+                        <div class="stat-label">合格率</div>
+                    </div>
+                </section>
+                <section class="table-section">
+                    <h3 style="padding: 20px 20px 10px; color: #2c3e50;">テスト結果一覧</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>学習者名</th>
+                                <th>1章</th>
+                                <th>2章</th>
+                                <th>3章</th>
+                                <th>4章</th>
+                                <th>総合格率</th>
+                                <th>最終受験日</th>
+                            </tr>
+                        </thead>
+                        <tbody id="testTableBody">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="page-settings" class="page-content" style="display: none;">
+                <header class="header">
+                    <h1>設定</h1>
+                </header>
+                <section class="table-section">
+                    <div style="padding: 20px;">
+                        <h3 style="margin-bottom: 20px; color: #2c3e50;">通知設定</h3>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" id="notifyChurn" checked>
+                                学習中止者が発生した時に通知
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" id="notifyLowProgress" checked>
+                                完了レッスン率が30%未満の学習者を通知
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" id="notifyPainPoints" checked>
+                                つまずきポイントが3つ以上の学習者を通知
+                            </label>
+                        </div>
+                    </div>
+                </section>
+                <section class="table-section">
+                    <div style="padding: 20px;">
+                        <h3 style="margin-bottom: 20px; color: #2c3e50;">データ管理</h3>
+                        <div class="setting-item">
+                            <button class="btn btn-white" onclick="exportAllData()">全データをエクスポート</button>
+                        </div>
+                        <div class="setting-item">
+                            <button class="btn btn-delete" onclick="clearAllData()">全データをクリア</button>
+                        </div>
+                    </div>
+                </section>
+                <section class="table-section">
+                    <div style="padding: 20px;">
+                        <h3 style="margin-bottom: 20px; color: #2c3e50;">システム情報</h3>
+                        <div class="setting-item">
+                            <span class="setting-info">バージョン: 1.0.0</span>
+                        </div>
+                        <div class="setting-item">
+                            <span class="setting-info">最終更新: 2026/10/04</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>ユーザー詳細</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

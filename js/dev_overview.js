@@ -1,3 +1,4 @@
+"use strict";
 /* =========================================================
    DEVELOPER OVERVIEW
    game_data.js / onboarding_data.js の内容をそのまま読み取って、
@@ -6,18 +7,16 @@
    オーバーレイなので、既存の goTo() 履歴システムの外側で単純に
    表示/非表示を切り替えるだけで動く。
    ========================================================= */
-
 function devEsc(str) {
-  if (str === undefined || str === null) return '';
-  const div = document.createElement('div');
-  div.textContent = String(str);
-  return div.innerHTML;
+    if (str === undefined || str === null)
+        return '';
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
 }
-
 const QUALITY_LABEL = { best: 'BEST', okay: 'OKAY', bad: 'BAD' };
-
 function renderDevBranch(choice) {
-  return `
+    return `
     <div class="dev-branch quality-${choice.quality}">
       <div class="dev-branch-title">${QUALITY_LABEL[choice.quality] || choice.quality} ・ ${choice.points}pt</div>
       <div><strong>選択肢:</strong> ${devEsc(choice.label)}</div>
@@ -30,10 +29,9 @@ function renderDevBranch(choice) {
       </div>
     </div>`;
 }
-
 function renderDevDay(day, index) {
-  const choices = day.question.choices.map(renderDevBranch).join('');
-  return `
+    const choices = day.question.choices.map(renderDevBranch).join('');
+    return `
     <details class="dev-day-card" open>
       <summary>
         <span>${devEsc(day.dayTitle)}</span>
@@ -98,13 +96,9 @@ function renderDevDay(day, index) {
       </div>
     </details>`;
 }
-
 function renderDevOnboarding() {
-  const introSlides = ONBOARDING_DATA.introSlides.map((s, i) =>
-    `<div class="dev-chip">#${i + 1} [${devEsc(s.type)}] ${devEsc(s.title || '').replace(/\n/g, ' ')}</div>`
-  ).join('');
-
-  const hearings = ONBOARDING_DATA.hearings.map(h => `
+    const introSlides = ONBOARDING_DATA.introSlides.map((s, i) => `<div class="dev-chip">#${i + 1} [${devEsc(s.type)}] ${devEsc(s.title || '').replace(/\n/g, ' ')}</div>`).join('');
+    const hearings = ONBOARDING_DATA.hearings.map(h => `
     <div class="dev-node">
       <div class="dev-node-label">${devEsc(h.label)}（key: ${devEsc(h.key)}）</div>
       <div class="dev-node-body">
@@ -112,18 +106,10 @@ function renderDevOnboarding() {
         <div class="dev-hearing-row">${h.options.map(o => `<div class="dev-chip">${devEsc(o)}</div>`).join('')}</div>
       </div>
     </div>`).join('<div class="dev-arrow">↓</div>');
-
-  const aptitude = ONBOARDING_DATA.aptitudeQuestions.map(q =>
-    `<div class="dev-chip">[${devEsc(q.dimension)}] ${devEsc(q.text)}</div>`
-  ).join('');
-
-  const languageOptions = ONBOARDING_DATA.languageOptions.map(o =>
-    `<div class="dev-chip">${devEsc(o.icon)} ${devEsc(o.label)}</div>`
-  ).join('');
-
-  const avatarCount = ONBOARDING_DATA.avatarOptions.length;
-
-  return `
+    const aptitude = ONBOARDING_DATA.aptitudeQuestions.map(q => `<div class="dev-chip">[${devEsc(q.dimension)}] ${devEsc(q.text)}</div>`).join('');
+    const languageOptions = ONBOARDING_DATA.languageOptions.map(o => `<div class="dev-chip">${devEsc(o.icon)} ${devEsc(o.label)}</div>`).join('');
+    const avatarCount = ONBOARDING_DATA.avatarOptions.length;
+    return `
     <details class="dev-day-card" open>
       <summary>
         <span>0章: 登録開始 〜 SHOSAパスポート完成</span>
@@ -132,9 +118,9 @@ function renderDevOnboarding() {
       <div class="dev-day-body">
 
         <div class="dev-node">
-          <div class="dev-node-label">① 登録開始 → SHOSA Ready CHECK</div>
+          <div class="dev-node-label">① 登録開始 → 言語設定選択</div>
           <div class="dev-node-body">
-            日本語レベル確認（${ONBOARDING_DATA.japaneseLevels.length}択）→ おすすめ言語設定 → 言語設定選択
+            ホテルスタッフ体験（導入カバー）→ 言語設定選択
             <div class="dev-hearing-row">${languageOptions}</div>
           </div>
         </div>
@@ -169,22 +155,20 @@ function renderDevOnboarding() {
       </div>
     </details>`;
 }
-
 function renderDevOverview() {
-  const dayCards = GAME_DATA.days.map(renderDevDay).join('');
-  $('dev-overview-content').innerHTML = `
+    const dayCards = GAME_DATA.days.map(renderDevDay).join('');
+    $('dev-overview-content').innerHTML = `
     <div class="dev-section-title">0章（オンボーディング）</div>
     ${renderDevOnboarding()}
     <div class="dev-section-title">ゲーム本編（DAY1〜${GAME_DATA.days.length}）</div>
     ${dayCards}
   `;
 }
-
 $('btn-open-dev-overview').addEventListener('click', () => {
-  renderDevOverview();
-  $('dev-overview').classList.remove('hidden');
+    renderDevOverview();
+    $('dev-overview').classList.remove('hidden');
 });
-
 $('btn-close-dev-overview').addEventListener('click', () => {
-  $('dev-overview').classList.add('hidden');
+    $('dev-overview').classList.add('hidden');
 });
+//# sourceMappingURL=dev_overview.js.map

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 402 874" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
+  <g opacity="0.22">
+    <polygon points="201.0,310.0 897.2,236.8 897.2,383.2" fill="#FFFFFF" />
+    <polygon points="201.0,310.0 866.7,526.3 807.2,660.0" fill="#FFFFFF" />
+    <polygon points="201.0,310.0 721.2,778.4 612.4,876.3" fill="#FFFFFF" />
+    <polygon points="201.0,310.0 485.7,949.5 346.5,994.7" fill="#FFFFFF" />
+    <polygon points="201.0,310.0 201.0,1010.0 55.5,994.7" fill="#FFFFFF" />
+    <polygon points="201.0,310.0 -83.7,949.5 -210.4,876.3" fill="#FFFFFF" />
+    <polygon points="201.0,310.0 -319.2,778.4 -405.2,660.0" fill="#FFFFFF" />
+    <polygon points="201.0,310.0 -464.7,526.3 -495.2,383.2" fill="#FFFFFF" />
+    <polygon points="201.0,310.0 -495.2,236.8 -464.7,93.7" fill="#FFFFFF" />
+    <polygon points="201.0,310.0 -405.2,-40.0 -319.2,-158.4" fill="#FFFFFF" />
+    <polygon points="201.0,310.0 -210.4,-256.3 -83.7,-329.5" fill="#FFFFFF" />
+    <polygon points="201.0,310.0 55.5,-374.7 201.0,-390.0" fill="#FFFFFF" />
+    <polygon points="201.0,310.0 346.5,-374.7 485.7,-329.5" fill="#FFFFFF" />
+    <polygon points="201.0,310.0 612.4,-256.3 721.2,-158.4" fill="#FFFFFF" />
+    <polygon points="201.0,310.0 807.2,-40.0 866.7,93.7" fill="#FFFFFF" />
+  </g>
+</svg>
