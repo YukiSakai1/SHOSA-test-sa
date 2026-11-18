@@ -3,6 +3,7 @@
  * 画面ロジックはこの型だけに依存する。文言は必ず ja / en の両方を持つ。
  */
 import type { ImageKey } from '@/theme/images';
+import type { SvgIconKey } from '@/theme/svgIcons';
 
 export type Lang = 'ja' | 'en';
 
@@ -39,10 +40,71 @@ export interface Chapter1Lesson {
   /** result 画面 */
   reason: Localized;
   shosaPrompt: Localized;
-  /** SHOSA Focus モーダル */
-  focusText: Localized;
+  /** SHOSA Focus モーダルの本文（段落ごと） */
+  focusParagraphs: Localized[];
   focusCaption: RichLocalized;
   focusImage?: ImageKey;
+}
+
+/* ---------- 0章（オンボーディング） ---------- */
+
+/** アイコンは PNG 画像（images のキー）か SVG（svgIcons のキー）のどちらか */
+export type IconRef = { image: ImageKey } | { svg: SvgIconKey };
+
+export interface ChoiceOption {
+  id: string;
+  label: Localized;
+  icon: IconRef;
+  /** true のとき選択すると自由入力欄が開く（「その他」） */
+  hasInput?: boolean;
+}
+
+export type HearingKey = 'experience' | 'workStyle' | 'interest' | 'concern';
+
+export interface HearingQuestion {
+  key: HearingKey;
+  question: Localized;
+  options: ChoiceOption[];
+}
+
+export type AptitudeDimension =
+  | 'Hospitality'
+  | 'ServiceMindset'
+  | 'Adaptability'
+  | 'StressTolerance'
+  | 'Observation'
+  | 'WorkplaceCulture'
+  | 'Teamwork'
+  | 'Initiative'
+  | 'MultiTasking';
+
+export interface AptitudeQuestion {
+  id: number;
+  dimension: AptitudeDimension;
+  text: Localized;
+}
+
+export interface RoleResult {
+  id: string;
+  name: string;
+  icon: IconRef;
+  /** この職種のスコアを計算するときに平均する次元 */
+  traits: AptitudeDimension[];
+  strengths: Localized[];
+}
+
+export interface JourneyStep {
+  doorNumber: string | null;
+  door: ImageKey;
+  title: Localized;
+  desc: Localized;
+  locked: boolean;
+}
+
+export interface IntroSlide {
+  kind: 'welcome' | 'features' | 'steps' | 'certification';
+  title: Localized;
+  button: Localized;
 }
 
 export interface Chapter1Data {

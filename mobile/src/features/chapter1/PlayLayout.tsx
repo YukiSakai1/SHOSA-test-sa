@@ -1,15 +1,17 @@
 /**
- * 第1章プレイ画面（situation / dialogue / question）の共通レイアウト。
- * 上：閉じる・進捗バー・言語切り替え／中：シーン画像／下：白いカード
+ * 第1章プレイ画面（situation / dialogue / question）の共通レイアウト（Figma CH1-L01-01〜03）。
+ * 上：✕・進捗バー／中：画面幅いっぱいのシーン画像（下端がフェード）／下：白いカード（上端に金の帯と飾り）
+ * Figma では章の中に EN ボタンは無い（btn_en が非表示）。言語は 0章の言語選択で決まる。
  */
 import { useState, type ReactNode } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
+import { router, type Href } from 'expo-router';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
-import { Flourish, LangToggle, ProgressBar } from '@/components/ui';
+import { CloseButton, Flourish, ProgressBar } from '@/components/ui';
 import { useLang } from '@/i18n/LanguageProvider';
-import { colors } from '@/theme/colors';
+import { colors, fonts } from '@/theme/colors';
 import { images, type ImageKey } from '@/theme/images';
 import { chapter1LessonCount } from '@/content/chapter1';
 
@@ -20,17 +22,16 @@ export function progressPercent(lessonIndex: number, stepInLesson: 1 | 2 | 3 | 4
   return Math.max(4, Math.min(100, Math.round((current / total) * 100)));
 }
 
-/** 閉じる（✕）＋進捗バー＋言語切り替え。確認ダイアログ付き */
-export function ChapterHeader({ percent, dark = false }: { percent: number; dark?: boolean }) {
+/** ✕（中断確認ダイアログ付き）＋進捗バー */
+/** exitTo: ✕ で中断したときの戻り先（既定はタイトル） */
+export function ChapterHeader({ percent, exitTo = '/' }: { percent: number; exitTo?: Href }) {
   const { t } = useLang();
   const [confirming, setConfirming] = useState(false);
   return (
     <View style={styles.header}>
-      <Pressable accessibilityRole="button" accessibilityLabel={t('close')} hitSlop={10} onPress={() => setConfirming(true)}>
-        <Text style={[styles.close, dark && { color: colors.white }]}>✕</Text>
-      </Pressable>
+      <CloseButton label={t('close')} onPress={() => setConfirming(true)} />
       <ProgressBar percent={percent} />
-      <LangToggle />
+      <View style={{ width: 32 }} />
       <ConfirmDialog
         visible={confirming}
         title={t('exitConfirmTitle')}
@@ -40,7 +41,7 @@ export function ChapterHeader({ percent, dark = false }: { percent: number; dark
         onCancel={() => setConfirming(false)}
         onConfirm={() => {
           setConfirming(false);
-          router.dismissTo('/');
+          router.dismissTo(exitTo);
         }}
       />
     </View>
@@ -49,22 +50,35 @@ export function ChapterHeader({ percent, dark = false }: { percent: number; dark
 
 interface Props {
   percent: number;
+  exitTo?: Href;
   image: ImageKey;
   imageAlt: string;
   label: string;
   children: ReactNode;
 }
 
-export function PlayLayout({ percent, image, imageAlt, label, children }: Props) {
+export function PlayLayout({ percent, exitTo, image, imageAlt, label, children }: Props) {
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const imageH = Math.round((Math.min(width, 500) * 342) / 402);
   return (
     <View style={[styles.screen, { paddingTop: insets.top }]}>
-      <ChapterHeader percent={percent} />
-      <ScrollView contentContainerStyle={[styles.scroll, { paddingBottom: insets.bottom + 20 }]}>
-        <View style={styles.illustration}>
-          <Image source={images[image]} accessibilityLabel={imageAlt} style={styles.sceneImg} resizeMode="contain" />
+      <ChapterHeader percent={percent} exitTo={exitTo} />
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} bounces={false}>
+        <View style={{ height: imageH }}>
+          <Image source={images[image]} accessibilityLabel={imageAlt} style={StyleSheet.absoluteFill} resizeMode="cover" />
+          <Svg style={styles.fade} height={40} width="100%">
+            <Defs>
+              <LinearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+                <Stop offset="0" stopColor={colors.white} stopOpacity={0} />
+                <Stop offset="1" stopColor={colors.white} stopOpacity={1} />
+              </LinearGradient>
+            </Defs>
+            <Rect width="100%" height="40" fill="url(#fade)" />
+          </Svg>
         </View>
-        <View style={styles.card}>
+        <View style={[styles.card, { paddingBottom: insets.bottom + 70 }]}>
+          <View style={styles.band} />
           <Flourish corner="tl" />
           <Flourish corner="tr" />
           <Text style={styles.cardLabel}>{label}</Text>
@@ -77,27 +91,14 @@ export function PlayLayout({ percent, image, imageAlt, label, children }: Props)
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.playBackground },
-  header: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 10 },
-  close: { fontSize: 20, color: colors.textMuted, fontWeight: '700', width: 24, textAlign: 'center' },
-  scroll: { flexGrow: 1, paddingHorizontal: 16, gap: 14 },
-  illustration: { width: '100%', aspectRatio: 4 / 3, borderRadius: 16, overflow: 'hidden', backgroundColor: colors.cream },
-  sceneImg: { width: '100%', height: '100%' },
-  card: {
-    flexGrow: 1,
-    minHeight: 220,
-    backgroundColor: colors.white,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: colors.goldPale,
-    paddingHorizontal: 22,
-    paddingTop: 22,
-    paddingBottom: 70,
-  },
-  cardLabel: { fontSize: 13, fontWeight: '800', color: colors.gold, letterSpacing: 2, textAlign: 'center', marginBottom: 12 },
+  header: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 21, paddingVertical: 10 },
+  fade: { position: 'absolute', bottom: 0, left: 0, right: 0 },
+  card: { flexGrow: 1, backgroundColor: colors.white, paddingHorizontal: 21, paddingTop: 30 },
+  band: { position: 'absolute', top: 0, left: 0, right: 0, height: 8, backgroundColor: colors.goldBorder },
+  cardLabel: { fontFamily: fonts.montserrat, fontSize: 14, color: colors.goldLabel, letterSpacing: 2, textAlign: 'center', marginBottom: 20 },
 });
 
 export const playTextStyles = StyleSheet.create({
-  meta: { fontSize: 12, color: colors.textMuted, fontWeight: '700', marginBottom: 10, textAlign: 'center' },
-  narrative: { fontSize: 15, lineHeight: 25, color: colors.text },
-  speaker: { color: colors.textMuted, fontWeight: '800', fontSize: 14 },
+  narrative: { fontSize: 16, lineHeight: 26, color: colors.black, paddingHorizontal: 20 },
+  speaker: { color: colors.goldDark, fontWeight: '700', fontSize: 16 },
 });

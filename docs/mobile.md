@@ -30,24 +30,32 @@ mobile/
 ├── assets/images/            画像（追加したら src/theme/images.ts にも登録する）
 └── src/
     ├── app/                  ★ 画面（ルート）。ファイルを置くとそのままURLになる
-    │   ├── _layout.tsx       ルートの Stack と各種 Provider
-    │   ├── index.tsx         仮のホーム画面（0章を移植したら置き換える）
-    │   └── chapter1/
-    │       ├── index.tsx              /chapter1               章のガイド
-    │       ├── [lesson]/situation.tsx /chapter1/0/situation   状況説明
-    │       ├── [lesson]/dialogue.tsx  /chapter1/0/dialogue    会話（1/2 → 2/2）
-    │       ├── [lesson]/question.tsx  /chapter1/0/question    2択問題
-    │       ├── [lesson]/result.tsx    /chapter1/0/result?choice=A  結果と SHOSA Focus
-    │       └── complete.tsx           /chapter1/complete      クリア画面
+    │   ├── _layout.tsx       ルートの Stack と Provider（言語・0章・2章）、フォント読み込み
+    │   ├── index.tsx         タイトル／ログイン（CH0-01）。進み具合に応じて 0章→1章→2章 へ
+    │   ├── onboarding/       0章：language → intro/[slide] → greet → hearing/[step] → schedule-intro
+    │   │                        → schedule → profile-intro → profile → journey → aptitude-intro
+    │   │                        → aptitude/[page] → complete → result
+    │   ├── chapter1/         1章：index（ガイド）→ [lesson]/situation → dialogue → question
+    │   │                        → result?choice= → complete
+    │   └── chapter2/         2章：index（ガイド）→ roles → [role]/[scenario]/situation/[step]
+    │                            → question/[step] → scenario-complete → diagnosis-complete
+    │                            → result → profile → complete
     ├── content/              ★ シナリオデータと型（画面のロジックを触らずに中身を増やせる）
-    │   ├── types.ts          Localized（{ ja, en }）、Chapter1Lesson など
-    │   ├── chapter1.ts       第1章のデータ
+    │   ├── types.ts          Localized（{ ja, en }）、IconRef、各章の型
+    │   ├── onboarding.ts     0章（ヒアリング・適性診断18問・職種の結果など）
+    │   ├── chapter1.ts       1章のレッスン
+    │   ├── chapter2.ts       2章の職種・シナリオ・行動傾向（4つ）
     │   └── uiStrings.ts      固定の UI 文言（ja / en）
-    ├── features/chapter1/    第1章専用の部品（共通レイアウト、Focus モーダル、クリア状態の保存）
-    ├── components/           共通の UI 部品（ボタン、言語切り替え、確認ダイアログ、RichText）
+    ├── features/
+    │   ├── onboarding/       0章の状態（OnboardingProvider）、採点（diagnosis.ts）、
+    │   │                     バリデーション（validation.ts）、共通レイアウト（components.tsx）
+    │   ├── chapter1/         プレイ画面の共通レイアウト（PlayLayout。2章でも使う）、Focus モーダル、クリア状態
+    │   └── chapter2/         2章の回答（Chapter2Provider）、集計（scoring.ts）、完了カード
+    ├── components/           共通部品（CtaButton・CloseButton・ProgressBar・PatternBackground・
+    │                         WheelPicker・BottomSheet・Celebration・ConfirmDialog・RichText・Icon）
     ├── i18n/                 言語の状態（useLang）
     ├── lib/storage.ts        端末内保存（型付き）
-    └── theme/                色と画像の一覧
+    └── theme/                色（colors.ts＝Figma の値）、画像（images.ts）、SVG アイコン（svgIcons.ts）
 ```
 `@/…` は `src/…` を指すパスの別名です。
 
@@ -74,9 +82,12 @@ mobile/
 
 ## 移植の状況
 - [x] 土台（Expo、TypeScript、Expo Router、言語切り替え、保存）
-- [x] 第1章（ch101）：ガイド → 状況説明 → 会話 → 問題 → 結果と Focus → クリア
-- [ ] 0章（オンボーディング）：言語選択、ヒアリング、プロフィール入力、適性診断など
-  - 入力欄のバリデーションとエラーメッセージの仕様がまだ決まっていません
-- [ ] ホーム画面（デザインがまだ決まっていません）
-- [ ] 演出の再現：紙吹雪、光が横切る演出、タイプライター表示など（今はメダルが落ちてくる演出だけを簡単に入れています）
-- [ ] 認証、バックエンド、通知、課金（仕様がまだ決まっていません）
+- [x] 0章（オンボーディング）：Figma「0章_261016」の全画面
+- [x] 1章（Omotenashi Mindset）：Figma の注記どおりに修正済み（Focus を開くまで NEXT が押せない、など）
+- [x] 2章（Omotenashi Style 診断 / JOB Simulation）：Figma の全画面（サンプルシナリオ1本）
+- [ ] ホーム画面（デザインがまだ決まっていない）
+- [ ] 3章以降（デザインがまだ無い）
+- [ ] 認証、バックエンド、通知、課金（仕様がまだ決まっていない）
+- [ ] 一部の演出（紙吹雪、光が横切る演出、扉が開く演出）
+
+Figma との照合結果と、仕様が決まっていないため仮で実装した箇所の一覧は [design-qa.md](design-qa.md) にあります。

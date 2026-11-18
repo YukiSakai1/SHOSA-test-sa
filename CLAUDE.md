@@ -52,6 +52,7 @@ npx tsc --noEmit  # 型チェックだけ実行
 
 ## ドキュメント
 - [docs/mobile.md](docs/mobile.md)：**モバイル版（Expo）のルール、構成、移植の状況**
+- [docs/design-qa.md](docs/design-qa.md)：Figma（sakaiローカル.fig）との照合結果と、仮で実装した仕様の一覧
 - [docs/architecture.md](docs/architecture.md)：実行時の仕組み（読み込み順、画面遷移、状態、保存）
 - [docs/screen-flow.md](docs/screen-flow.md)：画面ID・ローダー関数・遷移の一覧
 - [docs/data-model.md](docs/data-model.md)：データ型とシナリオデータの書き方

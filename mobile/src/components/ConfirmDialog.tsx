@@ -37,13 +37,13 @@ export function ConfirmDialog({ visible, title, body, confirmLabel, cancelLabel,
 }
 
 const styles = StyleSheet.create({
-  backdrop: { flex: 1, backgroundColor: colors.overlay, justifyContent: 'center', padding: 28 },
-  card: { backgroundColor: colors.cream, borderRadius: 18, padding: 22, gap: 10 },
+  backdrop: { flex: 1, backgroundColor: colors.dialogOverlay, justifyContent: 'center', padding: 28 },
+  card: { backgroundColor: colors.beige, borderRadius: 18, padding: 22, gap: 10 },
   title: { fontSize: 17, fontWeight: '800', color: colors.text },
   body: { fontSize: 14, lineHeight: 21, color: colors.text },
   row: { flexDirection: 'row', gap: 10, marginTop: 8 },
   btn: { flex: 1, borderRadius: 999, paddingVertical: 12, alignItems: 'center' },
-  cancel: { backgroundColor: colors.white, borderWidth: 1, borderColor: colors.goldLight },
+  cancel: { backgroundColor: colors.white, borderWidth: 1, borderColor: colors.goldBorder },
   cancelText: { color: colors.text, fontWeight: '700' },
   ok: { backgroundColor: colors.purple },
   okText: { color: colors.white, fontWeight: '800' },

@@ -1,21 +1,49 @@
-/** デザイントークン（Web版 css/style.css の ch101 系から抽出） */
+/**
+ * デザイントークン。値はすべて Figma（sakaiローカル.fig）から抽出したもの。
+ * 新しい色を足すときも、Figma のレイヤーにある値をそのまま使う。
+ */
 export const colors = {
-  gold: '#C4A265',
-  goldLight: '#D8C39D',
-  goldPale: '#E6D8BD',
-  cream: '#FAF7F2',
-  playBackground: '#ECE7DE',
+  // ベース
   white: '#FFFFFF',
-  text: '#2B2B2B',
+  black: '#000000',
+  text: '#333333',
   textMuted: '#8C7B6B',
-  purple: '#715BE1',
-  progressTrack: '#DFDEDE',
-  teal: '#18A5B1',
-  mint: '#D3F2F1',
-  cta: '#00C9C3',
-  ctaPressed: '#00B3AD',
-  incorrect: '#E36A6A',
-  sky: '#4FBFF1',
-  skyDeep: '#3CA7F1',
-  overlay: 'rgba(0,0,0,0.45)',
+  placeholder: '#C2C2C2',
+
+  // ゴールド系（飾り枠・ラベル）
+  goldLabel: '#DAC397', // "101" "SITUATION" などのラベル
+  goldDark: '#B09D79', // ✕ アイコン・話者名・飾り
+  goldBorder: '#E6D8BD', // カード枠・帯
+  goldCaption: '#988464', // Focus のキャプション
+  goldButton: '#CAB896', // SHOSA Focus ボタン
+  goldScore: '#AE9668',
+
+  // 背景
+  beige: '#F6F1E8', // 0章の背景・吹き出し
+  playBackground: '#E8DECB', // 1章プレイ画面の背景
+  turquoise: '#00C9C3', // 0章イントロの背景・NEXT ボタン
+  turquoisePressed: '#00B3AD',
+  sky: '#6DCAF1', // 1章ガイドの背景
+  skyEnd: '#4EBFF0', // 1章完了の背景
+  mint: '#D3F2F1', // 結果画面の下半分
+  teal: '#18A5B1', // 結果画面の上半分・強調
+
+  // アクセント
+  purple: '#715BE1', // START ボタン・進捗・強調文字
+  purplePressed: '#5E49C9',
+  disabled: '#E0E0E0',
+  correct: '#00C9C3',
+  incorrect: '#E41042',
+
+  // 進捗バー
+  progressTrack: '#DDDDDD',
+  progressTrackBorder: '#C2B7A2',
+
+  overlay: 'rgba(0,0,0,0.74)', // Focus モーダルの背面
+  dialogOverlay: 'rgba(0,0,0,0.45)',
+} as const;
+
+export const fonts = {
+  /** 英字の見出し・数字（Figma: Montserrat Bold） */
+  montserrat: 'Montserrat_700Bold',
 } as const;

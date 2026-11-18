@@ -8,7 +8,7 @@ import type { Chapter1Data } from './types';
 export const chapter1: Chapter1Data = {
   guide: {
     badgeNumber: '101',
-    title: { ja: '1章：Omotenashi Mindset', en: 'Chapter 1: Omotenashi Mindset' },
+    title: { ja: 'Omotenashi Mindset', en: 'Omotenashi Mindset' },
     subtitle: {
       ja: 'ホテルの一日に寄り添う「プロの思考と選択」',
       en: "Follow a hotel day through a pro's thinking and choices",
@@ -27,7 +27,8 @@ export const chapter1: Chapter1Data = {
   },
   end: {
     title: { ja: '1章 学習完了！', en: 'Chapter 1 Complete!' },
-    unlockLabel: { ja: '2章：JOB診断 が\n解放されました', en: 'Chapter 2: JOB Assessment\nhas been unlocked' },
+    // Figma CH1-END の文言（Web版は「2章：JOB診断」だった）
+    unlockLabel: { ja: '2章：Omotenashi Style診断 が\n解放されました', en: 'Chapter 2: Omotenashi Style Assessment\nhas been unlocked' },
     body: {
       ja: 'プロの仕事を観察し、日本の宿泊業の現場で求められるOmotenashi Mindsetを体験することができました！',
       en: "You observed the work of pros and experienced the Omotenashi Mindset required in Japan's hospitality industry!",
@@ -84,10 +85,21 @@ export const chapter1: Chapter1Data = {
         ja: '海外と日本では『香り』の感覚が違うんだ。プロが大切にする『無香』の意味、知ってる？',
         en: 'Views on scent differ between countries and Japan. Do you know why pros go fragrance-free?',
       },
-      focusText: {
-        ja: '多くの国では、良い香水を身につけることは『相手を歓迎するマナー』とされます。しかし、日本のホテル現場では『無香（匂いを残さないこと）』が最高の身だしなみです。さまざまな文化を持つゲストが寛ぐ空間では、どんなに良い香りでも『刺激』になり得ます。自身の好みを抑え、空間の快適さを守る『引き算の配慮』がプロの基準です。',
-        en: "In many countries, wearing good perfume is seen as a way of welcoming others. In Japanese hotels, however, being fragrance-free (leaving no scent behind) is the highest standard of grooming. In a space where guests from many cultures relax, even a lovely fragrance can be an irritant. Setting aside your own preferences to protect the comfort of the space – this 'less-is-more' consideration – is the professional standard.",
-      },
+      // Figma の SHOSA Focus モーダルと同じく3段落に分けて持つ
+      focusParagraphs: [
+        {
+          ja: '多くの国では、良い香水を身につけることは『相手を歓迎するマナー』とされます。',
+          en: 'In many countries, wearing good perfume is seen as a way of welcoming others.',
+        },
+        {
+          ja: 'しかし、日本のホテル現場では『無香（匂いを残さないこと）』が最高の身だしなみです。さまざまな文化を持つゲストが寛ぐ空間では、どんなに良い香りでも『刺激』になり得ます。',
+          en: 'In Japanese hotels, however, being fragrance-free (leaving no scent behind) is the highest standard of grooming. In a space where guests from many cultures relax, even a lovely fragrance can be an irritant.',
+        },
+        {
+          ja: '自身の好みを抑え、空間の快適さを守る『引き算の配慮』がプロの基準です。',
+          en: "Setting aside your own preferences to protect the comfort of the space – this 'less-is-more' consideration – is the professional standard.",
+        },
+      ],
       focusCaption: {
         ja: '<hl>「視覚・清潔感」</hl>だけでなく\n<hl>「嗅覚・無香」</hl>までカバーする\nプロの身だしなみチェックシート',
         en: 'Professional grooming checklist covering not only\n<hl>"Visual Cleanliness"</hl> but also\n<hl>"Fragrance-Free Sense"</hl>',

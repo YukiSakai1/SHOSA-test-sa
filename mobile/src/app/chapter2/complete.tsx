@@ -1,0 +1,36 @@
+/**
+ * 2章 職種診断完了（Figma CH2-06）：緑の背景・メダル・2つのボタン。
+ * NEXT CHAPTER：3章はまだデザインが無いためタイトルへ戻る。
+ * TRY ANOTHER ROLE：ROLE Line Up へ戻る。
+ */
+import { Redirect, router, useLocalSearchParams } from 'expo-router';
+import { Text } from 'react-native';
+import { Celebration, celebrationText } from '@/components/Celebration';
+import { CtaButton } from '@/components/ui';
+import { chapter2, fill, findRole } from '@/content/chapter2';
+import { useLang } from '@/i18n/LanguageProvider';
+
+export default function Chapter2CompleteScreen() {
+  const params = useLocalSearchParams<{ role: string }>();
+  const { tr } = useLang();
+  const role = findRole(params.role);
+  if (!role) return <Redirect href="/chapter2/roles" />;
+  const e = chapter2.end;
+
+  return (
+    <Celebration
+      background="#10C56E"
+      title={fill(tr(e.title), { role: role.name })}
+      medal="medalChapter1"
+      footer={
+        <>
+          <CtaButton testID="next-chapter" variant="light" label={tr(e.nextChapter)} onPress={() => router.dismissTo('/')} />
+          <CtaButton testID="another-role" variant="primary" pulse label={tr(e.anotherRole)} onPress={() => router.dismissTo('/chapter2/roles')} />
+        </>
+      }
+    >
+      <Text style={celebrationText.unlocked}>{tr(e.lead)}</Text>
+      <Text style={celebrationText.body}>{tr(e.body)}</Text>
+    </Celebration>
+  );
+}

@@ -6,10 +6,16 @@
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Lang } from '@/content/types';
+import type { Chapter2Record } from '@/features/chapter2/Chapter2Provider';
+import type { OnboardingRecord } from '@/features/onboarding/OnboardingProvider';
 
 export interface StorageSchema {
   'shosa.lang': Lang;
+  /** 0章の入力内容（ヒアリング・スケジュール・プロフィール・適性診断） */
+  'shosa.onboarding': OnboardingRecord;
   'shosa.chapter1.completed': boolean;
+  /** 2章の回答と、診断を終えた職種 */
+  'shosa.chapter2': Chapter2Record;
 }
 
 export type StorageKey = keyof StorageSchema;
@@ -32,6 +38,6 @@ export async function saveItem<K extends StorageKey>(key: K, value: StorageSchem
 }
 
 export async function clearAll(): Promise<void> {
-  const keys: StorageKey[] = ['shosa.lang', 'shosa.chapter1.completed'];
+  const keys: StorageKey[] = ['shosa.lang', 'shosa.onboarding', 'shosa.chapter1.completed', 'shosa.chapter2'];
   await AsyncStorage.multiRemove(keys);
 }

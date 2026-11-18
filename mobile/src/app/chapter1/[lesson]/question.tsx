@@ -42,7 +42,6 @@ export default function QuestionScreen() {
       imageAlt={tr(lesson.title)}
       label={t('questionLabel')}
     >
-      <Text style={styles.tag}>{tr(lesson.situationTag)}</Text>
       <Text style={styles.question}>{tr(lesson.question)}</Text>
       <View style={styles.choices}>
         {CHOICE_IDS.map((id) => (
@@ -69,21 +68,10 @@ export default function QuestionScreen() {
 }
 
 const styles = StyleSheet.create({
-  tag: {
-    alignSelf: 'center',
-    fontSize: 12,
-    color: colors.textMuted,
-    backgroundColor: colors.cream,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    overflow: 'hidden',
-    marginBottom: 12,
-  },
-  question: { fontSize: 15, lineHeight: 24, fontWeight: '700', color: colors.text, marginBottom: 16 },
-  choices: { gap: 12, marginBottom: -50 },
-  choice: { minHeight: 76, justifyContent: 'center', paddingHorizontal: 26, paddingVertical: 16 },
+  question: { fontSize: 16, lineHeight: 24, color: colors.black, marginBottom: 20, paddingHorizontal: 20 },
+  choices: { gap: 10, marginBottom: -50 },
+  choice: { minHeight: 95, justifyContent: 'center', paddingHorizontal: 34, paddingVertical: 16 },
   // 枠画像を親の幅に合わせる（指定しないと Web で画像の元サイズのままはみ出す）
   choiceBorder: { width: '100%', height: '100%' },
-  choiceText: { fontSize: 13.5, lineHeight: 21, color: colors.text, fontWeight: '600' },
+  choiceText: { fontSize: 16, lineHeight: 24, color: colors.text, fontWeight: '700' },
 });
