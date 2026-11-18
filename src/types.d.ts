@@ -151,6 +151,7 @@ interface IntroSlide {
   title: string;
   titleEn?: string;
   heroImg: string;
+  reportBaseImg?: string;
   buttonLabel: string;
   buttonLabelEn?: string;
   bodyLead?: string;
@@ -217,6 +218,8 @@ interface JourneyStep {
   step: number;
   doorNumber: string | null;
   doorImg: string;
+  dotImg?: string;
+  mascotImg?: string;
   isOpen: boolean;
   isLocked: boolean;
   lockImg?: string;
@@ -274,6 +277,7 @@ interface OnboardingSchedule {
   preferredTime: string | null;
   notifyTime: string;
   notifyEnabled: boolean;
+  userCustomizedTime?: boolean;
   lessonsPerDay: number;
   days: {
     mon: boolean;
@@ -317,7 +321,6 @@ interface Window {
   obState: any;
   SpeechRecognition: any;
   webkitSpeechRecognition: any;
-  DEV_JUMP_TARGETS: Record<string, () => void>;
   onboarding: any;
   $: (id: string) => any;
   showScreen: (id: string) => void;

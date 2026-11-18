@@ -14,10 +14,10 @@ const GAME_DATA: GameData = {
       daySummaryDesc: "忙しい朝の現場で、指示の優先順位を判断し「報連相（ほうれんそう）」の基本を身につけます。",
       npc: {
         name: "チーフ（上司）",
-        avatar: "assets/images/mascot_shosa_standing.png",
-        bannerNeutral: "assets/images/mascot_shosa_standing.png",
-        bannerHappy: "assets/images/mascot_shosa_standing.png",
-        bannerWorried: "assets/images/mascot_shosa_standing.png"
+        avatar: "assets/images/mascot_shosa_face.png",
+        bannerNeutral: "assets/images/mascot_shosa_face.png",
+        bannerHappy: "assets/images/mascot_shosa_face.png",
+        bannerWorried: "assets/images/mascot_shosa_face.png"
       },
       story: "朝礼5分前のバックヤード。同僚から「体調が悪く30分遅れる」とメッセージが届きました。",
       story_en: "It's the backyard, 5 minutes before the morning meeting. A colleague messages you: \"I'm not feeling well and will be 30 minutes late.\"",

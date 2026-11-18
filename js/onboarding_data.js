@@ -4,10 +4,10 @@
    コンテンツ定義。シナリオ担当の人はこのファイルだけ編集すればOK。
    ========================================================= */
 const ONBOARDING_DATA = {
-    // 1d/1e. 言語表示設定 (Figma CH0-08)
+    // 1d/1e. 言語表示設定 (Figma CH0-08 / CH0-02)
     languageOptions: [
-        { id: "normal", label: "Japanese", flag: "jp" },
-        { id: "english", label: "English", flag: "us" }
+        { id: "normal", label: "NORMAL JAPANESE", flag: "jp" },
+        { id: "english", label: "ENGLISH", flag: "us" }
     ],
     // 1f. キャラクター紹介カルーセル（4枚: Figma CH0-03 〜 CH0-06）
     introSlides: [
@@ -30,17 +30,18 @@ const ONBOARDING_DATA = {
             bodyLeadEn: "SHOSA PASSPORT is an app where you\nlearn hotel service language and Hospitality,",
             bodySub: "あなたに合ったpositionや\n成長ポイントを見つけられる\nアプリケーションです。",
             bodySubEn: "while discovering the position that suits you\nand the areas where you can grow.",
+            // バブルのラベル（Figma CH0-04）。\n は表示上の改行。日本語・英語で同じ素材（SVG）を共通利用する
             featuresJa: [
-                "✓ AIチューター",
-                "✓ ロールプレイ練習",
-                "✓ ホテル接客トレーニング",
-                "✓ 日本語応対学習"
+                "AIチューター",
+                "ロールプレイ\n練習",
+                "ホテル接客\nトレーニング",
+                "日本語応対\n学習"
             ],
             featuresEn: [
-                "✓ AI Tutor",
-                "✓ Role-play practice",
-                "✓ Hotel service training",
-                "✓ Japanese for guest service"
+                "AI Tutor",
+                "Role-play\npractice",
+                "Hotel service\ntraining",
+                "Japanese for\nguest service"
             ],
             heroImg: "assets/images/intro_slide_2_hero.png",
             buttonLabel: "NEXT",
@@ -52,14 +53,14 @@ const ONBOARDING_DATA = {
             titleEn: "Learn → Practice → Grow",
             stepsJa: [
                 "診断・・自分に合った学習方法を知る",
-                "学習・・ホテル接客を学ぶ",
-                "ロールプレイ・・AIと実践練習",
+                "体験・・ホテル接客を体験する",
+                "学習・・体系的にスキルを学ぶ",
                 "スコア化・・強みと課題をレポート"
             ],
             stepsEn: [
                 "Assess: Find your best way to learn",
-                "Learn: Hotel service",
-                "Role-play: Practice with AI",
+                "Experience: Hotel guest service",
+                "Learn: Systematically acquire skills",
                 "Scoring: Strengths & challenges"
             ],
             desc: "あなた専用の学習プランを作成し、\n苦手な部分をトレーニングします。",
@@ -80,6 +81,7 @@ const ONBOARDING_DATA = {
             reportTailEn: "",
             desc: "学ぶだけではなく、「できる」を証明する。\nそれがSHOSAです。",
             descEn: "Don't just learn.\nProve what you can do.\nThat's SHOSA.",
+            reportBaseImg: "assets/images/Frame 170.png",
             heroImg: "assets/images/intro_slide_4_hero.png",
             caption: "画像はイメージです",
             captionEn: "Image is for illustration purposes",
@@ -310,18 +312,21 @@ const ONBOARDING_DATA = {
         {
             step: 0,
             doorNumber: null,
-            doorImg: "assets/images/journey_door_open.png",
+            doorImg: "assets/images/normal-ドア.png",
+            dotImg: "assets/images/Ellipse 75.png",
+            mascotImg: "assets/images/shosa.png",
             isOpen: true,
             isLocked: false,
             title: "✔︎ 自分を知る（適職診断）",
-            desc: "適性診断で、あなたに合った職種を見つけましょう。",
+            desc: "適性診断で、あなたに合った\n職種を見つけましょう。",
             titleEn: "✔︎ Know yourself (Career Match)",
-            descEn: "Take the aptitude test to find the role that suits you."
+            descEn: "Take the aptitude test to find\nthe role that suits you."
         },
         {
             step: 1,
             doorNumber: "101",
-            doorImg: "assets/images/journey_door_101.png",
+            doorImg: "assets/images/ドア (3).png",
+            dotImg: "assets/images/Ellipse 73.png",
             isOpen: false,
             isLocked: true,
             lockImg: "assets/images/journey_lock_key.png",
@@ -333,38 +338,41 @@ const ONBOARDING_DATA = {
         {
             step: 2,
             doorNumber: "201",
-            doorImg: "assets/images/journey_door_201.png",
+            doorImg: "assets/images/ドア (2).png",
+            dotImg: "assets/images/Ellipse 72.png",
             isOpen: false,
             isLocked: true,
             lockImg: "assets/images/journey_lock_key.png",
             title: "✔︎ 仕事を体験し、自分の行動傾向を知る",
-            desc: "職種を体験しながら、あなたの行動傾向を診断しましょう。",
+            desc: "職種を体験しながら、\nあなたの行動傾向を診断しましょう。",
             titleEn: "✔︎ Try the work, know your tendencies",
-            descEn: "Experience each role while we assess your behavior tendencies."
+            descEn: "Experience each role while we\nassess your behavior tendencies."
         },
         {
             step: 3,
             doorNumber: "301",
-            doorImg: "assets/images/journey_door_301.png",
+            doorImg: "assets/images/ドア (1).png",
+            dotImg: "assets/images/Ellipse 71.png",
             isOpen: false,
             isLocked: true,
             lockImg: "assets/images/journey_lock_key.png",
             title: "✔︎ 仕事を学ぶ",
-            desc: "ホテルの仕事に必要な知識やマナーを体系的に学びましょう。",
+            desc: "ホテルの仕事に必要な知識や\nマナーを体系的に学びましょう。",
             titleEn: "✔︎ Learn the work",
-            descEn: "Systematically learn the knowledge and manners needed for hotel work."
+            descEn: "Systematically learn the knowledge and\nmanners needed for hotel work."
         },
         {
             step: 4,
             doorNumber: "401",
-            doorImg: "assets/images/journey_door_401.png",
+            doorImg: "assets/images/ドア.png",
+            dotImg: "assets/images/Ellipse 70.png",
             isOpen: false,
             isLocked: true,
             lockImg: "assets/images/journey_lock_key.png",
             title: "✔︎ 資格試験に挑戦する",
-            desc: "学んだことを確認し、あなたの力を証明しましょう。",
+            desc: "学んだことを確認し、\nあなたの力を証明しましょう。",
             titleEn: "✔︎ Take the certification exam",
-            descEn: "Review what you've learned and prove your abilities."
+            descEn: "Review what you've learned\nand prove your abilities."
         }
     ],
     // 診断結果 5職種定義（Figma CH0-20 & 参考翻訳内容）
@@ -472,8 +480,8 @@ const ONBOARDING_DATA = {
             title_continue_btn: "🏠 続きから（Day選択メニューへ）",
             title_reset_btn: "最初からやり直す（診断・登録情報もリセット）",
             langselect_bubble: "Please select<br>your language setting.",
-            langselect_opt_ja: "Japanese",
-            langselect_opt_en: "English",
+            langselect_opt_ja: "NORMAL JAPANESE",
+            langselect_opt_en: "ENGLISH",
             next: "NEXT",
             start: "START",
             greet_bubble: "はじめまして！SHOSAだよ。<br><br>学習をサポートするために<br>まずは君のことを教えてね。",
@@ -556,8 +564,8 @@ const ONBOARDING_DATA = {
             title_continue_btn: "🏠 Resume (Day Menu)",
             title_reset_btn: "Start Over (Reset Profile & Progress)",
             langselect_bubble: "Please select<br>your language setting.",
-            langselect_opt_ja: "Japanese",
-            langselect_opt_en: "English",
+            langselect_opt_ja: "NORMAL JAPANESE",
+            langselect_opt_en: "ENGLISH",
             next: "NEXT",
             start: "START",
             greet_bubble: "Nice to meet you! I'm SHOSA.<br><br>To help you learn,<br>first tell me a little about yourself.",

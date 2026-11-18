@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>SHOSA - ホテルスタッフ体験ゲーム</title>
+<title>SHOSA</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Montserrat:wght@700&family=Roboto:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=106">
+<link rel="stylesheet" href="css/style.css?v=117">
 <script>
 /* Fit the 402x874 phone stage into the viewport (PC/tablet only) */
 (function () {
@@ -74,7 +74,8 @@
             <img src="assets/images/logo_shosa_white.png" alt="SHOSA" class="ch01-logo-img">
           </div>
           <div class="ch01-mascot-wrap">
-            <img src="assets/images/mascot_shosa_standing.png" alt="SHOSA Mascot" class="ch01-mascot-img">
+            <img src="assets/images/mascot_shosa_face.png" alt="SHOSA Mascot" class="ch01-mascot-img">
+            <img src="assets/images/Ellipse 45.png" alt="" class="ch01-mascot-shadow">
           </div>
         </div>
       </div>
@@ -107,7 +108,8 @@
         <img src="assets/images/btn_header_back.png" alt="戻る" class="figma-header-back-icon">
       </button>
       <div class="character-preview">
-        <img src="assets/images/mascot_shosa_standing.png" alt="SHOSA" class="story-cover-mascot">
+        <img src="assets/images/mascot_shosa_face.png" alt="SHOSA" class="story-cover-mascot">
+        <img src="assets/images/Ellipse 45.png" alt="" class="story-cover-shadow">
       </div>
       <h2 class="story-cover-title">ホテルスタッフ体験</h2>
       <div class="ob-divider"></div>
@@ -177,9 +179,18 @@
         </svg>
         <div class="ch07-door-wrap">
           <img src="assets/images/scene_door_101.png" alt="Room 101" class="ch07-door-img">
+          <div class="ch07-lamp-unit ch07-lamp-left">
+            <div class="ch07-lamp-halo"></div>
+            <img src="assets/images/Group 224.png" alt="" class="ch07-lamp-body">
+          </div>
+          <div class="ch07-lamp-unit ch07-lamp-right">
+            <div class="ch07-lamp-halo"></div>
+            <img src="assets/images/Group 224.png" alt="" class="ch07-lamp-body">
+          </div>
         </div>
         <div class="ch07-mascot-wrap">
-          <img src="assets/images/mascot_shosa_standing.png" alt="SHOSA" class="ch07-mascot-img">
+          <img src="assets/images/mascot_shosa_face.png" alt="SHOSA" class="ch07-mascot-img">
+          <img src="assets/images/Ellipse 45.png" alt="" class="ch07-mascot-shadow">
         </div>
       </div>
       <div class="figma-ch07-overlay">
@@ -266,9 +277,18 @@
         </svg>
         <div class="ch07-door-wrap">
           <img src="assets/images/scene_door_101.png" alt="Room 101" class="ch07-door-img">
+          <div class="ch07-lamp-unit ch07-lamp-left">
+            <div class="ch07-lamp-halo"></div>
+            <img src="assets/images/Group 224.png" alt="" class="ch07-lamp-body">
+          </div>
+          <div class="ch07-lamp-unit ch07-lamp-right">
+            <div class="ch07-lamp-halo"></div>
+            <img src="assets/images/Group 224.png" alt="" class="ch07-lamp-body">
+          </div>
         </div>
         <div class="ch07-mascot-wrap">
-          <img src="assets/images/mascot_shosa_standing.png" alt="SHOSA" class="ch07-mascot-img">
+          <img src="assets/images/mascot_shosa_face.png" alt="SHOSA" class="ch07-mascot-img">
+          <img src="assets/images/Ellipse 45.png" alt="" class="ch07-mascot-shadow">
         </div>
       </div>
       <div class="figma-ch07-overlay">
@@ -353,9 +373,18 @@
         </svg>
         <div class="ch07-door-wrap">
           <img src="assets/images/scene_door_101.png" alt="Room 101" class="ch07-door-img">
+          <div class="ch07-lamp-unit ch07-lamp-left">
+            <div class="ch07-lamp-halo"></div>
+            <img src="assets/images/Group 224.png" alt="" class="ch07-lamp-body">
+          </div>
+          <div class="ch07-lamp-unit ch07-lamp-right">
+            <div class="ch07-lamp-halo"></div>
+            <img src="assets/images/Group 224.png" alt="" class="ch07-lamp-body">
+          </div>
         </div>
         <div class="ch07-mascot-wrap">
-          <img src="assets/images/mascot_shosa_standing.png" alt="SHOSA" class="ch07-mascot-img">
+          <img src="assets/images/mascot_shosa_face.png" alt="SHOSA" class="ch07-mascot-img">
+          <img src="assets/images/Ellipse 45.png" alt="" class="ch07-mascot-shadow">
         </div>
       </div>
       <div class="figma-ch07-overlay">
@@ -376,7 +405,7 @@
         </button>
         <div class="figma-header-progress-wrap">
           <div class="figma-header-progress-bar">
-            <div class="figma-header-progress-fill" style="width: 50%;"></div>
+            <div class="figma-header-progress-fill" id="ob-profile-progress-fill" style="width: 83%;"></div>
           </div>
         </div>
         <button class="btn-en-toggle" id="btn-profile-en" title="Translate / 言語切り替え">
@@ -512,11 +541,14 @@
         <img src="assets/images/figma/decor_filigree_bottom.png" alt="" class="ch19-sparkle-decor ch19-sparkle-bottom">
       </div>
 
-      <!-- Center Trophy with Halo -->
-      <img src="assets/images/figma/sunburst_ch19.svg" alt="" class="ch19-trophy-sunburst">
-      <div class="ch19-trophy-wrap">
-        <div class="ch19-trophy-halo"></div>
-        <img src="assets/images/medal-2.png" alt="Trophy" class="ch19-trophy-img">
+      <!-- Center Trophy Stage (100% Programmatic Lighting & Sunburst, Trophy is PNG) -->
+      <div class="ch19-trophy-stage">
+        <div class="ch19-programmatic-sunburst" aria-hidden="true"></div>
+        <div class="ch19-trophy-halo" aria-hidden="true"></div>
+        <div class="ch19-trophy-wrap">
+          <img src="assets/images/medal.png" alt="Trophy" class="ch19-trophy-img">
+          <div class="ch19-trophy-shine" aria-hidden="true"></div>
+        </div>
       </div>
 
       <!-- Announcement Section (Figma Frame 240) - Direct on background -->
@@ -532,7 +564,7 @@
       <!-- Bottom Proceed Button & iOS Home Bar -->
       <div class="ch19-bottom-area">
         <button id="btn-ob-view-result" class="ch19-view-result-btn">
-          <img src="assets/images/_レイヤー_4.png" alt="" class="ch19-btn-clipboard-icon">
+          <img src="assets/images/icon.svg" alt="" class="ch19-btn-clipboard-icon">
           <span class="ch19-btn-label" data-i18n="ch19_btn">結果を見る</span>
         </button>
       </div>
@@ -560,26 +592,14 @@
       </button>
       </div>
 
-      <!-- Main Result Container -->
+      <!-- Main Result Container (Figma CH0-20': Group 384 modal + modal_under) -->
       <div class="ch20-screen-container">
         <!-- White Paper Card with curled bottom -->
         <div class="ch20-paper-card">
-          <!-- Teal Header Bar with Shosa Face Logo -->
-          <div class="ch20-modal-header">
-            <img src="assets/images/figma/shosa_face_header.png" alt="" class="ch20-header-mascot-icon">
-            <h3 class="ch20-header-title" data-i18n="result_badge">適性診断 結果</h3>
-          </div>
+          <img src="assets/images/Group 384.png" alt="" class="ch20-figma-bg" aria-hidden="true">
 
-          <!-- Content -->
+          <!-- Dynamic rank-1 result card, positioned over Group 384's blank content area -->
           <div class="ch20-modal-content">
-            <!-- Recommended Job Types Header -->
-            <div class="ch20-rec-title-block">
-              <div class="ch20-rec-en-title">Recommended Job Types</div>
-              <div class="ch20-rec-ja-sub" data-i18n="result_recommend">あなたにおすすめ</div>
-              <div class="ch20-teal-divider"></div>
-            </div>
-
-            <!-- Rank 1 Job Card -->
             <div class="ch20-rank-card ch20-rank-1">
               <div class="ch20-job-main-row">
                 <div class="ch20-job-info">
@@ -606,40 +626,10 @@
                 <!-- Dynamically generated with gold star ★ -->
               </ul>
             </div>
-
-            <!-- Rank 2 Job Card (Under / Blurred preview) -->
-            <div class="ch20-rank-card ch20-rank-2 ch20-peeking-card">
-              <div class="ch20-job-main-row">
-                <div class="ch20-job-info">
-                  <div class="ch20-rank-ribbon ribbon-rank-2">
-                    <span class="ribbon-no">NO</span><span class="ribbon-num">2</span>
-                  </div>
-                  <div class="ch20-job-name-row">
-                    <span class="ch20-job-title ch20-rank2-name">Restaurant & Banquet</span>
-                    <span class="ch20-job-score-group">
-                      <span class="ch20-rank2-score">88</span><span class="score-percent">%</span>
-                    </span>
-                  </div>
-                </div>
-                <div class="ch20-job-avatar-badge">
-                  <img src="assets/images/icon_restaurant.png" alt="" class="ch20-job-avatar-img">
-                </div>
-              </div>
-            </div>
-
-            <!-- Locked Notice Overlay -->
-            <div class="ch20-locked-overlay">
-              <div class="ch20-locked-box">
-                <img src="assets/images/figma/icon_lock_gold.svg" alt="" class="ch20-lock-icon">
-                <div class="ch20-lock-text" data-i18n="result_lock_msg">2位以降を閲覧するには<br>1章を進めよう！</div>
-              </div>
-            </div>
           </div>
 
-          <!-- Bottom Curled Paper Edge Effect -->
-          <div class="ch20-paper-curl-wrap">
-            <img src="assets/images/figma/page_curl.svg" alt="" class="ch20-page-curl-img">
-          </div>
+          <!-- Restore Group 384's modal_under (lock notice + curl) above the dynamic cards -->
+          <img src="assets/images/Group 384.png" alt="" class="ch20-figma-under" aria-hidden="true">
         </div>
 
         <!-- Bottom Action Area -->
@@ -658,7 +648,7 @@
         </button>
         <div class="figma-hearing-progress-wrap">
           <div class="figma-hearing-progress-bar">
-            <div class="figma-hearing-progress-fill" style="width: 25%;"></div>
+            <div class="figma-hearing-progress-fill" id="ob-schedule-progress-fill" style="width: 83%;"></div>
           </div>
         </div>
         <button class="btn-en-toggle" id="btn-schedule-en" title="Translate / 言語切り替え">
@@ -890,30 +880,6 @@
       <div class="ob-form-group">
         <label>メニュー</label>
         <button id="btn-open-hub" class="secondary-btn">🏠 Day選択メニューを開く</button>
-      </div>
-
-      <div class="ob-form-group">
-        <label>開発者向け</label>
-        <button id="btn-open-dev-overview" class="secondary-btn">🛠️ 開発者ビュー（全イベント一覧）を開く</button>
-        <details class="dev-jump-details">
-          <summary>🧭 画面ジャンプ（開発用）</summary>
-          <div class="dev-jump-grid" id="dev-jump-grid">
-            <button class="secondary-btn" data-jump="home" style="grid-column: 1 / -1; background: #e2e8f0; font-weight: 700;">🏠 ホーム画面（HM-TOP＋MY：案B）</button>
-            <button class="secondary-btn" data-jump="storycover">ホテルスタッフ体験（導入カバー）</button>
-            <button class="secondary-btn" data-jump="langselect">言語設定選択</button>
-            <button class="secondary-btn" data-jump="intro">キャラクター紹介カルーセル</button>
-            <button class="secondary-btn" data-jump="character">AIチューター挨拶</button>
-            <button class="secondary-btn" data-jump="hearing">ヒアリング</button>
-            <button class="secondary-btn" data-jump="aptitude">適性診断</button>
-            <button class="secondary-btn" data-jump="profile1">プロフィール入力01</button>
-            <button class="secondary-btn" data-jump="profile2">プロフィール入力02</button>
-            <button class="secondary-btn" data-jump="passport">SHOSAパスポート</button>
-            <button class="secondary-btn" data-jump="scheduletime">学習スケジュール設定</button>
-            <button class="secondary-btn" data-jump="ch101">CHAPTER 101（おもてなしマインドセット）</button>
-            <button class="secondary-btn" data-jump="daystart1">DAY1（旧体験）</button>
-            <button class="secondary-btn" data-jump="hub">メニュー（Day選択）</button>
-          </div>
-        </details>
       </div>
     </section>
 
@@ -1148,8 +1114,8 @@
           </p>
 
           <div class="ch101-result-mascot-row">
-            <img src="assets/images/mascot_shosa_standing.png" alt="SHOSA Mascot" class="ch101-result-mascot-img">
-            <div class="ch101-mascot-floor-shadow"></div>
+            <img src="assets/images/mascot_shosa_face.png" alt="SHOSA Mascot" class="ch101-result-mascot-img">
+            <img src="assets/images/Ellipse 45.png" alt="" class="ch101-mascot-floor-shadow">
           </div>
 
           <!-- Fleur-de-lis corner ornaments at bottom of teal card -->
@@ -1241,10 +1207,6 @@
       <span class="lang-text">EN</span>
     </div>
       </button>
-      <!-- Background Sunburst Rays -->
-      <div class="ch101-complete-sunburst">
-        <img src="assets/images/figma/sunburst_ch19.svg" alt="" class="ch101-sunburst-img">
-      </div>
 
       <div class="ch101-complete-content">
         <!-- Top Filigree & Heading -->
@@ -1254,10 +1216,14 @@
           <img src="assets/images/figma/decor_filigree_bottom.png" alt="" class="ch101-complete-filigree ch101-complete-filigree-bottom">
         </div>
 
-        <!-- Center Trophy (medal-2.png) with soft glow -->
-        <div class="ch101-complete-trophy-wrap">
-          <div class="ch101-complete-trophy-halo"></div>
-          <img src="assets/images/medal-2.png" alt="Trophy" class="ch101-complete-trophy-img">
+        <!-- Center Trophy Stage (100% Programmatic Lighting & Sunburst, Trophy is PNG) -->
+        <div class="ch101-trophy-stage">
+          <div class="ch101-programmatic-sunburst" aria-hidden="true"></div>
+          <div class="ch101-trophy-halo" aria-hidden="true"></div>
+          <div class="ch101-trophy-wrap">
+            <img src="assets/images/medal-2.png" alt="Trophy" class="ch101-trophy-img">
+            <div class="ch101-trophy-shine" aria-hidden="true"></div>
+          </div>
         </div>
 
         <!-- Announcement Section -->
@@ -1480,27 +1446,11 @@
   </main>
 </div>
 
-<!-- 開発者ビュー：全イベント（ヒアリング・分岐・解説等）の俯瞰表示。スマホフレームの外に表示 -->
-<div id="dev-overview" class="dev-overview hidden">
-  <div class="dev-header">
-    <div>
-      <h1>🛠️ SHOSA Developer Overview</h1>
-      <p>game_data.js / onboarding_data.js の内容をそのまま俯瞰表示しています（データを更新すれば自動で反映されます）</p>
-    </div>
-    <button id="btn-close-dev-overview" class="dev-close-btn">✕ 閉じる</button>
-  </div>
-  <div class="dev-overview-scroll">
-    <div class="dev-overview-inner">
-      <div id="dev-overview-content"></div>
-    </div>
-  </div>
-</div>
 </div>
 
 <script src="js/game_data.js?v=25"></script>
-<script src="js/onboarding_data.js?v=27"></script>
-<script src="js/app.js?v=41"></script>
-<script src="js/onboarding.js?v=36"></script>
-<script src="js/dev_overview.js?v=21"></script>
+<script src="js/onboarding_data.js?v=30"></script>
+<script src="js/app.js?v=42"></script>
+<script src="js/onboarding.js?v=43"></script>
 </body>
 </html>

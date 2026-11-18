@@ -470,16 +470,15 @@ main::-webkit-scrollbar {
 }
 
 /* floor shadow: Figma Ellipse 45 (136x31, black 10%) */
-.ch01-mascot-wrap::before {
-  content: "";
+.ch01-mascot-shadow {
   position: absolute;
   left: 50%;
   top: 155px;
   width: 136px;
   height: 31px;
   transform: translateX(-50%);
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .ch01-mascot-img {
@@ -1823,235 +1822,6 @@ main::-webkit-scrollbar {
 }
 
 /* =========================================================
-   DEVELOPER OVERVIEW（開発者ビュー：全イベント俯瞰画面）
-   スマホフレームの制約を受けない、フルスクリーンのオーバーレイ
-   ========================================================= */
-.dev-overview {
-  position: fixed;
-  inset: 0;
-  background: #1a202c;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  color: #e2e8f0;
-}
-
-.dev-overview-scroll {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0 24px 24px;
-}
-
-.dev-overview-inner {
-  max-width: 980px;
-  margin: 0 auto;
-  padding-top: 20px;
-}
-
-.dev-header {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  background: #1a202c;
-  padding: 24px 24px 16px;
-  border-bottom: 1px solid #2d3748;
-  max-width: 980px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.dev-header h1 {
-  font-size: 20px;
-  color: #fff;
-  font-weight: 900;
-}
-
-.dev-header p {
-  font-size: 12px;
-  color: #a0aec0;
-  margin-top: 4px;
-}
-
-.dev-close-btn {
-  background: #2d3748;
-  color: #fff;
-  border: 1px solid #4a5568;
-  border-radius: 20px;
-  padding: 8px 18px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.dev-close-btn:active {
-  background: #4a5568;
-}
-
-.dev-section-title {
-  font-size: 14px;
-  font-weight: 900;
-  color: #90cdf4;
-  margin: 22px 0 10px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-.dev-day-card {
-  background: #2d3748;
-  border-radius: 14px;
-  margin-bottom: 14px;
-  overflow: hidden;
-  border: 1px solid #4a5568;
-}
-
-.dev-day-card>summary {
-  cursor: pointer;
-  padding: 14px 18px;
-  font-size: 15px;
-  font-weight: 900;
-  color: #fff;
-  list-style: none;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #2b3444;
-}
-
-.dev-day-card>summary::-webkit-details-marker {
-  display: none;
-}
-
-.dev-day-card>summary::after {
-  content: "▾";
-  color: #a0aec0;
-  font-size: 12px;
-  transition: transform 0.15s ease;
-}
-
-.dev-day-card[open]>summary::after {
-  transform: rotate(180deg);
-}
-
-.dev-day-meta {
-  font-size: 11px;
-  color: #a0aec0;
-  font-weight: 400;
-}
-
-.dev-day-body {
-  padding: 16px 18px 20px;
-}
-
-.dev-node {
-  background: #1f2836;
-  border: 1px solid #3a4556;
-  border-radius: 10px;
-  padding: 12px 14px;
-  margin-bottom: 4px;
-}
-
-.dev-node-label {
-  font-size: 11px;
-  font-weight: 900;
-  color: #63b3ed;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 6px;
-}
-
-.dev-node-body {
-  font-size: 12.5px;
-  color: #e2e8f0;
-  line-height: 1.6;
-}
-
-.dev-node-body .dev-en {
-  color: #a0aec0;
-  font-style: italic;
-  margin-top: 2px;
-}
-
-.dev-arrow {
-  text-align: center;
-  color: #4a5568;
-  font-size: 14px;
-  padding: 2px 0;
-}
-
-.dev-branches {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 10px;
-  margin: 4px 0;
-}
-
-.dev-branch {
-  border-radius: 10px;
-  padding: 12px 14px;
-  font-size: 12px;
-  line-height: 1.55;
-  border: 1.5px solid;
-  background: #1f2836;
-}
-
-.dev-branch.quality-best {
-  border-color: var(--accent-green);
-}
-
-.dev-branch.quality-okay {
-  border-color: var(--accent-blue);
-}
-
-.dev-branch.quality-bad {
-  border-color: var(--accent-red);
-}
-
-.dev-branch-title {
-  font-weight: 900;
-  font-size: 11px;
-  margin-bottom: 6px;
-  letter-spacing: 0.5px;
-}
-
-.dev-branch.quality-best .dev-branch-title {
-  color: var(--accent-green);
-}
-
-.dev-branch.quality-okay .dev-branch-title {
-  color: var(--accent-blue);
-}
-
-.dev-branch.quality-bad .dev-branch-title {
-  color: var(--accent-red);
-}
-
-.dev-branch-deltas {
-  margin-top: 6px;
-  font-size: 11px;
-  color: #a0aec0;
-}
-
-.dev-hearing-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 4px;
-}
-
-.dev-chip {
-  background: #1f2836;
-  border: 1px solid #3a4556;
-  border-radius: 10px;
-  padding: 4px 10px;
-  font-size: 11px;
-  color: #cbd5e0;
-}
-
-/* =========================================================
    NPC BANNER（会話・イベント導入・結果画面の「大きく見せる」表示）
    ========================================================= */
 .npc-banner-wrap {
@@ -2109,6 +1879,11 @@ main::-webkit-scrollbar {
   .intro-steps-img,
   .intro-report-img {
     max-height: 180px;
+  }
+
+  .ch06-report-stage {
+    transform: scale(0.7);
+    transform-origin: top center;
   }
 }
 
@@ -2198,36 +1973,6 @@ main::-webkit-scrollbar {
 }
 
 /* =========================================================
-   開発用ジャンプメニュー（設定画面内）
-   ========================================================= */
-.dev-jump-details {
-  margin-top: 10px;
-}
-
-.dev-jump-details>summary {
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 700;
-  color: #4a5568;
-  padding: 4px 0;
-}
-
-.dev-jump-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 10px;
-}
-
-.dev-jump-grid .secondary-btn {
-  margin-top: 0;
-  font-size: 12px;
-  height: 36px;
-  text-align: left;
-  padding-left: 16px;
-}
-
-/* =========================================================
    STORY COVER（0b. プログラム全体の導入カバー画面）
    ========================================================= */
 #screen-story-cover {
@@ -2241,8 +1986,22 @@ main::-webkit-scrollbar {
   width: 140px;
   height: auto;
   display: block;
-  margin: 0 auto 8px;
-  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.08));
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  animation: mascotBreathe 2.2s ease-in-out infinite;
+}
+
+#screen-story-cover .story-cover-shadow {
+  width: 96px;
+  height: auto;
+  margin: -8px auto 8px;
+  display: block;
+  position: relative;
+  z-index: 0;
+  pointer-events: none;
+  transform-origin: center center;
+  animation: mascotShadowBreatheOrigin 2.2s ease-in-out infinite;
 }
 
 .story-cover-title {
@@ -3243,6 +3002,148 @@ main::-webkit-scrollbar {
   user-select: none;
 }
 
+/* 3b. Programmatic Wall Sconce Lamp (Group 224.png + Radial Light Halo) */
+.ch07-lamp-unit {
+  position: absolute;
+  width: 76px;
+  height: 76px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ch07-lamp-left {
+  left: 0px;
+  top: 48px;
+}
+
+.ch07-lamp-right {
+  left: 286px;
+  top: 48px;
+}
+
+/* Programmatic radial light halo behind the lamp */
+.ch07-lamp-halo {
+  position: absolute;
+  top: 38px;
+  left: 38px;
+  width: 100px;
+  height: 100px;
+  margin-top: -50px;
+  margin-left: -50px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 235, 150, 0.9) 0%, rgba(255, 220, 110, 0.5) 42%, rgba(255, 210, 80, 0) 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* The lamp body Group 224.png */
+.ch07-lamp-body {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 76px;
+  height: 76px;
+  z-index: 2;
+  display: block;
+}
+
+/* Programmatic lighting animation: Flicker -> Breathing warm pulse */
+@keyframes ch07HaloFlicker {
+  0%   { opacity: 0; transform: scale(0.6); }
+  12%  { opacity: 1; transform: scale(1.15); }
+  22%  { opacity: 0.2; transform: scale(0.8); }
+  35%  { opacity: 1; transform: scale(1.2); }
+  48%  { opacity: 0.45; transform: scale(0.9); }
+  60%  { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 0.85; transform: scale(1); }
+}
+
+@keyframes ch07HaloPulse {
+  0%, 100% { opacity: 0.8; transform: scale(0.98); }
+  50%      { opacity: 1; transform: scale(1.1); }
+}
+
+@keyframes ch07LampBodyFlicker {
+  0%   { filter: brightness(0.7) drop-shadow(0 0 0 rgba(255,230,140,0)); }
+  12%  { filter: brightness(1.2) drop-shadow(0 0 12px rgba(255,230,140,0.9)); }
+  22%  { filter: brightness(0.8) drop-shadow(0 0 2px rgba(255,230,140,0.3)); }
+  35%  { filter: brightness(1.25) drop-shadow(0 0 16px rgba(255,230,140,1)); }
+  48%  { filter: brightness(0.9) drop-shadow(0 0 6px rgba(255,230,140,0.5)); }
+  60%  { filter: brightness(1.15) drop-shadow(0 0 14px rgba(255,230,140,0.9)); }
+  100% { filter: brightness(1.05) drop-shadow(0 0 10px rgba(255,230,140,0.8)); }
+}
+
+@keyframes ch07LampBodyPulse {
+  0%, 100% { filter: brightness(1.0) drop-shadow(0 0 8px rgba(255,230,140,0.7)); }
+  50%      { filter: brightness(1.15) drop-shadow(0 0 14px rgba(255,230,140,0.95)); }
+}
+
+.figma-ch07-screen:not(.hidden) .ch07-lamp-halo {
+  animation: ch07HaloFlicker 1.2s ease-out forwards,
+             ch07HaloPulse 2.8s ease-in-out 1.2s infinite;
+}
+
+.figma-ch07-screen:not(.hidden) .ch07-lamp-body {
+  animation: ch07LampBodyFlicker 1.2s ease-out forwards,
+             ch07LampBodyPulse 2.8s ease-in-out 1.2s infinite;
+}
+
+/* Mascot bounce-in on CH0-07 */
+@keyframes ch07MascotBounce {
+  0% {
+    opacity: 0;
+    transform: translateY(24px) scale(0.92);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(-6px) scale(1.03);
+  }
+  85% {
+    transform: translateY(2px) scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes ch07ShadowGrow {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.7);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+.figma-ch07-screen:not(.hidden) .ch07-mascot-img {
+  animation: ch07MascotBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards,
+             mascotBreathe 2.2s ease-in-out 0.9s infinite;
+}
+
+.figma-ch07-screen:not(.hidden) .ch07-mascot-shadow {
+  animation: ch07ShadowGrow 0.6s ease-out 0.3s forwards,
+             mascotShadowBreathe 2.2s ease-in-out 0.9s infinite;
+}
+
+/* Bubble fade-in */
+@keyframes ch07BubbleFade {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.figma-ch07-screen:not(.hidden) .figma-speech-bubble {
+  animation: ch07BubbleFade 0.4s ease-out 0.7s both;
+}
+
 /* 4. Mascot standing in front of door */
 .ch07-mascot-wrap {
   position: absolute;
@@ -4163,6 +4064,68 @@ main:has(.ch101-intro-screen:not(.hidden)) {
   max-height: 195px;
 }
 
+/* CH0-06: 検定成績表 — Frame 170（素の表）から intro_slide_4_hero（評価入り）へ領域ごとに出す */
+#screen-ob-intro .ch06-report-stage {
+  position: relative;
+  width: 340px;
+  height: 275px;
+  margin: 0 auto;
+}
+
+#screen-ob-intro .ch06-report-base,
+#screen-ob-intro .ch06-hero-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 340px;
+  display: block;
+}
+
+#screen-ob-intro .ch06-report-base { height: 252px; }
+#screen-ob-intro .ch06-hero-layer { height: 275px; pointer-events: none; }
+
+#screen-ob-intro .ch06-hero-score { animation: ch06ScoreCircleIn 3s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both; }
+#screen-ob-intro .ch06-hero-performance { animation: ch06PerfWipe 1.5s cubic-bezier(0.16, 1, 0.3, 1) 1.1s both; }
+#screen-ob-intro .ch06-potential-1 { animation: ch06Potential1In 1.1s cubic-bezier(0.16, 1, 0.3, 1) 2s both; }
+#screen-ob-intro .ch06-potential-2 { animation: ch06Potential2In 1.1s cubic-bezier(0.16, 1, 0.3, 1) 2.35s both; }
+#screen-ob-intro .ch06-potential-3 { animation: ch06Potential3In 1.1s cubic-bezier(0.16, 1, 0.3, 1) 2.7s both; }
+#screen-ob-intro .ch06-hero-final { opacity: 0; animation: ch06HeroFinalIn 0.8s ease-out 3.9s forwards; }
+
+@keyframes ch06ScoreCircleIn {
+  0% { clip-path: circle(0 at 40px 93px); }
+  100% { clip-path: circle(36px at 40px 93px); }
+}
+
+@keyframes ch06PerfWipe {
+  0% { clip-path: inset(60px 222px 117px 118px); }
+  100% { clip-path: inset(60px 8px 117px 118px); }
+}
+
+@keyframes ch06Potential1In {
+  0% { clip-path: inset(190px 180px 70px 160px); }
+  100% { clip-path: inset(190px 17px 70px 160px); }
+}
+
+@keyframes ch06Potential2In {
+  0% { clip-path: inset(205px 180px 55px 160px); }
+  100% { clip-path: inset(205px 17px 55px 160px); }
+}
+
+@keyframes ch06Potential3In {
+  0% { clip-path: inset(220px 180px 40px 160px); }
+  100% { clip-path: inset(220px 17px 40px 160px); }
+}
+
+@keyframes ch06HeroFinalIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #screen-ob-intro .ch06-hero-layer { display: none !important; }
+  #screen-ob-intro .ch06-hero-final { display: block !important; opacity: 1 !important; animation: none !important; }
+}
+
 .intro-arch-card {
   flex: 1;
   width: 100%;
@@ -4888,6 +4851,7 @@ main:has(.ch101-intro-screen:not(.hidden)) {
   width: 78px;
   height: auto;
   display: block;
+  animation: mascotBreathe 2.2s ease-in-out infinite;
 }
 
 .langselect-shadow {
@@ -4896,6 +4860,8 @@ main:has(.ch101-intro-screen:not(.hidden)) {
   background: rgba(0, 0, 0, 0.08);
   border-radius: 50%;
   margin-top: -3px;
+  transform-origin: center center;
+  animation: mascotShadowBreatheOrigin 2.2s ease-in-out infinite;
 }
 
 .langselect-bubble {
@@ -6832,14 +6798,11 @@ main:has(.ch101-intro-screen:not(.hidden)) {
 }
 
 /* =========================================================
-   HOME: HM-TOP＋MY：案B (Wireframe Design)
+   HOME: HM-TOP＋MY：案B (デザイン中のため非表示)
    ========================================================= */
+#screen-home,
 .figma-home-screen {
-  background: #FFFFFF !important;
-  padding: 0 !important;
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
+  display: none !important;
 }
 
 .hm-inner-container {
@@ -7408,6 +7371,7 @@ body:has(.ch101-play-screen:not(.hidden)) {
   width: 135px;
   height: auto;
   display: block;
+  animation: mascotBreathe 2.2s ease-in-out infinite;
 }
 
 .ch101-desc-card {
@@ -7739,14 +7703,21 @@ body:has(.ch101-play-screen:not(.hidden)) {
   width: 140px;
   height: auto;
   display: block;
+  position: relative;
+  z-index: 1;
+  animation: mascotBreathe 2.2s ease-in-out infinite;
 }
 
 .ch101-mascot-floor-shadow {
   width: 100px;
-  height: 14px;
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 50%;
+  height: auto;
   margin-top: -8px;
+  display: block;
+  position: relative;
+  z-index: 0;
+  pointer-events: none;
+  transform-origin: center center;
+  animation: mascotShadowBreatheOrigin 2.2s ease-in-out infinite;
 }
 
 .ch101-teal-flourish {
@@ -8027,7 +7998,7 @@ body:has(.ch101-play-screen:not(.hidden)) {
    CHAPTER 101 SCREEN 3: 1章 学習完了！ (Image 3)
    ------------------------------------------------------------- */
 .ch101-complete-screen {
-  background: #4FBFF1 radial-gradient(circle at 50% 32%, #79D1FA 0%, #4FBFF1 55%, #3CA7F1 100%) !important;
+  background: #4FBFF1 radial-gradient(circle at 50% 38%, #79D1FA 0%, #4FBFF1 55%, #3CA7F1 100%) !important;
   height: 100%;
   min-height: 100%;
   display: flex !important;
@@ -8038,23 +8009,6 @@ body:has(.ch101-play-screen:not(.hidden)) {
   overflow: hidden;
   padding: calc(20px + var(--safe-top)) 20px calc(24px + var(--safe-bottom));
   box-sizing: border-box;
-}
-
-.ch101-complete-sunburst {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.ch101-complete-sunburst .ch101-sunburst-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.75;
 }
 
 .ch101-complete-content {
@@ -8075,6 +8029,8 @@ body:has(.ch101-play-screen:not(.hidden)) {
   display: flex;
   flex-direction: column;
   align-items: center;
+  opacity: 0;
+  animation: ch101FadeIn 0.4s ease-out 0.2s forwards;
 }
 
 .ch101-complete-filigree {
@@ -8102,35 +8058,151 @@ body:has(.ch101-play-screen:not(.hidden)) {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
-.ch101-complete-trophy-wrap {
+/* Center Trophy Stage (100% Programmatic Lighting & Sunburst, Trophy is PNG) */
+.ch101-trophy-stage {
   position: relative;
+  width: 180px;
+  height: 205px;
+  margin: 6px 0 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 10px 0 16px;
 }
 
-.ch101-complete-trophy-halo {
+/* 放射線（プログラム描画・24分割コニックグラデーション＋マスク＋回転アニメーション） */
+.ch101-programmatic-sunburst {
   position: absolute;
-  width: 180px;
-  height: 180px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 70%);
+  top: 50%;
+  left: 50%;
+  width: 880px;
+  height: 880px;
+  margin-top: -440px;
+  margin-left: -440px;
   border-radius: 50%;
+  background: repeating-conic-gradient(
+    from 0deg at 50% 50%,
+    rgba(255, 255, 255, 0.24) 0deg 7.5deg,
+    transparent 7.5deg 15deg
+  );
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.88) 45%, rgba(0, 0, 0, 0.3) 80%, rgba(0, 0, 0, 0) 100%);
+  mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.88) 45%, rgba(0, 0, 0, 0.3) 80%, rgba(0, 0, 0, 0) 100%);
+  pointer-events: none;
   z-index: -1;
-  animation: trophy-halo-pulse 2.5s ease-in-out infinite alternate;
+  opacity: 0;
+  animation: ch101SunburstFadeIn 0.8s ease-out 0.35s forwards, ch101SunburstSpin 24s linear infinite;
 }
 
-.ch101-complete-trophy-img {
-  width: 160px;
-  height: auto;
+@keyframes ch101SunburstFadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes ch101SunburstSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 光輪・ハロー（プログラム描画・多層ラジアルグラデーション＋ぼかし＋脈動アニメーション） */
+.ch101-trophy-halo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 270px;
+  height: 270px;
+  margin-top: -135px;
+  margin-left: -135px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 255, 255, 0.98) 0%,
+    rgba(220, 248, 255, 0.85) 25%,
+    rgba(140, 225, 255, 0.45) 50%,
+    rgba(80, 200, 255, 0.15) 68%,
+    transparent 80%
+  );
+  filter: blur(14px);
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
+  animation: ch101HaloFadeIn 0.6s ease-out 0.55s forwards, ch101HaloPulse 2.8s ease-in-out 1.15s infinite alternate;
+}
+
+@keyframes ch101HaloFadeIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes ch101HaloPulse {
+  0% { transform: scale(0.95); opacity: 0.85; filter: blur(14px); }
+  100% { transform: scale(1.08); opacity: 1; filter: blur(18px); }
+}
+
+/* トロフィー枠（上から落ちて小さく弾む演出） */
+.ch101-trophy-wrap {
+  position: relative;
+  width: 180px;
+  height: 205px;
+  margin: 0;
+  z-index: 3;
+  overflow: hidden;
+  border-radius: 24px;
+  opacity: 0;
+  transform: translateY(-70px) scale(0.85);
+  animation: ch101BadgeDrop 0.6s cubic-bezier(0.34, 1.45, 0.64, 1) 0.6s forwards;
+}
+
+@keyframes ch101BadgeDrop {
+  0% {
+    opacity: 0;
+    transform: translateY(-70px) scale(0.85);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(6px) scale(1.05);
+  }
+  85% {
+    opacity: 1;
+    transform: translateY(-2px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.ch101-trophy-img {
+  width: 180px;
+  height: 205px;
   object-fit: contain;
-  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.16));
-  animation: trophy-float 3s ease-in-out infinite alternate;
+  display: block;
+  filter: none !important;
+}
+
+/* トロフィーの光（横切るハイライト） */
+.ch101-trophy-shine {
+  position: absolute;
+  top: 0;
+  left: -130%;
+  width: 80%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.85) 50%, transparent 100%);
+  transform: skewX(-25deg);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.ch101-trophy-shine.shine-active {
+  animation: trophyShineWipe 0.65s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes ch101FadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .ch101-complete-announcement {
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .ch101-complete-unlocked-title {
@@ -8185,6 +8257,17 @@ body:has(.ch101-play-screen:not(.hidden)) {
   cursor: pointer;
   box-shadow: 0 4px 14px rgba(113, 91, 225, 0.35);
   transition: transform 0.15s ease, background-color 0.15s ease;
+  animation: ch101BtnPulse 2s ease-in-out infinite;
+}
+
+@keyframes ch101BtnPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.035);
+    box-shadow: 0 4px 16px rgba(113, 91, 225, 0.4);
+  }
 }
 
 .ch101-complete-start-btn:active {
@@ -8240,63 +8323,176 @@ body:has(.ch101-play-screen:not(.hidden)) {
   max-width: 132px;
 }
 
-.intro-steps-en-card {
-  width: 100%;
-  max-width: 310px;
+/* ---- Figma CH0-05 (要点 Row 7: 4項目が上から順に出る。アイコンが軽くポップ) ---- */
+.ch05-steps-card {
+  position: relative;
+  width: 326px;
+  max-width: calc(100% - 24px);
+  height: 284px;
   margin: 0 auto;
-  background: #FFFDF9;
-  border: 2px solid #E6D8BD;
-  border-radius: 14px;
-  padding: 14px 16px;
+  background: #FFFFFF url('../assets/images/Frame 342.png') no-repeat center center / 100% 100%;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+  padding: 24px 20px 24px 22px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 11px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  justify-content: space-between;
 }
 
-.intro-step-en-row {
+.ch05-steps-line {
+  position: absolute;
+  left: 38px;
+  top: 40px;
+  bottom: 40px;
+  width: 4px;
+  z-index: 1;
+  pointer-events: none;
+  animation: ch05LineDraw 0.9s cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+
+.ch05-line-img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: block;
+}
+
+.ch05-steps-list {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.ch05-step-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  text-align: left;
+  gap: 14px;
+  opacity: 0;
+  animation: ch05RowAppear 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.intro-step-en-badge {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: #D3F2F1;
-  display: inline-flex;
+.ch05-step-row-1 { animation-delay: 0.2s; }
+.ch05-step-row-2 { animation-delay: 0.4s; }
+.ch05-step-row-3 { animation-delay: 0.6s; }
+.ch05-step-row-4 { animation-delay: 0.8s; }
+
+.ch05-step-icon-wrap {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
-  flex-shrink: 0;
 }
 
-.intro-step-en-text {
-  font-size: 12.5px;
-  color: #2D3748;
-  line-height: 1.35;
-  font-weight: 600;
+.ch05-step-icon {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  transform: scale(0.3);
+  opacity: 0;
+  animation: ch05IconPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.ch05-step-row-1 .ch05-step-icon { animation-delay: 0.2s; }
+.ch05-step-row-2 .ch05-step-icon { animation-delay: 0.4s; }
+.ch05-step-row-3 .ch05-step-icon { animation-delay: 0.6s; }
+.ch05-step-row-4 .ch05-step-icon { animation-delay: 0.8s; }
+
+.ch05-step-content {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ch05-step-title {
+  font-family: 'Noto Sans JP', -apple-system, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1A202C;
+  flex-shrink: 0;
+  line-height: 1.3;
+}
+
+.ch05-step-desc {
+  font-family: 'Noto Sans JP', -apple-system, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: #333333;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slide-steps.is-en .ch05-step-title {
+  font-size: 14.5px;
+}
+.slide-steps.is-en .ch05-step-desc {
+  font-size: 12px;
+}
+
+@keyframes ch05LineDraw {
+  0% {
+    clip-path: inset(0 0 100% 0);
+    -webkit-clip-path: inset(0 0 100% 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    -webkit-clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes ch05RowAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ch05IconPop {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  65% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ch05-steps-line,
+  .ch05-step-row,
+  .ch05-step-icon {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+    -webkit-clip-path: none !important;
+  }
+}
+
+.intro-steps-en-card {
+  display: none !important;
 }
 
 .frame248-followup-banner {
-  margin: 10px auto 0;
-  width: 100%;
-  max-width: 344px;
-  background: #F4F1FC;
-  border: 1.5px solid #C8BCF6;
-  border-radius: 12px;
-  padding: 8px 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12.5px;
-  font-weight: 700;
-  color: #4C3AA9;
-  line-height: 1.45;
-  box-sizing: border-box;
+  display: none !important;
 }
 
 .schedule-notify-hint {
@@ -8506,6 +8702,7 @@ body:has(.ch101-play-screen:not(.hidden)) {
   z-index: 1;
   width: 110px;
   height: auto;
+  animation: mascotBreathe 2.2s ease-in-out infinite;
 }
 
 #screen-ob-hearing .frame248-mascot-shadow {
@@ -8516,6 +8713,10 @@ body:has(.ch101-play-screen:not(.hidden)) {
   height: 17px;
   margin: 0;
   background: rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  transform-origin: center center;
+  animation: mascotShadowBreatheOrigin 2.2s ease-in-out infinite;
+}
   filter: none;
 }
 
@@ -8897,15 +9098,15 @@ body:has(.ch101-play-screen:not(.hidden)) {
 }
 
 /* ---------- Corridor scenes (CH0-07 / 13 / 15): mascot floor shadow ---------- */
-.ch07-mascot-wrap::before {
-  content: "";
+.ch07-mascot-shadow {
   position: absolute;
-  left: 26.6px;
+  left: 50%;
   top: 133.1px;
+  transform: translateX(-50%);
   width: 116.8px;
   height: 26.6px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .ch07-mascot-img {
@@ -9569,55 +9770,136 @@ body:has(.ch101-play-screen:not(.hidden)) {
   gap: 0;
   margin: 18.5px auto 0;
   padding: 0;
+  position: relative;
 }
 
 #screen-ob-journey .journey-timeline-container::before {
-  left: 4px;
+  content: "";
+  position: absolute;
+  left: 12px;
   top: 57px;
   bottom: 57px;
   width: 2px;
-  background: #DDDDDD;
+  background: url("../assets/images/Vector 13.png") repeat-y center / 2px auto;
+  z-index: 0;
+  animation: journeyLineGrow 0.75s cubic-bezier(0.25, 1, 0.5, 1) 0.05s both;
 }
 
+@keyframes journeyLineGrow {
+  0% {
+    clip-path: inset(0 0 100% 0);
+    -webkit-clip-path: inset(0 0 100% 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    -webkit-clip-path: inset(0 0 0 0);
+  }
+}
+
+/* 扉・部屋の順次出現 (Figma CH0-18 / 要点 No.15: 部屋が順に出る、現在地の扉が開く) */
 #screen-ob-journey .journey-step-row {
   height: 114px;
   gap: 0;
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  animation: journeyRowAppear 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+#screen-ob-journey .journey-step-row:nth-child(1) { animation-delay: 0.08s; }
+#screen-ob-journey .journey-step-row:nth-child(2) { animation-delay: 0.20s; }
+#screen-ob-journey .journey-step-row:nth-child(3) { animation-delay: 0.32s; }
+#screen-ob-journey .journey-step-row:nth-child(4) { animation-delay: 0.44s; }
+#screen-ob-journey .journey-step-row:nth-child(5) { animation-delay: 0.56s; }
+
+@keyframes journeyRowAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 #screen-ob-journey .journey-dot-col {
-  width: 10px;
+  width: 26px;
   margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
 }
 
-#screen-ob-journey .journey-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #DDDDDD;
-  box-shadow: 0 0 0 4px #F6F1E8;
+#screen-ob-journey .journey-dot-img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  display: block;
+  opacity: 0;
 }
 
-#screen-ob-journey .journey-dot.is-active {
-  width: 6px;
-  height: 6px;
-  background: #00C9C3;
-  box-shadow:
-    0 0 0 4px #F6F1E8,
-    0 0 0 6px rgba(0, 201, 195, 0.1),
-    0 0 0 10px rgba(0, 201, 195, 0.1);
+#screen-ob-journey .journey-step-row:nth-child(1) .journey-dot-img { animation: journeyDotPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.08s both; }
+#screen-ob-journey .journey-step-row:nth-child(2) .journey-dot-img { animation: journeyDotPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.20s both; }
+#screen-ob-journey .journey-step-row:nth-child(3) .journey-dot-img { animation: journeyDotPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.32s both; }
+#screen-ob-journey .journey-step-row:nth-child(4) .journey-dot-img { animation: journeyDotPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.44s both; }
+#screen-ob-journey .journey-step-row:nth-child(5) .journey-dot-img { animation: journeyDotPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.56s both; }
+
+@keyframes journeyDotPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-#screen-ob-journey .journey-dot.is-active::after {
-  display: none;
+#screen-ob-journey .journey-dot-img.is-active {
+  width: 26px;
+  height: 26px;
 }
 
 #screen-ob-journey .journey-door-col,
 #screen-ob-journey .journey-step-row.is-open .journey-door-col {
   position: relative;
   width: 54px;
-  height: 93px;
-  margin-right: 29px;
+  height: 101px;
+  margin-right: 21px;
   overflow: visible;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  opacity: 0;
+}
+
+#screen-ob-journey .journey-step-row:nth-child(1) .journey-door-col { animation: journeyDoorPop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) 0.08s both; }
+#screen-ob-journey .journey-step-row:nth-child(2) .journey-door-col { animation: journeyDoorPop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) 0.20s both; }
+#screen-ob-journey .journey-step-row:nth-child(3) .journey-door-col { animation: journeyDoorPop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) 0.32s both; }
+#screen-ob-journey .journey-step-row:nth-child(4) .journey-door-col { animation: journeyDoorPop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) 0.44s both; }
+#screen-ob-journey .journey-step-row:nth-child(5) .journey-door-col { animation: journeyDoorPop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) 0.56s both; }
+
+@keyframes journeyDoorPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) translateY(8px);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(1.06) translateY(-1px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 #screen-ob-journey .journey-door-img {
@@ -9628,13 +9910,281 @@ body:has(.ch101-play-screen:not(.hidden)) {
   object-fit: contain;
 }
 
-#screen-ob-journey .journey-step-row.is-open .journey-door-img {
-  width: 94px;
-  height: 144px;
-  max-width: none;
-  max-height: none;
-  flex-shrink: 0;
-  align-self: center;
+/* Door 3D frame & glowing interior with peeking Shosa (Figma CH0-18) */
+#screen-ob-journey .journey-door-frame {
+  position: relative;
+  width: 54px;
+  height: 101px;
+  perspective: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: visible;
+}
+
+/* Programmatic Door Light: 扉から扇状に差し込む光線 ＋ 開口部ハロー脈動光 (100% プログラム描画) */
+#screen-ob-journey .journey-door-programmatic-light {
+  position: absolute;
+  left: 0;
+  top: -28px;
+  width: 140px;
+  height: 150px;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  animation: doorBeamIn 0.65s ease-out 0.68s forwards, doorBeamPulse 3.2s ease-in-out 1.35s infinite alternate;
+  transition: transform 0.4s ease, filter 0.4s ease;
+}
+
+/* 扇状（台形）に部屋・床へと照射される光線コーン */
+#screen-ob-journey .journey-door-programmatic-light::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 246, 160, 0.78) 0%,
+    rgba(255, 240, 140, 0.58) 35%,
+    rgba(255, 235, 120, 0.28) 65%,
+    rgba(255, 230, 100, 0.08) 85%,
+    transparent 100%
+  );
+  clip-path: polygon(
+    0px 32px,     /* ドア上端の開口部起点 */
+    100% 0px,     /* 右上へ広がる光 */
+    100% 100%,    /* 右下へ広がる光 */
+    0px 125px     /* ドア下端の開口部起点 */
+  );
+  filter: blur(5px);
+}
+
+/* 扉の開口部からふんわり広がる柔らかなアンビエントハロー（光輪） */
+#screen-ob-journey .journey-door-programmatic-light::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 15px;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(
+    ellipse at 20% 50%,
+    rgba(255, 252, 195, 0.85) 0%,
+    rgba(255, 240, 150, 0.48) 38%,
+    rgba(255, 225, 110, 0.15) 65%,
+    transparent 82%
+  );
+  filter: blur(10px);
+}
+
+#screen-ob-journey .journey-door-programmatic-light.light-burst {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 24px rgba(255, 245, 160, 1)) brightness(1.35);
+}
+
+@keyframes doorBeamIn {
+  from {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes doorBeamPulse {
+  0% {
+    opacity: 0.85;
+    filter: drop-shadow(0 0 4px rgba(255, 240, 140, 0.35));
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 14px rgba(255, 245, 170, 0.75));
+    transform: scale(1.02);
+  }
+}
+
+/* Doorway opening: 12Vector.png (yellow interior) + 11Vector.png (border frame) */
+#screen-ob-journey .journey-door-opening {
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 54px;
+  height: 93px;
+  z-index: 2;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+#screen-ob-journey .journey-doorway-interior {
+  position: absolute;
+  inset: 0;
+  width: 54px;
+  height: 93px;
+  object-fit: fill;
+  display: block;
+}
+
+#screen-ob-journey .journey-doorway-frame {
+  position: absolute;
+  inset: 0;
+  width: 54px;
+  height: 93px;
+  object-fit: fill;
+  display: block;
+  pointer-events: none;
+}
+
+/* Shosa container holding character & foot shadow: shosa.png 52x47 + Subtract.png 30x9 */
+#screen-ob-journey .journey-door-shosa-wrap {
+  position: absolute;
+  left: 16px;
+  bottom: 2px;
+  width: 58px;
+  height: 55px;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  animation: shosaPeekEntry 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.72s both;
+  transition: transform 0.4s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+#screen-ob-journey .journey-door-shosa-wrap.shosa-step-forward {
+  transform: translateX(8px) scale(1.06);
+}
+
+/* Character foot shadow: Subtract.png (30x9) */
+#screen-ob-journey .journey-shosa-shadow {
+  position: absolute;
+  left: 14px;
+  bottom: 0;
+  width: 35px;
+  height: 10px;
+  object-fit: fill;
+  pointer-events: none;
+  z-index: 1;
+  animation: shosaShadowBreathe 3s ease-in-out 1.57s infinite;
+}
+
+@keyframes shosaShadowBreathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.95;
+  }
+  50% {
+    transform: scale(0.92);
+    opacity: 0.75;
+  }
+}
+
+/* Shosa character image: shosa.png (52x47) */
+#screen-ob-journey .journey-door-peeking-shosa {
+  position: absolute;
+  left: 0;
+  bottom: 1px;
+  width: 58px;
+  height: auto;
+  z-index: 2;
+  pointer-events: none;
+  display: block;
+  animation: shosaPeekBreathe 3s ease-in-out 1.57s infinite;
+}
+
+@keyframes shosaPeekEntry {
+  0% {
+    transform: translateX(-16px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes shosaPeekBreathe {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+/* Door panel wrap: Group.png (33x101) */
+#screen-ob-journey .journey-door-panel-wrap {
+  position: absolute;
+  left: -2px;
+  top: 0;
+  width: 33px;
+  height: 101px;
+  z-index: 4;
+  transform-origin: right center;
+  opacity: 0;
+  animation: doorSwingIn 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.66s both;
+  transition: transform 0.45s cubic-bezier(0.1, 0.9, 0.2, 1), filter 0.45s ease;
+}
+
+#screen-ob-journey .journey-door-panel-wrap.door-swing-wide {
+  transform: translateX(-4px) scaleX(0.85);
+  filter: drop-shadow(4px 6px 14px rgba(255, 220, 100, 0.7));
+}
+
+@keyframes doorSwingIn {
+  0% {
+    transform: translateX(20px) scaleX(0.6);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0) scaleX(1);
+    opacity: 1;
+  }
+}
+
+#screen-ob-journey .journey-door-panel-img {
+  width: 33px;
+  height: 101px;
+  object-fit: fill;
+  display: block;
+}
+
+@keyframes interiorGlowPulse {
+  0% {
+    opacity: 0.8;
+    filter: drop-shadow(0 0 8px rgba(255, 200, 50, 0.6)) brightness(1);
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 20px rgba(255, 220, 80, 0.95)) brightness(1.25);
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 0.8;
+    filter: drop-shadow(0 0 8px rgba(255, 200, 50, 0.6)) brightness(1);
+    transform: scale(0.98);
+  }
+}
+
+@keyframes lockJiggle {
+  0%, 80%, 100% {
+    transform: rotate(0deg);
+  }
+  83% {
+    transform: rotate(-13deg);
+  }
+  86% {
+    transform: rotate(11deg);
+  }
+  89% {
+    transform: rotate(-7deg);
+  }
+  92% {
+    transform: rotate(4deg);
+  }
+  95% {
+    transform: rotate(-2deg);
+  }
 }
 
 #screen-ob-journey .journey-card-bubble {
@@ -9649,6 +10199,24 @@ body:has(.ch101-play-screen:not(.hidden)) {
   flex-direction: column;
   justify-content: center;
   box-shadow: none;
+  opacity: 0;
+}
+
+#screen-ob-journey .journey-step-row:nth-child(1) .journey-card-bubble { animation: journeyBubbleSlide 0.38s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both; }
+#screen-ob-journey .journey-step-row:nth-child(2) .journey-card-bubble { animation: journeyBubbleSlide 0.38s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both; }
+#screen-ob-journey .journey-step-row:nth-child(3) .journey-card-bubble { animation: journeyBubbleSlide 0.38s cubic-bezier(0.16, 1, 0.3, 1) 0.36s both; }
+#screen-ob-journey .journey-step-row:nth-child(4) .journey-card-bubble { animation: journeyBubbleSlide 0.38s cubic-bezier(0.16, 1, 0.3, 1) 0.48s both; }
+#screen-ob-journey .journey-step-row:nth-child(5) .journey-card-bubble { animation: journeyBubbleSlide 0.38s cubic-bezier(0.16, 1, 0.3, 1) 0.60s both; }
+
+@keyframes journeyBubbleSlide {
+  0% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 #screen-ob-journey .journey-card-bubble::before {
@@ -9671,11 +10239,20 @@ body:has(.ch101-play-screen:not(.hidden)) {
 }
 
 #screen-ob-journey .journey-card-lock {
+  position: absolute;
   top: -10px;
   right: -8px;
   width: 24px;
   height: 32px;
+  transform-origin: 50% 15%;
+  animation: lockJiggle 3.5s ease-in-out infinite;
 }
+
+#screen-ob-journey .journey-step-row:nth-child(1) .journey-card-lock { animation-delay: 0.9s; }
+#screen-ob-journey .journey-step-row:nth-child(2) .journey-card-lock { animation-delay: 1.7s; }
+#screen-ob-journey .journey-step-row:nth-child(3) .journey-card-lock { animation-delay: 2.5s; }
+#screen-ob-journey .journey-step-row:nth-child(4) .journey-card-lock { animation-delay: 3.3s; }
+#screen-ob-journey .journey-step-row:nth-child(4) .journey-card-lock { animation-delay: 2.4s; }
 
 #screen-ob-journey .journey-card-title {
   font-family: 'Noto Sans JP', sans-serif;
@@ -9771,39 +10348,77 @@ body:has(.ch101-play-screen:not(.hidden)) {
   text-shadow: none;
 }
 
-#screen-ob-passport .ch19-trophy-sunburst {
-  top: 40px;
-  left: -69px;
-  width: 540px;
-  height: 540px;
-  object-fit: contain;
-  opacity: 0.28;
-}
-
-#screen-ob-passport .ch19-trophy-wrap {
+#screen-ob-passport .ch19-trophy-stage {
   position: absolute;
   top: 208px;
   left: 50%;
   transform: translateX(-50%);
   width: 180px;
+  height: 205px;
   margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+#screen-ob-passport .ch19-programmatic-sunburst {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 540px;
+  height: 540px;
+  margin-top: -270px;
+  margin-left: -270px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    from 0deg at 50% 50%,
+    rgba(255, 255, 255, 0.22) 0deg 7.5deg,
+    transparent 7.5deg 15deg
+  );
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.85) 35%, rgba(0, 0, 0, 0) 70%);
+  mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.85) 35%, rgba(0, 0, 0, 0) 70%);
+  pointer-events: none;
+  z-index: 1;
 }
 
 #screen-ob-passport .ch19-trophy-halo {
-  left: -40px;
-  top: -28px;
-  width: 260px;
-  height: 260px;
-  background: #FFFFFF;
-  opacity: 0.8;
-  filter: blur(28px);
-  animation: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 270px;
+  height: 270px;
+  margin-top: -135px;
+  margin-left: -135px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 255, 255, 0.98) 0%,
+    rgba(255, 245, 200, 0.80) 25%,
+    rgba(255, 215, 140, 0.42) 50%,
+    rgba(255, 185, 110, 0.15) 68%,
+    transparent 80%
+  );
+  filter: blur(14px);
+  pointer-events: none;
+  z-index: 2;
+}
+
+#screen-ob-passport .ch19-trophy-wrap {
+  position: relative;
+  width: 180px;
+  height: 205px;
+  margin: 0;
+  z-index: 3;
 }
 
 #screen-ob-passport .ch19-trophy-img {
   position: relative;
   width: 180px;
-  filter: none;
+  height: 205px;
+  object-fit: contain;
+  display: block;
+  filter: none !important;
 }
 
 #screen-ob-passport .ch19-message-section {
@@ -9922,71 +10537,53 @@ body:has(.ch101-play-screen:not(.hidden)) {
 }
 
 #screen-ob-result .ch20-screen-container {
-  max-width: 355px;
+  width: min(370px, calc(100% - 24px));
+  max-width: none;
+  margin-left: 24px;
+  margin-right: auto;
   padding: 0;
+  display: block;
   flex: 0 0 auto;
+  position: relative;
 }
 
 #screen-ob-result .ch20-paper-card {
-  height: 543px;
+  width: 370px;
+  height: 626px;
+  zoom: var(--ch20-card-zoom, 1);
+  transform-origin: top left;
   border-radius: 0;
-  background: #FFFFFF;
-}
-
-#screen-ob-result .ch20-modal-header {
-  height: 60px;
-  background: #0095A2;
-  padding: 0;
-  gap: 0;
+  background: transparent !important;
+  overflow: visible;
   position: relative;
-  justify-content: center;
 }
 
-#screen-ob-result .ch20-header-mascot-icon {
+#screen-ob-result .ch20-figma-bg,
+#screen-ob-result .ch20-figma-under {
   position: absolute;
-  left: 11px;
-  top: 10px;
-  height: 39.6px;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: block;
+  pointer-events: none;
 }
 
-#screen-ob-result .ch20-header-title {
-  font-family: 'Noto Sans JP', sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 20px;
-  letter-spacing: 0.08em;
+#screen-ob-result .ch20-figma-under {
+  z-index: 8;
+  clip-path: inset(69.968% 0 0 0);
 }
 
 #screen-ob-result .ch20-modal-content {
-  height: 483px;
-  padding: 23px 23px 0;
-  overflow: hidden;
-}
-
-#screen-ob-result .ch20-rec-title-block {
-  margin-bottom: 15px;
-}
-
-#screen-ob-result .ch20-rec-en-title {
-  font-family: 'Montserrat', 'Inter', sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 26px;
-  color: #0095A2;
-}
-
-#screen-ob-result .ch20-rec-ja-sub {
-  font-family: 'Noto Sans JP', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 14px;
-  margin-top: 4px;
-  color: #0095A2;
-}
-
-#screen-ob-result .ch20-teal-divider {
-  margin-top: 16px;
-  background: #0095A2;
+  position: absolute;
+  left: 6.216%;
+  top: 25.56%;
+  width: 83.784%;
+  height: 43.77%;
+  padding: 0;
+  background: transparent;
+  overflow: visible;
+  z-index: 4;
 }
 
 #screen-ob-result .ch20-rank-card {
@@ -9994,7 +10591,7 @@ body:has(.ch101-play-screen:not(.hidden)) {
 }
 
 #screen-ob-result .ch20-rank-card.ch20-rank-2 {
-  margin-top: 30px;
+  margin-top: 8px;
 }
 
 #screen-ob-result .ch20-job-main-row {
@@ -10006,7 +10603,7 @@ body:has(.ch101-play-screen:not(.hidden)) {
   width: 46px;
   height: 23px;
   margin-top: 8px;
-  padding: 0 0 0 6.3px;
+  padding: 0 0 0 6px;
   background: #B09D79;
   clip-path: polygon(0 0, 100% 0, calc(100% - 7px) 50%, 100% 100%, 0 100%);
 }
@@ -10017,7 +10614,7 @@ body:has(.ch101-play-screen:not(.hidden)) {
 
 #screen-ob-result .ribbon-no {
   font-family: 'Montserrat', 'Inter', sans-serif;
-  font-size: 10.55px;
+  font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.07em;
   margin-right: 0;
@@ -10025,22 +10622,22 @@ body:has(.ch101-play-screen:not(.hidden)) {
 
 #screen-ob-result .ribbon-num {
   font-family: 'Roboto', 'Inter', sans-serif;
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 700;
 }
 
 #screen-ob-result .ch20-job-name-row {
   margin-top: 13px;
   align-items: flex-start;
-  gap: 10px;
+  gap: 8px;
 }
 
 #screen-ob-result .ch20-job-title {
   font-family: 'Montserrat', 'Inter', sans-serif;
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 700;
-  line-height: 20px;
-  min-width: 116px;
+  line-height: 19px;
+  min-width: 110px;
   letter-spacing: 0;
   color: #000000;
   margin-top: 0;
@@ -10054,21 +10651,24 @@ body:has(.ch101-play-screen:not(.hidden)) {
 #screen-ob-result .result-job-score,
 #screen-ob-result .ch20-rank2-score {
   font-family: 'Roboto', 'Inter', sans-serif;
-  font-size: 33px;
+  font-size: 32px;
   font-weight: 700;
-  line-height: 33px;
+  line-height: 32px;
 }
 
 #screen-ob-result .score-percent {
   font-family: 'Montserrat', 'Inter', sans-serif;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 900;
-  margin-left: 3px;
+  margin-left: 2px;
 }
 
 #screen-ob-result .ch20-job-avatar-badge {
   width: 78px;
   height: 78px;
+  border-radius: 50%;
+  border: none;
+  background: #F6F1E8;
 }
 
 #screen-ob-result .ch20-job-avatar-img {
@@ -10082,8 +10682,11 @@ body:has(.ch101-play-screen:not(.hidden)) {
   margin: 13px 0 13px;
   padding: 0 5px;
   border-radius: 0;
+  display: flex;
+  align-items: center;
+  background: #B09D79;
   font-family: 'Noto Sans JP', sans-serif;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
   line-height: 20px;
   letter-spacing: 0;
@@ -10098,23 +10701,23 @@ body:has(.ch101-play-screen:not(.hidden)) {
 }
 
 #screen-ob-result .ch20-st-star {
-  width: 17.1px;
-  font-size: 17px;
+  width: 17px;
+  font-size: 18px;
   line-height: 18px;
 }
 
 #screen-ob-result .ch20-st-text,
 #screen-ob-result .ch20-st-headline,
 #screen-ob-result .ch20-st-desc {
-  font-size: 14px;
+  font-size: 12px;
   line-height: 18px;
   font-weight: 400;
   color: #000000;
 }
 
 #screen-ob-result .ch20-peeking-card {
-  opacity: 1;
-  filter: none;
+  opacity: 0.55;
+  filter: blur(1.5px);
 }
 
 #screen-ob-result .ch20-rank-card.ch20-rank-2 .result-job-score,
@@ -10123,75 +10726,96 @@ body:has(.ch101-play-screen:not(.hidden)) {
   color: #A1A1A1;
 }
 
-/* lock sheet (modal_under): y438 of the modal, 355x85, white30 -> #F4F4F4 */
+/* lock sheet: positioned right over rank-2 card preview */
 #screen-ob-result .ch20-locked-overlay {
+  position: absolute;
   left: 0;
   right: 0;
-  bottom: 20px;
-  height: 85px;
+  bottom: 0;
+  height: 76px;
   padding: 0;
-  border-radius: 6px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, #F4F4F4 100%);
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(244, 244, 244, 0.90) 100%);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
 }
 
 #screen-ob-result .ch20-locked-box {
-  gap: 13.8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   padding: 0;
 }
 
 #screen-ob-result .ch20-lock-icon {
-  width: 33px;
-  height: 44px;
+  width: 26px;
+  height: 35px;
 }
 
 #screen-ob-result .ch20-lock-text {
   font-family: 'Roboto', 'Noto Sans JP', sans-serif;
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 22.5px;
-  color: #828282;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 19px;
+  color: #555555;
 }
 
-/* page curl (Figma modal_under vectors): starts 20px above the modal bottom (abs y615)
-   and hangs 83px below it (to y718); width 355 */
-#screen-ob-result .ch20-paper-card {
-  overflow: visible;
-}
-
+/* page curl (Figma CH0-20' modal_under): connects seamlessly to the card bottom */
 #screen-ob-result .ch20-paper-curl-wrap {
   display: block;
-  top: 523px;
-  bottom: auto;
-  max-height: none;
+  position: relative;
+  margin-top: -1px;
+  width: 100%;
+  height: auto;
   overflow: visible;
+  z-index: 10;
+  pointer-events: none;
 }
 
 #screen-ob-result .ch20-page-curl-img {
-  width: 355px;
+  width: 100%;
   max-width: none;
-  height: 103px;
+  height: auto;
+  display: block;
 }
 
 #screen-ob-result .ch20-screen-bottom-area {
-  position: absolute;
-  left: 21px;
-  right: 21px;
-  bottom: calc(32px + var(--safe-bottom));
-  width: auto;
-  margin: 0;
+  position: relative;
+  width: min(360px, 100%);
+  margin: 11.351% 0 0 -3px;
+  display: flex;
+  justify-content: center;
+  z-index: 20;
 }
 
 #screen-ob-result .ch20-next-cta-btn {
-  max-width: 360px;
+  width: 100%;
+  max-width: none;
   height: 48px;
-  border-radius: 31px;
-  font-family: 'Roboto', 'Inter', sans-serif;
+  border-radius: 24px;
+  font-family: 'Montserrat', 'Inter', sans-serif;
   font-size: 18px;
   font-weight: 700;
-  letter-spacing: 0.03em;
-  background: #00C9C3;
-  box-shadow: 0 3px 0 #18A5B1;
+  letter-spacing: 0.05em;
+  background: #00C4B4;
+  color: #FFFFFF;
+  box-shadow: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+#screen-ob-result .ch20-next-cta-btn:active {
+  transform: scale(0.97);
+  opacity: 0.9;
 }
 
 #screen-ob-result .ch20-next-cta-btn:active {
@@ -10467,3 +11091,836 @@ body:has(.ch101-play-screen:not(.hidden)) {
   box-shadow: none;
   border-radius: 0;
 }
+
+/* =========================================================
+   Carousel text: flow layout (not fixed y per paragraph) so longer copy
+   (English) pushes following lines down instead of overlapping them or the button.
+   Start positions are still the Figma ones: text top = arch padding-top
+   (welcome: centred between the phone bottom y582 and the button zone).
+   ========================================================= */
+#screen-ob-intro .intro-arch-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0;
+  padding-top: 371px;
+}
+
+#screen-ob-intro .intro-card-body {
+  display: contents;
+}
+
+#screen-ob-intro .intro-card-title,
+#screen-ob-intro .intro-body-lead,
+#screen-ob-intro .intro-body-sub,
+#screen-ob-intro .intro-report-lead,
+#screen-ob-intro .intro-report-tail,
+#screen-ob-intro .intro-report-footer {
+  position: static;
+  flex: 0 0 auto;
+  width: 338px;
+}
+
+#screen-ob-intro .intro-badges-row {
+  position: static;
+  flex: 0 0 auto;
+  width: 335px;
+  justify-content: center;
+}
+
+/* welcome: text block centred in the gap between phone (ends y582) and button (y760) */
+#screen-ob-intro .slide-welcome .intro-arch-card {
+  padding-top: 386px;
+  padding-bottom: 136px;
+  justify-content: center;
+}
+
+#screen-ob-intro .slide-features .intro-body-sub { margin-top: 17px !important; }
+
+#screen-ob-intro .slide-steps .intro-body-sub { width: 360px; }
+
+#screen-ob-intro .slide-certification .intro-report-lead { width: 335px; }
+#screen-ob-intro .slide-certification .intro-badges-row { margin-top: 7px !important; }
+#screen-ob-intro .slide-certification .intro-report-tail { width: 335px; margin-top: 7px !important; }
+#screen-ob-intro .slide-certification .intro-report-tail:empty { display: none; }
+#screen-ob-intro .slide-certification .intro-report-footer { width: 360px; margin-top: 17px !important; }
+
+/* English: wider lines and a slightly smaller size (English copy is longer) */
+#screen-ob-intro .is-en .intro-card-title {
+  font-size: 17px;
+  line-height: 26px;
+}
+
+#screen-ob-intro .is-en .intro-body-lead,
+#screen-ob-intro .is-en .intro-body-sub,
+#screen-ob-intro .is-en .intro-report-lead,
+#screen-ob-intro .is-en .intro-report-tail,
+#screen-ob-intro .is-en .intro-report-footer {
+  width: 360px;
+  font-size: 15px;
+  line-height: 22px;
+}
+
+#screen-ob-intro .is-en .intro-badge-pill {
+  font-size: 14px;
+  padding: 0 6px;
+}
+
+#screen-ob-intro .is-en .intro-header-title {
+  font-size: 17px;
+  line-height: 25px;
+}
+
+/* =========================================================
+   Features slide (CH0-04) — English version of the bubble artwork
+   Rebuilt from the Figma frame (340x297): phone 160x297 at x90; four 90px circles
+   (#D9F5F4) with tails, hard shadow 0/3 #94918B, 12px Bold #333 labels, vector icons.
+   ========================================================= */
+#screen-ob-intro .intro-features-en-scene {
+  position: relative;
+  display: block;
+  flex: none;
+  width: 340px;
+  min-width: 340px;
+  max-width: none;
+  height: 297px;
+  margin: 0;
+  padding: 0;
+}
+
+#screen-ob-intro .intro-features-phone-en {
+  position: absolute;
+  left: 90px;
+  top: 0;
+  width: 160px;
+  height: 297px;
+  max-width: none;
+  max-height: none;
+  filter: none;
+}
+
+/* M-04 / 要点 R6: スマホ枠から4機能へ線が伸び、アイコンが順に出る
+   Group 245.png〜Group 248.png（各107x93）を使用 */
+#screen-ob-intro .ifb {
+  position: absolute;
+  width: 107px;
+  height: 93px;
+  opacity: 0;
+}
+
+#screen-ob-intro .ifb-group-img {
+  width: 107px;
+  height: 93px;
+  display: block;
+  pointer-events: none;
+}
+
+#screen-ob-intro .ifb-tl {
+  left: 0;
+  top: 60px;
+  animation: lineExtendTL 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+}
+
+#screen-ob-intro .ifb-tr {
+  left: 233px;
+  top: 60px;
+  animation: lineExtendTR 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.35s forwards;
+}
+
+#screen-ob-intro .ifb-bl {
+  left: 0;
+  top: 180px;
+  animation: lineExtendBL 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.55s forwards;
+}
+
+#screen-ob-intro .ifb-br {
+  left: 233px;
+  top: 180px;
+  animation: lineExtendBR 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.75s forwards;
+}
+
+@keyframes lineExtendTL {
+  0% {
+    opacity: 0;
+    clip-path: polygon(100% 100%, 100% 100%, 100% 100%, 100% 100%);
+    transform: scale(0.6);
+    transform-origin: bottom right;
+  }
+  40% {
+    opacity: 1;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: scale(0.9);
+    transform-origin: bottom right;
+  }
+  70% {
+    opacity: 1;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: scale(1.08);
+    transform-origin: 45px 45px;
+  }
+  100% {
+    opacity: 1;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: scale(1);
+    transform-origin: 45px 45px;
+  }
+}
+
+@keyframes lineExtendTR {
+  0% {
+    opacity: 0;
+    clip-path: polygon(0 100%, 0 100%, 0 100%, 0 100%);
+    transform: scale(0.6);
+    transform-origin: bottom left;
+  }
+  40% {
+    opacity: 1;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: scale(0.9);
+    transform-origin: bottom left;
+  }
+  70% {
+    opacity: 1;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: scale(1.08);
+    transform-origin: 62px 45px;
+  }
+  100% {
+    opacity: 1;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: scale(1);
+    transform-origin: 62px 45px;
+  }
+}
+
+@keyframes lineExtendBL {
+  0% {
+    opacity: 0;
+    clip-path: polygon(100% 0, 100% 0, 100% 0, 100% 0);
+    transform: scale(0.6);
+    transform-origin: top right;
+  }
+  40% {
+    opacity: 1;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: scale(0.9);
+    transform-origin: top right;
+  }
+  70% {
+    opacity: 1;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: scale(1.08);
+    transform-origin: 45px 45px;
+  }
+  100% {
+    opacity: 1;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: scale(1);
+    transform-origin: 45px 45px;
+  }
+}
+
+@keyframes lineExtendBR {
+  0% {
+    opacity: 0;
+    clip-path: polygon(0 0, 0 0, 0 0, 0 0);
+    transform: scale(0.6);
+    transform-origin: top left;
+  }
+  40% {
+    opacity: 1;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: scale(0.9);
+    transform-origin: top left;
+  }
+  70% {
+    opacity: 1;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: scale(1.08);
+    transform-origin: 62px 45px;
+  }
+  100% {
+    opacity: 1;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: scale(1);
+    transform-origin: 62px 45px;
+  }
+}
+
+#screen-ob-intro .ifb-label {
+  position: absolute;
+  width: 76px;
+  top: 48px;
+  font-family: 'Noto Sans JP', 'Roboto', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 14px;
+  letter-spacing: 0;
+  color: #333333;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* English labels are longer: slightly smaller so they stay inside the 90px circle */
+#screen-ob-intro .is-en .ifb-label {
+  font-size: 11px;
+  line-height: 13px;
+  letter-spacing: -0.2px;
+}
+
+#screen-ob-intro .ifb-tl .ifb-label,
+#screen-ob-intro .ifb-bl .ifb-label { left: 7px; }
+#screen-ob-intro .ifb-tr .ifb-label,
+#screen-ob-intro .ifb-br .ifb-label { left: 24px; }
+
+/* Figma: the Japanese "ホテル接客 / トレーニング" label is set with tight tracking */
+#screen-ob-intro .slide-features:not(.is-en) .ifb-bl .ifb-label {
+  letter-spacing: -0.08em;
+}
+
+
+/* ==========================================================================
+   FRONTEND MOTION SPECIFICATION (フロントエンドSHOSA_motion.xlsx)
+   ========================================================================== */
+
+/* ---------- M-01: すべてのボタン (タップ時0.95倍縮み、0.15秒・1回、disabled無反応) ---------- */
+button:not(:disabled):not(.disabled):active,
+.primary-btn:not(:disabled):not(.disabled):active,
+.langselect-next-btn:not(:disabled):not(.disabled):active,
+.ch01-btn:not(:disabled):not(.disabled):active,
+.ch19-view-result-btn:not(:disabled):not(.disabled):active,
+.langselect-card:not(.disabled):active,
+.schedule-time-card:not(.disabled):active,
+.ch20-close-btn:active {
+  transform: scale(0.95) !important;
+  transition: transform 0.15s ease !important;
+}
+
+button:disabled,
+button[disabled],
+.disabled {
+  transform: none !important;
+  pointer-events: none;
+}
+
+/* ---------- M-02: NEXTボタン (無効から有効時に小さく弾む・0.3秒・1回だけ) ---------- */
+@keyframes nextBtnBounce {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.06); }
+  75% { transform: scale(0.98); }
+  100% { transform: scale(1); }
+}
+.btn-bounce-once {
+  animation: nextBtnBounce 0.3s cubic-bezier(0.25, 1, 0.5, 1) 1 forwards !important;
+}
+
+/* ---------- M-03: 画面全体 (進む: 右から左スライド0.3s / 戻る: 逆向き0.3s) ---------- */
+@keyframes screenSlideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes screenSlideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+.screen-slide-right {
+  animation: screenSlideInRight 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.screen-slide-left {
+  animation: screenSlideInLeft 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ---------- M-30: 進捗バー (0.4秒で伸び縮み、点滅・光なし) ---------- */
+.figma-hearing-progress-fill,
+.figma-header-progress-fill,
+.figma-progress-fill {
+  transition: width 0.4s ease-out !important;
+}
+
+/* ---------- M-32: ENボタン (クロスフェード0.3秒) ---------- */
+.lang-crossfade {
+  animation: textCrossFade 0.3s ease-out 1;
+}
+
+/* ---------- M-41: トースト (下からスライド0.3秒、成功2秒/失敗3秒) ---------- */
+.shosa-toast-container {
+  position: fixed;
+  bottom: calc(40px + var(--safe-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  pointer-events: none;
+  width: 90%;
+  max-width: 350px;
+  display: flex;
+  justify-content: center;
+}
+.shosa-toast {
+  background: rgba(30, 30, 35, 0.92);
+  color: #FFFFFF;
+  padding: 12px 20px;
+  border-radius: 24px;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  animation: toastSlideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.shosa-toast.toast-error {
+  background: rgba(220, 53, 69, 0.95);
+}
+.shosa-toast.toast-fadeout {
+  animation: toastFadeOut 0.25s ease-out forwards;
+}
+@keyframes toastSlideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes toastFadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(15px); }
+}
+
+/* ---------- CH0-01: M-19, M-20, M-21, M-22, M-23, M-24, M-26 ---------- */
+.figma-ch0-01-screen .ch01-tagline {
+  opacity: 0;
+  animation: ch01FadeIn 0.3s ease-out 0.2s forwards;
+}
+@keyframes ch01FadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.figma-ch0-01-screen .ch01-logo-wrap {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: ch01LogoRise 0.4s ease-out 0.4s forwards;
+}
+@keyframes ch01LogoRise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.figma-ch0-01-screen .ch01-mascot-img {
+  opacity: 0;
+  transform: translateY(18px) scale(0.92);
+  animation: ch01MascotEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s forwards,
+             mascotBreathe 2s ease-in-out 1.1s infinite;
+}
+@keyframes ch01MascotEnter {
+  0% { opacity: 0; transform: translateY(18px) scale(0.92); }
+  70% { opacity: 1; transform: translateY(-3px) scale(1.02); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes mascotBreathe {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.figma-ch0-01-screen .ch01-mascot-shadow {
+  opacity: 0;
+  animation: ch01ShadowEnter 0.5s ease-out 0.6s forwards,
+             mascotShadowBreathe 2s ease-in-out 1.1s infinite;
+}
+@keyframes ch01ShadowEnter {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.8); }
+  100% { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+@keyframes mascotShadowBreathe {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(0.95); }
+}
+@keyframes mascotShadowBreatheOrigin {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+}
+
+.figma-ch0-01-screen .ch01-btn-google {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: ch01BtnRise 0.3s ease-out 0.9s forwards;
+}
+.figma-ch0-01-screen .ch01-btn-apple {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: ch01BtnRise 0.3s ease-out 1.0s forwards;
+}
+.figma-ch0-01-screen .ch01-btn-phone {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: ch01BtnRise 0.3s ease-out 1.1s forwards;
+}
+@keyframes ch01BtnRise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* M-26: Google / Apple ボタン内のスピナー */
+.ch01-btn-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid rgba(120, 120, 120, 0.3);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: btnSpinnerRotate 0.6s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+@keyframes btnSpinnerRotate {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- CH0-08: M-05, M-06 ---------- */
+@keyframes cardPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.025); }
+  100% { transform: scale(1); }
+}
+.langselect-ticket-card.card-popped,
+.schedule-time-card.card-popped {
+  animation: cardPop 0.15s ease-out 1 !important;
+}
+
+@keyframes textCrossFade {
+  0% { opacity: 0.2; }
+  100% { opacity: 1; }
+}
+.text-crossfade {
+  animation: textCrossFade 0.3s ease-out 1;
+}
+
+/* ---------- CH0-14: M-07 ---------- */
+@keyframes checkmarkPop {
+  0% { transform: translate(-50%, -50%) scale(0.8); }
+  50% { transform: translate(-50%, -50%) scale(1.1); }
+  100% { transform: translate(-50%, -50%) scale(1.0); }
+}
+#screen-ob-aptitude .ob-likert-btn.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  animation: checkmarkPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 1;
+  color: #FFFFFF;
+}
+
+/* ---------- CH0-19: M-10, M-11, M-12, M-13 ---------- */
+#screen-ob-passport .ch19-top-badge-wrap {
+  opacity: 0;
+  animation: ch19FadeIn 0.3s ease-out 0.2s forwards;
+}
+@keyframes ch19FadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* =========================================================
+   CH0-19: M-10, M-11, M-12, M-13 (適性診断完了 / CELEBRATION)
+   ========================================================= */
+#screen-ob-passport .ch19-top-badge-wrap {
+  opacity: 0;
+  animation: ch19FadeIn 0.4s ease-out 0.2s forwards;
+}
+
+/* 放射線（プログラム描画・24分割コニックグラデーション＋マスク＋回転アニメーション） */
+#screen-ob-passport .ch19-programmatic-sunburst {
+  opacity: 0;
+  animation: ch19SunburstFadeIn 0.8s ease-out 0.35s forwards, ch19SunburstSpin 24s linear infinite;
+}
+
+@keyframes ch19SunburstFadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes ch19SunburstSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 光輪・ハロー（プログラム描画・多層ラジアルグラデーション＋ぼかし＋脈動アニメーション） */
+#screen-ob-passport .ch19-trophy-halo {
+  opacity: 0;
+  animation: ch19HaloFadeIn 0.6s ease-out 0.55s forwards, ch19HaloPulse 2.8s ease-in-out 1.15s infinite alternate;
+}
+
+@keyframes ch19HaloFadeIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes ch19HaloPulse {
+  0% { transform: scale(0.95); opacity: 0.85; filter: blur(14px); }
+  100% { transform: scale(1.08); opacity: 1; filter: blur(18px); }
+}
+
+/* M-10: 画面を表示して0.6秒後に上から落ちて小さく弾む (0.6秒・1回、弾んだら静止) */
+#screen-ob-passport .ch19-trophy-wrap {
+  position: relative;
+  width: 180px;
+  height: 205px;
+  margin: 0;
+  z-index: 3;
+  overflow: hidden;
+  border-radius: 24px;
+  opacity: 0;
+  transform: translateY(-70px) scale(0.85);
+  animation: ch19BadgeDrop 0.6s cubic-bezier(0.34, 1.45, 0.64, 1) 0.6s forwards;
+}
+
+@keyframes ch19BadgeDrop {
+  0% {
+    opacity: 0;
+    transform: translateY(-70px) scale(0.85);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(6px) scale(1.05);
+  }
+  85% {
+    opacity: 1;
+    transform: translateY(-2px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+#screen-ob-passport .ch19-trophy-img {
+  width: 180px;
+  height: 205px;
+  object-fit: contain;
+  display: block;
+  filter: none !important;
+}
+
+/* M-11: バッジの光 (表示から1.3秒後、1回横切って消える) */
+.ch19-trophy-shine {
+  position: absolute;
+  top: 0;
+  left: -130%;
+  width: 80%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.85) 50%, transparent 100%);
+  transform: skewX(-25deg);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.ch19-trophy-shine.shine-active {
+  animation: trophyShineWipe 0.65s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes trophyShineWipe {
+  0% { left: -130%; opacity: 0; }
+  20% { opacity: 1; }
+  100% { left: 190%; opacity: 0; }
+}
+
+/* M-12: 紙吹雪 (表示から1.3秒後、画面上部から舞い落ちる、1回だけ) */
+.ch19-confetti-particle {
+  position: absolute;
+  top: -12px;
+  width: 9px;
+  height: 13px;
+  opacity: 0.95;
+  border-radius: 2px;
+  animation: confettiFall 2.4s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  pointer-events: none;
+  z-index: 999;
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  75% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(720px) rotate(720deg) scale(0.7);
+    opacity: 0;
+  }
+}
+
+/* M-13: 1章解放テキスト (1.6s) */
+#screen-ob-passport .ch19-main-heading,
+#screen-ob-passport .ch19-diamond-divider-wrap {
+  opacity: 0;
+  animation: ch19FadeIn 0.4s ease-out 1.6s forwards;
+}
+
+/* M-13: 本文 (1.9s) */
+#screen-ob-passport .ch19-body-desc,
+#screen-ob-passport .ch19-body-sub {
+  opacity: 0;
+  animation: ch19FadeIn 0.4s ease-out 1.9s forwards;
+}
+
+/* M-13: ボタン (2.2sに出現、2.4sから1.5秒周期で脈動パルス) */
+#screen-ob-passport .ch19-bottom-area {
+  opacity: 0;
+  animation: ch19FadeIn 0.4s ease-out 2.2s forwards;
+}
+
+#screen-ob-passport .ch19-view-result-btn {
+  animation: ch19BtnPulse 1.5s ease-in-out 2.4s infinite;
+}
+
+@keyframes ch19BtnPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.035);
+    box-shadow: 0 4px 16px rgba(113, 91, 225, 0.4);
+  }
+}
+
+/* ---------- CH0-20': M-14, M-16 ---------- */
+#screen-ob-result .ch20-paper-card {
+  animation: paperSlideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes paperSlideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.ch20-strength-item {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: strengthItemFade 0.3s ease-out forwards;
+}
+@keyframes strengthItemFade {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- CH0-22: M-34, M-35, M-37 ---------- */
+.time-wheel-backdrop {
+  transition: opacity 0.3s ease;
+}
+.time-wheel-backdrop.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.time-wheel-card {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.time-wheel-backdrop.hidden .time-wheel-card {
+  transform: translateY(100%);
+  transition: transform 0.25s ease-in;
+}
+
+/* M-37: トグル 0.2s */
+.schedule-notify-ios-slider {
+  transition: background-color 0.2s ease, transform 0.2s ease !important;
+}
+.schedule-notify-ios-slider::before {
+  transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+/* ---------- M-04: OSの「視差効果を減らす」（prefers-reduced-motion） ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.15s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.15s !important;
+  }
+  .screen-slide-right,
+  .screen-slide-left,
+  #screen-ob-result .ch20-paper-card {
+    animation: reducedMotionFade 0.15s ease-out forwards !important;
+    transform: none !important;
+  }
+  @keyframes reducedMotionFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .figma-ch0-01-screen .ch01-mascot-img,
+  .figma-ch0-01-screen .ch01-mascot-shadow,
+  .ch07-mascot-img,
+  .ch07-mascot-shadow,
+  .ch07-lamp-halo,
+  .ch07-lamp-body,
+  .story-cover-mascot,
+  .story-cover-shadow,
+  .langselect-mascot,
+  .langselect-shadow,
+  .frame248-mascot-img,
+  .frame248-mascot-shadow,
+  .ch101-intro-mascot-img,
+  .ch101-result-mascot-img,
+  .ch101-mascot-floor-shadow,
+  .figma-speech-bubble,
+  #screen-ob-passport .ch19-view-result-btn {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .ch19-confetti-particle,
+  .ch19-trophy-shine {
+    display: none !important;
+  }
+}
+
+
+/* =========================================================
+   CTA COLOR UNIFICATION (2026-11-17)
+   ========================================================= */
+/* CH0-19: 「結果を見る」から確認しよう！ = 白文字 */
+#screen-ob-passport .ch19-body-sub {
+  color: #FFFFFF !important;
+}
+
+/* CH0-07 / CH0-15: 黄緑系（ティール）CTA */
+#btn-ob-character-next,
+#btn-ob-profile-intro-next {
+  background: #00C9C3 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 3px 0 #18A5B1 !important;
+}
+#btn-ob-character-next:active,
+#btn-ob-profile-intro-next:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 #18A5B1 !important;
+}
+
+/* CH0-13 / CH0-20: 紫CTA */
+#btn-ob-aptitude-intro-next,
+#screen-ob-result .ch20-next-cta-btn {
+  background: #715BE1 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 3px 0 #4D3CA8 !important;
+}
+#btn-ob-aptitude-intro-next:active,
+#screen-ob-result .ch20-next-cta-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 #4D3CA8 !important;
+}
+
+/* CH0-16: 誕生日選択後は紫枠 */
+#screen-ob-profile1 .figma-date-input.has-value {
+  border-color: #725BE1 !important;
+}
+
+/* CH0-20' Figma alignment (2026-11-17 v2) */
+#screen-ob-result .ch20-close-btn { display: none !important; }
+#screen-ob-result .ch20-modal-content { height: 43.77% !important; background: transparent !important; }
+#screen-ob-result .ch20-strengths-list { gap: 12px !important; }
+#screen-ob-result .ch20-st-desc { font-size: 12px !important; line-height: 18px !important; }
+#screen-ob-result .ch20-locked-overlay { height: 84px !important; background: linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.92) 100%) !important; box-shadow: none !important; }
+#screen-ob-result .ch20-paper-curl-wrap { margin-top: -1px !important; }
+#screen-ob-result .ch20-screen-bottom-area { margin-top: 11.351% !important; }

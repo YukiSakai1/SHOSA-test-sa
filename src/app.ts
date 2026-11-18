@@ -72,11 +72,64 @@ const state = {
 const $ = (id: string): any => document.getElementById(id);
 const screens = document.querySelectorAll('.screen');
 
+/* ---------- M-01 / M-03: 触覚フィードバック & 画面遷移方向管理 ---------- */
+let currentNavDirection: 'forward' | 'back' = 'forward';
+
+function triggerHaptic(duration = 10): void {
+  try {
+    if (typeof navigator !== 'undefined' && typeof (navigator as any).vibrate === 'function') {
+      (navigator as any).vibrate(duration);
+    }
+  } catch (_) {}
+}
+(window as any).triggerHaptic = triggerHaptic;
+
+document.addEventListener('pointerdown', (e: PointerEvent) => {
+  const target = (e.target as HTMLElement)?.closest('button, .btn, .primary-btn, .langselect-ticket-card, .schedule-time-card, .ob-likert-btn');
+  if (target && !target.hasAttribute('disabled') && !target.classList.contains('disabled')) {
+    triggerHaptic(10);
+  }
+}, { passive: true });
+
+function showToast(message: string, isSuccess = true): void {
+  let container = document.querySelector('.shosa-toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.className = 'shosa-toast-container';
+    document.body.appendChild(container);
+  }
+  container.innerHTML = '';
+  const toast = document.createElement('div');
+  toast.className = 'shosa-toast' + (isSuccess ? '' : ' toast-error');
+  toast.textContent = message;
+  container.appendChild(toast);
+  const displayDuration = isSuccess ? 2000 : 3000;
+  setTimeout(() => {
+    toast.classList.add('toast-fadeout');
+    setTimeout(() => toast.remove(), 250);
+  }, displayDuration);
+}
+(window as any).showToast = showToast;
+
 function showScreen(id) {
-  screens.forEach(s => s.classList.add('hidden'));
+  screens.forEach(s => {
+    s.classList.remove('screen-slide-right', 'screen-slide-left');
+    s.classList.add('hidden');
+  });
   const target = $(id);
-  if (target) target.classList.remove('hidden');
+  if (target) {
+    target.classList.remove('hidden');
+    // M-03: 進む時は右から左へスライド、戻る時は逆向き（初回タイトルは除外）
+    if (id !== 'screen-title') {
+      if (currentNavDirection === 'back') {
+        target.classList.add('screen-slide-left');
+      } else {
+        target.classList.add('screen-slide-right');
+      }
+    }
+  }
   $('app-viewport').scrollTop = 0;
+  currentNavDirection = 'forward';
 
   // ゲーム本編プレイ画面（共通ヘッダーでDAY/時刻/スコア等を表示する画面）
   const GAME_PLAY_SCREENS = [
@@ -247,6 +300,7 @@ function patchHistoryObState(patchFn) {
 }
 
 function goTo(loaderFn, ...args) {
+  currentNavDirection = 'forward';
   // 今の画面を離れる直前に、その画面で行った回答・入力を履歴に反映しておく
   // （そうしないと、後で「戻る」した時に選択済みの回答が復元されない）
   if (navHistory.length > 0) {
@@ -356,6 +410,7 @@ function navigatePreviousFallback(currentId) {
 }
 
 function goBack() {
+  currentNavDirection = 'back';
   if (navHistory.length >= 2) {
     navHistory.pop(); // 現在の画面を捨てる
     const prev = navHistory[navHistory.length - 1];
@@ -466,6 +521,45 @@ function restorePlayerIdentity() {
   }
 }
 
+function startAuthWithSpinner(buttonId: string, callback: () => void): void {
+  const clickedBtn = $(buttonId) as HTMLButtonElement | null;
+  const googleBtn = $('btn-login-google') as HTMLButtonElement | null;
+  const appleBtn = $('btn-login-apple') as HTMLButtonElement | null;
+  const phoneBtn = $('btn-login-phone') as HTMLButtonElement | null;
+  if (!clickedBtn) {
+    callback();
+    return;
+  }
+
+  // M-26: 押したボタンの中にスピナーを表示し、他の2つは押せなくする
+  [googleBtn, appleBtn, phoneBtn].forEach(b => {
+    if (b) b.disabled = true;
+  });
+
+  const originalHtml = clickedBtn.innerHTML;
+  clickedBtn.innerHTML = '<span class="ch01-btn-spinner"></span>';
+
+  setTimeout(() => {
+    clickedBtn.innerHTML = originalHtml;
+    [googleBtn, appleBtn, phoneBtn].forEach(b => {
+      if (b) b.disabled = false;
+    });
+    callback();
+  }, 600);
+}
+
+function triggerStartGoogle() {
+  startAuthWithSpinner('btn-login-google', () => {
+    goTo(typeof startOnboarding === 'function' ? startOnboarding : startGame);
+  });
+}
+
+function triggerStartApple() {
+  startAuthWithSpinner('btn-login-apple', () => {
+    goTo(typeof startOnboarding === 'function' ? startOnboarding : startGame);
+  });
+}
+
 function triggerStartGame() {
   goTo(typeof startOnboarding === 'function' ? startOnboarding : startGame);
 }
@@ -473,9 +567,9 @@ function triggerStartGame() {
 function onPhoneOrLoginClick() {
   const savedProfile = typeof loadSavedProfile === 'function' ? loadSavedProfile() : null;
   if (savedProfile) {
-    // 2回目以降ログイン：「ログイン」ボタンを押したらホーム画面（HM-TOP＋MY：案B）へ遷移
+    // 2回目以降ログイン：ホーム画面はデザイン中のため非表示とし、第1章へ直接遷移
     restorePlayerIdentity();
-    goTo(loadHomeScreen);
+    goTo(startChapter101);
   } else {
     // 初回ログイン：「電話番号で続ける」ボタンを押したらオンボーディングへ遷移
     goTo(typeof startOnboarding === 'function' ? startOnboarding : startGame);
@@ -484,36 +578,16 @@ function onPhoneOrLoginClick() {
 
 if ($('btn-login-phone')) $('btn-login-phone').addEventListener('click', onPhoneOrLoginClick);
 if ($('btn-start-game')) $('btn-start-game').addEventListener('click', onPhoneOrLoginClick);
-if ($('btn-login-google')) $('btn-login-google').addEventListener('click', triggerStartGame);
-if ($('btn-login-apple')) $('btn-login-apple').addEventListener('click', triggerStartGame);
+if ($('btn-login-google')) $('btn-login-google').addEventListener('click', triggerStartGoogle);
+if ($('btn-login-apple')) $('btn-login-apple').addEventListener('click', triggerStartApple);
 if ($('btn-login-link')) $('btn-login-link').addEventListener('click', onPhoneOrLoginClick);
 
 /* =========================================================
    HOME SCREEN (HM-TOP＋MY：案B - WF Design)
    ========================================================= */
 function loadHomeScreen() {
-  restorePlayerIdentity();
-  const savedProfile = typeof loadSavedProfile === 'function' ? loadSavedProfile() : null;
-  const savedProgress = typeof loadSavedProgress === 'function' ? loadSavedProgress() : null;
-
-  // 連続学習日数（サンプルで5日、または保存データがあれば反映）
-  const streakEl = $('hm-streak-days');
-  if (streakEl) {
-    const daysCount = (savedProgress && savedProgress.completedDays) ? (savedProgress.completedDays + 1) : 5;
-    streakEl.textContent = daysCount;
-  }
-
-  // 吹き出しテキスト
-  const bubbleEl = $('hm-bubble-text');
-  if (bubbleEl) {
-    if (savedProgress && (savedProgress.completedDays >= 1 || (savedProgress.completedDaySet && savedProgress.completedDaySet[0]))) {
-      bubbleEl.textContent = 'Chapter 1 クリア！おつかれさま！';
-    } else {
-      bubbleEl.textContent = '今日も一緒に学びましょう！';
-    }
-  }
-
-  showScreen('screen-home');
+  // ホーム画面（#screen-home）はデザイン中のため非表示とし、タイトル画面へ遷移
+  goTo(loadTitle);
 }
 window.loadHomeScreen = loadHomeScreen;
 
@@ -958,30 +1032,6 @@ $('btn-hub-passport').addEventListener('click', () => {
 });
 $('btn-open-hub').addEventListener('click', () => goTo(loadGameOver));
 
-// 開発用ジャンプメニュー：どの画面へも直接移動できる（テスト用）
-const DEV_JUMP_TARGETS = {
-  home: () => goTo(loadHomeScreen),
-  ch101: () => goTo(startChapter101),
-  storycover: () => goTo(loadStoryCover),
-  langselect: () => goTo(loadLangSelect),
-  intro: () => goTo(loadIntroSlide, 0),
-  character: () => goTo(loadCharacterGreet),
-  hearing: () => goTo(loadHearing, 0),
-  aptitude: () => goTo(loadAptitudeIntro),
-  profile1: () => goTo(loadProfile1),
-  profile2: () => goTo(loadProfile1),
-  passport: () => goTo(finalizeOnboarding),
-  scheduletime: () => goTo(loadScheduleTime),
-  daystart1: () => goTo(loadDayStart, 0),
-  day1: () => goTo(loadEventIntro, 0),
-  hub: () => goTo(loadGameOver)
-};
-document.querySelectorAll<HTMLElement>('#dev-jump-grid [data-jump]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const fn = DEV_JUMP_TARGETS[btn.dataset.jump || ''];
-    if (fn) fn();
-  });
-});
 $('btn-restart').addEventListener('click', () => {
   navHistory.length = 0; // 最初からやり直すので履歴もリセット
   goTo(loadTitle);
@@ -1027,7 +1077,7 @@ $('btn-translate-intro').addEventListener('click', () => {
    APP STARTUP
    ---------------------------------------------------------
    スクリプトは game_data.js → onboarding_data.js → app.js →
-   onboarding.js → dev_overview.js の順に読み込まれるため、
+   onboarding.js の順に読み込まれるため、
    app.js の末尾で即座に loadSavedProfile() 等を呼ぶと、まだ
    onboarding.js が読み込まれておらず正しく判定できない。
    そのため DOMContentLoaded（全スクリプト読み込み後に発火）を
@@ -1336,7 +1386,7 @@ function initChapter101Events() {
       if (ch101State.lessonIndex + 1 < total) {
         loadCh101Lesson(ch101State.lessonIndex + 1);
       } else {
-        showScreen('screen-ch101-complete');
+        finalizeCh101Complete();
       }
     });
   }
@@ -1378,6 +1428,48 @@ function initChapter101Events() {
       }
     });
   }
+
+  // Chapter 1 Celebration (Trophy Drop, Programmatic Rays & Halo, Shine, Confetti)
+  function triggerCh101Confetti(): void {
+    const screen = $('screen-ch101-complete');
+    if (!screen) return;
+    screen.querySelectorAll('.ch19-confetti-particle').forEach(el => el.remove());
+    const colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#715BE1', '#FFA07A', '#98D8C8', '#FFFFFF', '#56C3F7'];
+    for (let i = 0; i < 36; i++) {
+      const p = document.createElement('div');
+      p.className = 'ch19-confetti-particle';
+      p.style.left = `${Math.random() * 92 + 4}%`;
+      p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      p.style.animationDelay = `${Math.random() * 0.7}s`;
+      p.style.animationDuration = `${1.8 + Math.random() * 1.2}s`;
+      screen.appendChild(p);
+    }
+  }
+
+  function finalizeCh101Complete(): void {
+    const trophyWrap = document.querySelector('#screen-ch101-complete .ch101-trophy-wrap');
+    if (trophyWrap && !trophyWrap.querySelector('.ch101-trophy-shine')) {
+      const shine = document.createElement('div');
+      shine.className = 'ch101-trophy-shine';
+      trophyWrap.appendChild(shine);
+    }
+
+    showScreen('screen-ch101-complete');
+
+    // M-11 & M-12: バッジ落下後（表示から1.3秒後）に光と紙吹雪を1回横切る
+    setTimeout(() => {
+      const shine = document.querySelector('#screen-ch101-complete .ch101-trophy-shine');
+      if (shine) {
+        shine.classList.remove('shine-active');
+        void (shine as HTMLElement).offsetWidth;
+        shine.classList.add('shine-active');
+      }
+      triggerCh101Confetti();
+    }, 1300);
+  }
+
+  (window as any).finalizeCh101Complete = finalizeCh101Complete;
+  (window as any).loadCh101Complete = finalizeCh101Complete;
 
   // Close buttons (✕)
   ['btn-ch101-sit1-close', 'btn-ch101-sit2-close', 'btn-ch101-question-close', 'btn-ch101-result-close'].forEach(btnId => {

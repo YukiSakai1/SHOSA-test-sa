@@ -148,6 +148,18 @@ function loadStoryCover() {
 }
 $('btn-story-cover-next').addEventListener('click', () => goTo(loadLangSelect));
 
+/* ---------- M-02: NEXTボタン弾みヘルパー ---------- */
+function triggerNextBtnBounce(btn: HTMLElement | null): void {
+  if (!btn) return;
+  btn.classList.remove('btn-bounce-once');
+  void btn.offsetWidth;
+  btn.classList.add('btn-bounce-once');
+  btn.addEventListener('animationend', () => {
+    btn.classList.remove('btn-bounce-once');
+  }, { once: true });
+}
+(window as any).triggerNextBtnBounce = triggerNextBtnBounce;
+
 /* ---------- 1e. 言語表示設定 (Figma CH0-08) ---------- */
 function loadLangSelect() {
   const list = $('ob-lang-list');
@@ -179,15 +191,30 @@ function loadLangSelect() {
     `;
 
     card.addEventListener('click', () => {
-      list.querySelectorAll('.langselect-ticket-card').forEach(c => c.classList.remove('selected'));
+      list.querySelectorAll('.langselect-ticket-card').forEach(c => c.classList.remove('selected', 'card-popped'));
       card.classList.add('selected');
+      // M-05: 選択カードタップ時、紫に変わり、枠が一瞬ふくらむ (0.15秒・1回)
+      card.classList.remove('card-popped');
+      void card.offsetWidth;
+      card.classList.add('card-popped');
+
       obState.languageSetting = opt.id;
       const chosenLang = opt.id === 'english' ? 'en' : 'ja';
       if (window.currentAppLang !== chosenLang) {
         window.currentAppLang = chosenLang;
         if (typeof applyAppLanguage === 'function') applyAppLanguage(chosenLang);
+        // M-06: 吹き出しの文言がクロスフェードで切り替わる (0.3秒)
+        const bubbleText = document.querySelector('#screen-ob-langselect .langselect-bubble p');
+        if (bubbleText) {
+          bubbleText.classList.remove('text-crossfade');
+          void (bubbleText as HTMLElement).offsetWidth;
+          bubbleText.classList.add('text-crossfade');
+        }
       }
-      nextBtn.disabled = false;
+      if (nextBtn.disabled) {
+        nextBtn.disabled = false;
+        triggerNextBtnBounce(nextBtn);
+      }
     });
 
     list.appendChild(card);
@@ -253,7 +280,7 @@ function loadIntroSlide(i: number) {
   if (slide.type === 'welcome') {
     // Figma CH0-03
     content.innerHTML = `
-      <div class="intro-slide slide-welcome">
+      <div class="intro-slide slide-welcome${isEn ? ' is-en' : ''}">
         ${langBtnHtml}
         <div class="intro-top-header ch03-header">
           <span class="intro-welcome-to">${isEn && slide.badgeTextEn ? slide.badgeTextEn : slide.badgeText}</span>
@@ -270,22 +297,25 @@ function loadIntroSlide(i: number) {
         </div>
       </div>`;
   } else if (slide.type === 'features') {
-    // Figma CH0-04
+    // Figma CH0-04 (M-04 / 要点 R6: スマホ枠から4機能へ線が伸び、アイコンが順に出る)
     const bodyLead = isEn && slide.bodyLeadEn ? slide.bodyLeadEn : slide.bodyLead;
     const bodySub = isEn && slide.bodySubEn ? slide.bodySubEn : slide.bodySub;
-    const visualHtml = isEn && slide.featuresEn
-      ? `<div class="intro-features-en-scene">
-           <img src="assets/images/intro_slide_1_hero.png" alt="SHOSA Phone" class="intro-features-phone-en">
-           <div class="intro-features-bubbles-grid">
-             <div class="intro-feature-bubble">${devEscSafe(slide.featuresEn[0] || '')}</div>
-             <div class="intro-feature-bubble">${devEscSafe(slide.featuresEn[1] || '')}</div>
-             <div class="intro-feature-bubble">${devEscSafe(slide.featuresEn[2] || '')}</div>
-             <div class="intro-feature-bubble">${devEscSafe(slide.featuresEn[3] || '')}</div>
-           </div>
-         </div>`
-      : `<img src="${slide.heroImg}" alt="SHOSA Features" class="intro-features-img">`;
+    const featureBubbles = [
+      { pos: 'tl', file: 'Group 245.png' },
+      { pos: 'tr', file: 'Group 246.png' },
+      { pos: 'bl', file: 'Group 247.png' },
+      { pos: 'br', file: 'Group 248.png' }
+    ];
+    const featureLabels: string[] = (isEn && slide.featuresEn ? slide.featuresEn : slide.featuresJa) || [];
+    const visualHtml = `<div class="intro-features-en-scene">
+           <img src="assets/images/intro_feature_phone.svg" alt="SHOSA Phone" class="intro-features-phone-en">
+           ${featureBubbles.map((bb, i) => `<div class="ifb ifb-${bb.pos}">
+             <img src="assets/images/${bb.file}" alt="" class="ifb-group-img">
+             <span class="ifb-label">${devEscSafe(String(featureLabels[i] || "").replace(/^✓\s*/, "")).replace(/\n/g, "<br>")}</span>
+           </div>`).join('')}
+         </div>`;
     content.innerHTML = `
-      <div class="intro-slide slide-features">
+      <div class="intro-slide slide-features${isEn ? ' is-en' : ''}">
         ${langBtnHtml}
         <div class="intro-top-header">
           <h2 class="intro-header-title">${title.replace(/\n/g, '<br>')}</h2>
@@ -303,24 +333,44 @@ function loadIntroSlide(i: number) {
         </div>
       </div>`;
   } else if (slide.type === 'steps') {
-    // Figma CH0-05
+    // Figma CH0-05 (要点 Row 7: 4項目が上から順に出る。アイコンが軽くポップ)
     const desc = isEn && slide.descEn ? slide.descEn : slide.desc;
-    const stepIcons = ['📱', '🛎️', '✏️', '📋'];
-    const visualStepsHtml = isEn && slide.stepsEn
-      ? `<div class="intro-steps-en-card">
-           ${slide.stepsEn.map((st: string, idx: number) => {
-             const colonIdx = st.indexOf(':');
-             const head = colonIdx > -1 ? st.slice(0, colonIdx) : '';
-             const tail = colonIdx > -1 ? st.slice(colonIdx + 1).trim() : st;
-             return `<div class="intro-step-en-row">
-               <span class="intro-step-en-badge">${stepIcons[idx] || '✓'}</span>
-               <span class="intro-step-en-text">${head ? `<strong>${devEscSafe(head)}</strong>: ` : ''}${devEscSafe(tail)}</span>
-             </div>`;
-           }).join('')}
-         </div>`
-      : `<img src="${slide.heroImg}" alt="SHOSA Steps" class="intro-steps-img">`;
+    const rawSteps: string[] = (isEn && slide.stepsEn ? slide.stepsEn : slide.stepsJa) || [];
+    const stepIconFiles = [
+      'Group 253.png', // 1: 診断 (Phone)
+      'Group 256.png', // 2: 体験 (Hotel staff)
+      'Group 255.png', // 3: 学習 (Pencil)
+      'Group 254.png'  // 4: スコア化 (Report)
+    ];
+
+    const visualStepsHtml = `
+      <div class="ch05-steps-card">
+        <div class="ch05-steps-line" aria-hidden="true">
+          <img src="assets/images/Vector 5.png" alt="" class="ch05-line-img">
+        </div>
+        <div class="ch05-steps-list">
+          ${rawSteps.map((st: string, idx: number) => {
+            const isColon = st.includes(':');
+            const sep = isColon ? ':' : (st.includes('・・') ? '・・' : (st.includes('　') ? '　' : ' '));
+            const splitIdx = st.indexOf(sep);
+            const head = splitIdx > -1 ? st.slice(0, splitIdx).trim() : st.trim();
+            const tail = splitIdx > -1 ? st.slice(splitIdx + sep.length).trim() : '';
+            return `
+              <div class="ch05-step-row ch05-step-row-${idx + 1}">
+                <div class="ch05-step-icon-wrap">
+                  <img src="assets/images/${stepIconFiles[idx] || 'Group 253.png'}" alt="${devEscSafe(head)}" class="ch05-step-icon">
+                </div>
+                <div class="ch05-step-content intro-step-en-text">
+                  <strong class="ch05-step-title">${devEscSafe(head)}${isEn ? ':' : ''}</strong>
+                  <span class="ch05-step-desc">${devEscSafe(tail)}</span>
+                </div>
+              </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+
     content.innerHTML = `
-      <div class="intro-slide slide-steps">
+      <div class="intro-slide slide-steps${isEn ? ' is-en' : ''}">
         ${langBtnHtml}
         <div class="intro-top-header">
           <h2 class="intro-header-title">${title.replace(/\n/g, '<br>')}</h2>
@@ -331,7 +381,7 @@ function loadIntroSlide(i: number) {
             ${visualStepsHtml}
           </div>
           <div class="intro-card-body">
-            <p class="intro-body-sub" style="margin-top: 14px;">${desc.replace(/\n/g, '<br>')}</p>
+            <p class="intro-body-sub">${desc.replace(/\n/g, '<br>')}</p>
             <button id="btn-slide-action" class="intro-action-btn btn-turquoise">${buttonLabel}</button>
           </div>
         </div>
@@ -345,7 +395,7 @@ function loadIntroSlide(i: number) {
     const desc = isEn && slide.descEn ? slide.descEn : slide.desc;
 
     content.innerHTML = `
-      <div class="intro-slide slide-certification">
+      <div class="intro-slide slide-certification${isEn ? ' is-en' : ''}">
         ${langBtnHtml}
         <div class="intro-top-header">
           <h2 class="intro-header-title">${title.replace(/\n/g, '<br>')}</h2>
@@ -353,7 +403,15 @@ function loadIntroSlide(i: number) {
         </div>
         <div class="intro-arch-card">
           <div class="intro-visual-wrap ch06-report-wrap">
-            <img src="${slide.heroImg}" alt="SHOSA Report" class="intro-report-img">
+            <div class="ch06-report-stage">
+              <img src="${slide.reportBaseImg || 'assets/images/Frame 170.png'}" alt="SHOSA Report" class="ch06-report-base">
+              <img src="${slide.heroImg}" alt="" aria-hidden="true" class="ch06-hero-layer ch06-hero-score">
+              <img src="${slide.heroImg}" alt="" aria-hidden="true" class="ch06-hero-layer ch06-hero-performance">
+              <img src="${slide.heroImg}" alt="" aria-hidden="true" class="ch06-hero-layer ch06-hero-potential ch06-potential-1">
+              <img src="${slide.heroImg}" alt="" aria-hidden="true" class="ch06-hero-layer ch06-hero-potential ch06-potential-2">
+              <img src="${slide.heroImg}" alt="" aria-hidden="true" class="ch06-hero-layer ch06-hero-potential ch06-potential-3">
+              <img src="${slide.heroImg}" alt="" aria-hidden="true" class="ch06-hero-layer ch06-hero-final">
+            </div>
           </div>
           <div class="intro-card-body ch06-body">
             <p class="intro-report-lead">${reportLead}</p>
@@ -400,8 +458,9 @@ function loadHearing(i) {
   const h = ONBOARDING_DATA.hearings[i];
   const isEn = window.currentAppLang === 'en';
 
-  const total = ONBOARDING_DATA.hearings.length;
-  const progressPercent = Math.round(((i + 1) / total) * 100);
+  // 進捗バー（塊1：ヒアリング4問 + スケジュール + プロフィール = 全6ステップ）
+  const CHUNK1_TOTAL_STEPS = 6;
+  const progressPercent = Math.round(((i + 1) / CHUNK1_TOTAL_STEPS) * 100);
   const fillBar = $('ob-hearing-progress-fill');
   if (fillBar) fillBar.style.width = progressPercent + '%';
 
@@ -429,8 +488,8 @@ function loadHearing(i) {
     const isSelected = (rawLabel === currentAnswer || (isOther && typeof currentAnswer === 'string' && currentAnswer.startsWith('その他')));
 
     const card = document.createElement('div');
-    card.className = 'frame248-option-btn' + 
-      (isOther ? ' frame248-option-other' : '') + 
+    card.className = 'frame248-option-btn' +
+      (isOther ? ' frame248-option-other' : '') +
       (isSelected ? ' selected' : '');
     card.setAttribute('role', 'button');
     card.setAttribute('tabindex', '0');
@@ -493,7 +552,6 @@ function loadHearing(i) {
         nextBtn.disabled = false;
       }
       saveHearingAnswers(obState.answers);
-      if (h.key === 'concern') renderHearingFollowup(rawLabel);
     };
 
     optRow.addEventListener('click', (e) => {
@@ -521,37 +579,13 @@ function loadHearing(i) {
     optWrap.appendChild(card);
   });
 
-  if (h.key === 'concern' && currentAnswer) {
-    renderHearingFollowup(currentAnswer);
-  } else {
-    renderHearingFollowup(null);
-  }
+  // 補足メッセージ（フォローアップバナー）は非表示
+  const existingFollowup = document.getElementById('ob-hearing-followup');
+  if (existingFollowup) existingFollowup.remove();
 
   nextBtn.disabled = !hasValidAnswer;
 
   showScreen('screen-ob-hearing');
-}
-
-// Q4（心配事）フォローアップ表示（CH0-12）
-function renderHearingFollowup(concernKey: string | null) {
-  const optWrap = $('ob-hearing-options');
-  if (!optWrap) return;
-  let noteEl = document.getElementById('ob-hearing-followup');
-  const map = ONBOARDING_DATA.q4Followup;
-  const entry = concernKey && map ? map[concernKey] : null;
-  if (!entry) {
-    if (noteEl) noteEl.remove();
-    return;
-  }
-  const isEn = window.currentAppLang === 'en';
-  const msg = isEn ? entry.textEn : entry.textJa;
-  if (!noteEl) {
-    noteEl = document.createElement('div');
-    noteEl.id = 'ob-hearing-followup';
-    noteEl.className = 'frame248-followup-banner';
-    optWrap.insertAdjacentElement('afterend', noteEl);
-  }
-  noteEl.innerHTML = `<span class="followup-icon">💡</span><span>${devEscSafe(msg)}</span>`;
 }
 
 // 簡易HTMLエスケープ
@@ -634,7 +668,12 @@ function loadAptitude(pageIndex = 0) {
         row.querySelectorAll('.ob-likert-btn').forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
         obState.aptitudeScores[qKey] = Number(btn.dataset.value);
+        const nextBtn = $('btn-ob-aptitude-next') as HTMLButtonElement | null;
+        const wasDisabled = nextBtn?.disabled ?? true;
         updateAptitudeProgress(pageIndex);
+        if (wasDisabled && nextBtn && !nextBtn.disabled) {
+          triggerNextBtnBounce(nextBtn);
+        }
       });
     });
   });
@@ -660,8 +699,46 @@ $('btn-ob-aptitude-next').addEventListener('click', () => {
   }
 });
 
+function triggerCelebrationConfetti(): void {
+  const screen = $('screen-ob-passport');
+  if (!screen) return;
+  screen.querySelectorAll('.ch19-confetti-particle').forEach(el => el.remove());
+  const colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#715BE1', '#FFA07A', '#98D8C8'];
+  for (let i = 0; i < 36; i++) {
+    const p = document.createElement('div');
+    p.className = 'ch19-confetti-particle';
+    p.style.left = `${Math.random() * 92 + 4}%`;
+    p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    p.style.animationDelay = `${Math.random() * 0.4}s`;
+    p.style.animationDuration = `${1.8 + Math.random() * 0.8}s`;
+    p.style.transform = `rotate(${Math.random() * 360}deg)`;
+    screen.appendChild(p);
+  }
+  setTimeout(() => {
+    screen.querySelectorAll('.ch19-confetti-particle').forEach(el => el.remove());
+  }, 3000);
+}
+
 function finalizeAptitudeCelebration() {
+  const trophyWrap = document.querySelector('#screen-ob-passport .ch19-trophy-wrap');
+  if (trophyWrap && !trophyWrap.querySelector('.ch19-trophy-shine')) {
+    const shine = document.createElement('div');
+    shine.className = 'ch19-trophy-shine';
+    trophyWrap.appendChild(shine);
+  }
+
   showScreen('screen-ob-passport');
+
+  // M-11 & M-12: バッジ落下後（表示から1.3秒後）に光と紙吹雪を1回横切る
+  setTimeout(() => {
+    const shine = document.querySelector('#screen-ob-passport .ch19-trophy-shine');
+    if (shine) {
+      shine.classList.remove('shine-active');
+      void (shine as HTMLElement).offsetWidth;
+      shine.classList.add('shine-active');
+    }
+    triggerCelebrationConfetti();
+  }, 1300);
 }
 /* ---------- 1k-0. プロフィール導入 (Figma CH0-15) ---------- */
 function loadProfileIntro() {
@@ -812,13 +889,19 @@ document.addEventListener('click', (e) => {
 });
 /* ---------- 1k. プロフィール入力 (Figma CH0-16') ---------- */
 function updateProfile1Validity() {
-  const nameVal = $('ob-name-input').value.trim();
-  const countryVal = $('ob-country-input').value;
-  const birthVal = $('ob-birthdate-input').value;
+  const nameVal = ($('ob-name-input') as HTMLInputElement)?.value.trim() || '';
+  const countryVal = ($('ob-country-input') as HTMLSelectElement)?.value || '';
+  const birthVal = ($('ob-birthdate-input') as HTMLInputElement)?.value || '';
   const isGenderChosen = !!obState.profile.gender;
   const isValid = isGenderChosen && nameVal.length > 0 && !!countryVal && !!birthVal;
-  const nextBtn = $('btn-ob-profile1-next');
+  const nextBtn = $('btn-ob-profile1-next') as HTMLButtonElement | null;
   if (nextBtn) nextBtn.disabled = !isValid;
+
+  // プロフィール入力完了時に進捗バーを100%（いっぱい）にする
+  const profileFillBar = $('ob-profile-progress-fill');
+  if (profileFillBar) {
+    profileFillBar.style.width = isValid ? '100%' : '83%';
+  }
 }
 
 function loadProfile1() {
@@ -841,6 +924,12 @@ function loadProfile1() {
   $('ob-country-input').value = obState.profile.country || '';
   $('ob-birthdate-input').value = obState.profile.birthdate || '2000-01-01';
 
+  // 進捗バー（ブロック1：プロフィール入力画面開始時は83%）
+  const profileFillBar = $('ob-profile-progress-fill');
+  if (profileFillBar) {
+    profileFillBar.style.width = '83%';
+  }
+
   applyAppLanguage(window.currentAppLang || 'ja');
   updateProfile1Validity();
   showScreen('screen-ob-profile1');
@@ -859,6 +948,12 @@ document.querySelectorAll<HTMLElement>('#ob-gender-row .figma-gender-btn').forEa
 $('ob-name-input').addEventListener('input', updateProfile1Validity);
 $('ob-country-input').addEventListener('change', updateProfile1Validity);
 $('ob-birthdate-input').addEventListener('change', updateProfile1Validity);
+// 誕生日を選んだら他の項目と同じく紫枠にする
+['change', 'input'].forEach(ev => {
+  $('ob-birthdate-input').addEventListener(ev, () => {
+    $('ob-birthdate-input').classList.toggle('has-value', !!($('ob-birthdate-input') as HTMLInputElement).value);
+  });
+});
 
 $('btn-ob-profile1-next').addEventListener('click', () => {
   obState.profile.name = $('ob-name-input').value.trim() || 'SHOSA';
@@ -866,7 +961,17 @@ $('btn-ob-profile1-next').addEventListener('click', () => {
   obState.profile.birthdate = $('ob-birthdate-input').value || '2000-01-01';
   saveProfile(obState.profile);
   window.PLAYER_NAME = obState.profile.name;
-  goTo(loadJourney);
+
+  // プロフィール入力完了：まず進捗バーを100%（いっぱい）にする
+  const profileFillBar = $('ob-profile-progress-fill');
+  if (profileFillBar) {
+    profileFillBar.style.width = '100%';
+  }
+
+  // バーが100%に達するアニメーション（0.4秒）を見せてから、次の画面（YOUR JOURNEY）へ進む
+  setTimeout(() => {
+    goTo(loadJourney);
+  }, 450);
 });
 
 /* ---------- 1k-2. YOUR JOURNEY (Figma CH0-18) ---------- */
@@ -880,19 +985,37 @@ function renderJourneySteps() {
   list.innerHTML = steps.map(s => {
     const title = isEn && s.titleEn ? s.titleEn : s.title;
     const desc = isEn && s.descEn ? s.descEn : s.desc;
+    const dotSrc = s.dotImg || (s.isOpen ? 'assets/images/Ellipse 75.png' : 'assets/images/Ellipse 70.png');
 
     return `
-      <div class="journey-step-row ${s.isOpen ? 'is-open' : 'is-locked'}">
+      <div class="journey-step-row ${s.isOpen ? 'is-open' : 'is-locked'}" data-step="${s.step}">
         <div class="journey-dot-col">
-          <div class="journey-dot ${s.isOpen ? 'is-active' : ''}"></div>
+          <img src="${dotSrc}" alt="" class="journey-dot-img ${s.isOpen ? 'is-active' : ''}">
         </div>
         <div class="journey-door-col">
-          <img src="${s.doorImg}" alt="${s.doorNumber ? s.doorNumber + 'ドア' : 'Open Door'}" class="journey-door-img">
+          ${s.isOpen ? `
+            <div class="journey-door-frame">
+              <div class="journey-door-programmatic-light" id="journey-door-beam" aria-hidden="true"></div>
+              <div class="journey-door-opening">
+                <img src="assets/images/12Vector.png" alt="" class="journey-doorway-interior">
+                <img src="assets/images/11Vector.png" alt="" class="journey-doorway-frame">
+              </div>
+              <div class="journey-door-shosa-wrap" id="journey-peeking-shosa">
+                <img src="assets/images/Subtract.png" alt="" class="journey-shosa-shadow" id="journey-shosa-shadow">
+                <img src="assets/images/shosa.png" alt="SHOSA" class="journey-door-peeking-shosa">
+              </div>
+              <div class="journey-door-panel-wrap" id="journey-door-panel">
+                <img src="assets/images/Group.png" alt="Open Door" class="journey-door-panel-img">
+              </div>
+            </div>
+          ` : `
+            <img src="${s.doorImg}" alt="${s.doorNumber ? s.doorNumber + 'ドア' : 'Door'}" class="journey-door-img">
+          `}
         </div>
         <div class="journey-card-bubble">
           ${s.isLocked && s.lockImg ? `<img src="${s.lockImg}" alt="Locked" class="journey-card-lock">` : ''}
           <h3 class="journey-card-title">${title}</h3>
-          <p class="journey-card-desc">${desc}</p>
+          <p class="journey-card-desc">${desc.replace(/\n/g, '<br>')}</p>
         </div>
       </div>
     `;
@@ -904,7 +1027,21 @@ function loadJourney() {
   showScreen('screen-ob-journey');
 }
 
-$('btn-ob-journey-next').addEventListener('click', () => goTo(loadAptitudeIntro));
+$('btn-ob-journey-next').addEventListener('click', () => {
+  const panel = $('journey-door-panel');
+  const beam = $('journey-door-beam');
+  const shosa = $('journey-peeking-shosa');
+  if (panel) {
+    panel.classList.add('door-swing-wide');
+    if (beam) beam.classList.add('light-burst');
+    if (shosa) shosa.classList.add('shosa-step-forward');
+    setTimeout(() => {
+      goTo(loadAptitudeIntro);
+    }, 450);
+  } else {
+    goTo(loadAptitudeIntro);
+  }
+});
 
 /* ---------- 1m. 診断完了・1章解放 (Figma CH0-19 & CH0-20') ---------- */
 function finalizeOnboarding() {
@@ -967,20 +1104,66 @@ function updateDiagnosisResultModal() {
       <li class="ch20-strength-item">
         <span class="ch20-st-star">★</span>
         <div class="ch20-st-text">
-          <span class="ch20-st-desc">${devEscSafe(s).replace(/^・/, '')}</span>
+          <span class="ch20-st-desc">${devEscSafe(s).replace(/^・/, '').replace('、', '、<br>')}</span>
         </div>
       </li>
     `).join('');
   }
 }
 
+function animateScoreCountUp(targetScore = 95): void {
+  const el = document.querySelector('.result-job-score');
+  if (!el) return;
+  const duration = 1000;
+  let start: number | null = null;
+  el.textContent = '0';
+  function step(timestamp: number) {
+    if (!start) start = timestamp;
+    const progress = Math.min(1, (timestamp - start) / duration);
+    el!.textContent = String(Math.floor(progress * targetScore));
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    } else {
+      el!.textContent = String(targetScore);
+    }
+  }
+  // M-15: 紙がせり上がった後（0.6秒後）にカウントアップ開始
+  setTimeout(() => {
+    requestAnimationFrame(step);
+  }, 600);
+}
+
+function fitCh20ResultCard(): void {
+  const container = document.querySelector('#screen-ob-result .ch20-screen-container');
+  const card = document.querySelector<HTMLElement>('#screen-ob-result .ch20-paper-card');
+  if (!container || !card) return;
+  const zoom = Math.min(1, container.clientWidth / 370);
+  card.style.setProperty('--ch20-card-zoom', String(zoom));
+}
+
 function loadDiagnosisResult() {
   updateDiagnosisResultModal();
   showScreen('screen-ob-result');
+  fitCh20ResultCard();
+  const role = calculateAptitudeResult();
+  const targetScore = parseInt(String(role.score || '95').replace('%', ''), 10) || 95;
+  animateScoreCountUp(targetScore);
+  // M-16: 割合の表示が終わった後（1.6秒後）、上から順に0.3秒間隔で1つずつ表示
+  const items = document.querySelectorAll('.ch20-strength-item');
+  items.forEach((item, idx) => {
+    (item as HTMLElement).style.animationDelay = `${1.6 + idx * 0.3}s`;
+  });
 }
 
 $('btn-ob-view-result').addEventListener('click', () => {
   goTo(loadDiagnosisResult);
+});
+
+window.addEventListener('resize', () => {
+  const resultScreen = $('screen-ob-result');
+  if (resultScreen && !resultScreen.classList.contains('hidden')) {
+    fitCh20ResultCard();
+  }
 });
 
 if ($('btn-result-proceed')) {
@@ -1030,10 +1213,16 @@ function initTimeWheelColumns(): void {
     minsCol.appendChild(span);
   }
 
-  // Bind debounced scroll listeners for scroll-snap detection
+  // Bind debounced scroll listeners for scroll-snap detection with haptics (M-36)
   let hourScrollTimer: any = null;
+  let lastHourSnap = -1;
   hoursCol.addEventListener('scroll', () => {
     clearTimeout(hourScrollTimer);
+    const snap = Math.round(hoursCol.scrollTop / 40);
+    if (snap !== lastHourSnap) {
+      lastHourSnap = snap;
+      triggerHaptic(10);
+    }
     hourScrollTimer = setTimeout(() => {
       const idx = Math.round(hoursCol.scrollTop / 40);
       const clamped = Math.max(0, Math.min(23, idx));
@@ -1043,8 +1232,14 @@ function initTimeWheelColumns(): void {
   });
 
   let minScrollTimer: any = null;
+  let lastMinSnap = -1;
   minsCol.addEventListener('scroll', () => {
     clearTimeout(minScrollTimer);
+    const snap = Math.round(minsCol.scrollTop / 40);
+    if (snap !== lastMinSnap) {
+      lastMinSnap = snap;
+      triggerHaptic(10);
+    }
     minScrollTimer = setTimeout(() => {
       const idx = Math.round(minsCol.scrollTop / 40);
       const clamped = Math.max(0, Math.min(59, idx));
@@ -1118,9 +1313,25 @@ if ($('btn-submit-time-wheel')) {
     const formatted = `${selectedHour}:${selectedMinute}`;
     if ($('ob-schedule-notify-time')) ($('ob-schedule-notify-time') as HTMLInputElement).value = formatted;
     if ($('ob-schedule-notify-time-display')) $('ob-schedule-notify-time-display').textContent = formatted;
-    if (obState.schedule) obState.schedule.notifyTime = formatted;
+    if (obState.schedule) {
+      obState.schedule.notifyTime = formatted;
+      obState.schedule.userCustomizedTime = true;
+    }
     $('modal-time-wheel')?.classList.add('hidden');
   });
+}
+
+function updateScheduleNextBtn(): void {
+  const nextBtn = $('btn-ob-schedule-time-next') as HTMLButtonElement | null;
+  if (!nextBtn) return;
+  const wasDisabled = nextBtn.disabled;
+  const isToggleChecked = ($('ob-schedule-notify-toggle') as HTMLInputElement)?.checked ?? true;
+  // M-37: NEXTは、時間帯の選択とトグルONの両方がそろった時だけ有効になる（M-02）
+  const isReady = !!obState.schedule.preferredTime && isToggleChecked;
+  nextBtn.disabled = !isReady;
+  if (wasDisabled && !nextBtn.disabled) {
+    triggerNextBtnBounce(nextBtn);
+  }
 }
 
 /* ---------- 1n. 学習スケジュール作成 STEP1：時間帯・通知設定 (Figma iPhone 17 - 110) ---------- */
@@ -1129,6 +1340,13 @@ function loadScheduleTime() {
   optWrap.innerHTML = '';
   const nextBtn = $('btn-ob-schedule-time-next') as HTMLButtonElement;
   nextBtn.textContent = 'NEXT';
+
+  const defaultTimes: Record<string, string> = {
+    morning: "07:00",
+    lunch: "12:30",
+    evening: "18:00",
+    night: "21:30"
+  };
 
   ONBOARDING_DATA.scheduleTimeOptions.forEach(opt => {
     const btn = document.createElement('button');
@@ -1148,10 +1366,38 @@ function loadScheduleTime() {
     `;
 
     btn.addEventListener('click', () => {
-      optWrap.querySelectorAll('.schedule-time-card').forEach(b => b.classList.remove('selected'));
+      optWrap.querySelectorAll('.schedule-time-card').forEach(b => b.classList.remove('selected', 'card-popped'));
       btn.classList.add('selected');
+      // M-33: カードをタップした時、紫になり、枠が一瞬ふくらむ (0.15秒・1回)
+      btn.classList.remove('card-popped');
+      void btn.offsetWidth;
+      btn.classList.add('card-popped');
+
       obState.schedule.preferredTime = opt.id;
-      nextBtn.disabled = false;
+
+      // M-38: 時間帯カードを選び、時刻の初期値が変わる時、数字がクロスフェードで切り替わる（0.2秒）
+      if (!obState.schedule.userCustomizedTime && defaultTimes[opt.id]) {
+        const newTime = defaultTimes[opt.id];
+        obState.schedule.notifyTime = newTime;
+        const displayEl = $('ob-schedule-notify-time-display');
+        if (displayEl) {
+          displayEl.classList.remove('text-crossfade');
+          void displayEl.offsetWidth;
+          displayEl.textContent = newTime;
+          displayEl.classList.add('text-crossfade');
+        }
+        const inputEl = $('ob-schedule-notify-time') as HTMLInputElement | null;
+        if (inputEl) inputEl.value = newTime;
+      }
+
+      updateScheduleNextBtn();
+
+      // その他を選んだら自動で「お知らせ時間を編集」モーダル（ボトムシート）を開く
+      if (opt.id === 'other') {
+        setTimeout(() => {
+          openTimeWheelModal();
+        }, 150);
+      }
     });
 
     optWrap.appendChild(btn);
@@ -1161,7 +1407,12 @@ function loadScheduleTime() {
   if ($('ob-schedule-notify-time')) ($('ob-schedule-notify-time') as HTMLInputElement).value = notifyTime;
   if ($('ob-schedule-notify-time-display')) $('ob-schedule-notify-time-display').textContent = notifyTime;
   if ($('ob-schedule-notify-toggle')) ($('ob-schedule-notify-toggle') as HTMLInputElement).checked = obState.schedule.notifyEnabled ?? true;
-  nextBtn.disabled = !obState.schedule.preferredTime;
+
+  // 進捗バー（ステップ5/6: スケジュール = 83%）
+  const scheduleFillBar = $('ob-schedule-progress-fill');
+  if (scheduleFillBar) scheduleFillBar.style.width = '83%';
+
+  updateScheduleNextBtn();
   showScreen('screen-ob-schedule-time');
 }
 if ($('ob-schedule-notify-time')) {
@@ -1172,7 +1423,10 @@ if ($('ob-schedule-notify-time')) {
 }
 if ($('ob-schedule-notify-toggle')) {
   $('ob-schedule-notify-toggle').addEventListener('change', () => {
-    if (obState.schedule) obState.schedule.notifyEnabled = ($('ob-schedule-notify-toggle') as HTMLInputElement).checked;
+    const isChecked = ($('ob-schedule-notify-toggle') as HTMLInputElement).checked;
+    if (obState.schedule) obState.schedule.notifyEnabled = isChecked;
+    triggerHaptic(10);
+    updateScheduleNextBtn();
   });
 }
 $('btn-ob-schedule-time-next').addEventListener('click', () => {
