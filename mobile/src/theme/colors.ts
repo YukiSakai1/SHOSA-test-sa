@@ -1,0 +1,21 @@
+/** デザイントークン（Web版 css/style.css の ch101 系から抽出） */
+export const colors = {
+  gold: '#C4A265',
+  goldLight: '#D8C39D',
+  goldPale: '#E6D8BD',
+  cream: '#FAF7F2',
+  playBackground: '#ECE7DE',
+  white: '#FFFFFF',
+  text: '#2B2B2B',
+  textMuted: '#8C7B6B',
+  purple: '#715BE1',
+  progressTrack: '#DFDEDE',
+  teal: '#18A5B1',
+  mint: '#D3F2F1',
+  cta: '#00C9C3',
+  ctaPressed: '#00B3AD',
+  incorrect: '#E36A6A',
+  sky: '#4FBFF1',
+  skyDeep: '#3CA7F1',
+  overlay: 'rgba(0,0,0,0.45)',
+} as const;

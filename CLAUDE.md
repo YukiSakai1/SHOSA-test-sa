@@ -5,9 +5,16 @@ AI（Claude Code / Codex / Cursor など）がこのリポジトリで作業す�
 
 ## プロジェクト概要
 - **SHOSA**：外国人ホテルスタッフが、日本の職場での「所作」を選択式のショートストーリーで学ぶアプリです。
-- **技術構成**：TypeScript（`.ts`）で書いた素のWebアプリです（DOMを直接操作し、フレームワークは使っていません）。それを **Capacitor** で包んで iOS アプリにしています。
-  - React / React Native は**使っていません**。
-- 画面のUIテキストは日本語と英語の2言語です（`*En` / `*_en` フィールド）。
+- 画面のUIテキストは日本語と英語の2言語です。
+
+## このリポジトリには2つのアプリがあります
+| 場所 | 中身 | 位置づけ |
+|---|---|---|
+| **`mobile/`** | **Expo（React Native）＋ TypeScript**。iOS と Android の両方に対応 | **本番アプリ。新しい開発はすべてこちらで行います** → [docs/mobile.md](docs/mobile.md) |
+| リポジトリ直下（`src/`、`index.html` など） | TypeScript で書いた素の Web アプリを、Capacitor で iOS アプリに包んだもの | 移植元の**仕様の見本**。新しい機能は追加しません |
+
+「作業して」と言われたら、特に指示がない限り `mobile/` で作業してください。`mobile/AGENTS.md` も読んでください。
+ここから下の内容は、**Web 版（仕様の見本）** についての説明です。
 
 ## 最重要ルール
 1. **編集するのは `src/*.ts` だけです**。`js/*.js` と `www/` は自動で生成されるファイルなので、直接編集しないでください。
@@ -44,6 +51,7 @@ npx tsc --noEmit  # 型チェックだけ実行
 | `.github/workflows/testflight.yml` | `v*` タグを push すると TestFlight に配信 |
 
 ## ドキュメント
+- [docs/mobile.md](docs/mobile.md)：**モバイル版（Expo）のルール、構成、移植の状況**
 - [docs/architecture.md](docs/architecture.md)：実行時の仕組み（読み込み順、画面遷移、状態、保存）
 - [docs/screen-flow.md](docs/screen-flow.md)：画面ID・ローダー関数・遷移の一覧
 - [docs/data-model.md](docs/data-model.md)：データ型とシナリオデータの書き方

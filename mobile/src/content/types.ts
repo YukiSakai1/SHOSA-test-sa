@@ -1,0 +1,64 @@
+/**
+ * コンテンツ（シナリオデータ）の型定義。
+ * 画面ロジックはこの型だけに依存する。文言は必ず ja / en の両方を持つ。
+ */
+import type { ImageKey } from '@/theme/images';
+
+export type Lang = 'ja' | 'en';
+
+/** 日本語・英語のペア。片方だけの文言は型エラーになる。 */
+export type Localized = Record<Lang, string>;
+
+/**
+ * 強調付きテキスト。`<hl>…</hl>` で囲んだ部分が紫の太字、`\n` が改行になる。
+ * 描画は `components/RichText.tsx`。
+ */
+export type RichLocalized = Localized;
+
+export type ChoiceId = 'A' | 'B';
+
+export interface Chapter1Lesson {
+  /** L01, L02 … の連番 */
+  id: string;
+  /** ストーリー内の時刻（例 "12:45"） */
+  time: string;
+  title: Localized;
+  /** 状況説明（situation 画面） */
+  narration: Localized;
+  sceneImage: ImageKey;
+  /** dialogue 画面 1/2：登場人物のセリフ */
+  speaker: Localized;
+  line1: Localized;
+  /** dialogue 画面 2/2：SHOSA の視点 */
+  line2: Localized;
+  /** question 画面 */
+  situationTag: Localized;
+  question: Localized;
+  choices: Record<ChoiceId, Localized>;
+  correct: ChoiceId;
+  /** result 画面 */
+  reason: Localized;
+  shosaPrompt: Localized;
+  /** SHOSA Focus モーダル */
+  focusText: Localized;
+  focusCaption: RichLocalized;
+  focusImage?: ImageKey;
+}
+
+export interface Chapter1Data {
+  guide: {
+    badgeNumber: string;
+    title: Localized;
+    subtitle: Localized;
+    paragraphs: RichLocalized[];
+    button: Localized;
+  };
+  end: {
+    title: Localized;
+    unlockLabel: Localized;
+    body: Localized;
+    note: Localized;
+    button: Localized;
+  };
+  lessons: Chapter1Lesson[];
+}
