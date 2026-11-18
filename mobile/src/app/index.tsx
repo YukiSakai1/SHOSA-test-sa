@@ -80,7 +80,8 @@ function LoginButton({
 
 const styles = StyleSheet.create({
   shieldWrap: { flex: 1, alignItems: 'center' },
-  shield: { position: 'absolute', top: 0, left: -20, right: -20, height: '100%' },
+  // Web では画像に width を指定しないと元画像の幅のままになるため、幅も明示する
+  shield: { position: 'absolute', top: 0, left: '-5%', width: '110%', height: '100%' },
   shieldContent: { position: 'absolute', alignItems: 'center', gap: 6 },
   tagline: { fontSize: 13, fontWeight: '700', color: colors.text, letterSpacing: 0.3 },
   logo: { width: 260, height: 76 },
