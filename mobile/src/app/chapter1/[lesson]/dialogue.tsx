@@ -1,28 +1,22 @@
 /**
- * 第1章 状況説明（Figma CH1-L01-02 / テンプレ2）。
- * 1回目のタップ：登場人物のセリフ（line1）
- * 2回目のタップ：セリフはそのまま、右に SHOSA が現れ、下のベージュの吹き出しに SHOSA の視点（line2）
- * 3回目のタップ：問題へ
+ * 第1章 会話（index.html #screen-ch101-sit2）。
+ * 1/2：「状況 1 / 2」バッジ → 話者名 → セリフ（line1）
+ * 2/2：「SHOSAの視点 2 / 2」バッジ → SHOSA のアイコンと名前 → SHOSA の視点（line2）
+ * 3回目のタップで問題へ。
  */
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
-import { Animated, Image, StyleSheet, Text, View } from 'react-native';
-import { AdvanceButton } from '@/components/ui';
+import { Image, StyleSheet, Text, View } from 'react-native';
+import { Appear } from '@/components/Appear';
 import { chapter1, parseLessonIndex } from '@/content/chapter1';
-import { PlayLayout, playTextStyles, progressPercent } from '@/features/chapter1/PlayLayout';
+import { Ch1AdvanceButton, PlayLayout, playTextStyles, progressPercent } from '@/features/chapter1/PlayLayout';
 import { useLang } from '@/i18n/LanguageProvider';
-import { colors } from '@/theme/colors';
 import { images } from '@/theme/images';
 
 export default function DialogueScreen() {
   const { lesson: raw } = useLocalSearchParams<{ lesson: string }>();
   const { lang, t, tr } = useLang();
   const [turn, setTurn] = useState<1 | 2>(1);
-  const appear = useRef(new Animated.Value(0)).current;
-  useEffect(() => {
-    if (turn === 2) Animated.timing(appear, { toValue: 1, duration: 300, useNativeDriver: true }).start();
-  }, [turn, appear]);
-
   const index = parseLessonIndex(raw);
   const lesson = index === null ? undefined : chapter1.lessons[index];
   if (index === null || !lesson) return <Redirect href="/chapter1" />;
@@ -35,43 +29,51 @@ export default function DialogueScreen() {
 
   return (
     <PlayLayout percent={progressPercent(index, 2)} image={lesson.sceneImage} imageAlt={tr(lesson.title)} label={t('situationLabel')}>
-      <View style={styles.lineRow}>
-        <View style={{ flex: 1 }}>
+      {turn === 1 ? (
+        <View key="turn1">
+          <Text style={styles.badge}>{t('sceneTurn1')}</Text>
           <Text style={playTextStyles.speaker}>
             {tr(lesson.speaker)}
             {colon}
           </Text>
-          <Text style={[styles.line, { marginTop: 12 }]}>{tr(lesson.line1)}</Text>
+          <Text style={[playTextStyles.narrative, { marginTop: 18 }]}>{tr(lesson.line1)}</Text>
         </View>
-        {turn === 2 && <Animated.Image source={images.mascotFace} style={[styles.shosa, { opacity: appear }]} resizeMode="contain" />}
-      </View>
-      {turn === 2 && (
-        <Animated.View style={[styles.tipBox, { opacity: appear }]} testID="shosa-tip">
-          <View style={styles.tipTail} />
-          <Text style={styles.line}>{tr(lesson.line2)}</Text>
-        </Animated.View>
+      ) : (
+        <Appear key="turn2" from="none" duration={300}>
+          <Text style={[styles.badge, styles.badgeShosa]}>{t('sceneTurn2')}</Text>
+          <View style={styles.shosaRow}>
+            <Image source={images.mascotFace} style={styles.avatar} resizeMode="contain" />
+            <Text style={[playTextStyles.speaker, { color: '#18A5B1' }]}>SHOSA{colon}</Text>
+          </View>
+          <Text style={[playTextStyles.narrative, { marginTop: 14 }]}>{tr(lesson.line2)}</Text>
+        </Appear>
       )}
-      <AdvanceButton label={t('next')} onPress={advance} />
+      <Ch1AdvanceButton label={t('next')} onPress={advance} />
     </PlayLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  lineRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, paddingHorizontal: 20 },
-  line: { fontSize: 16, lineHeight: 24, color: colors.black },
-  shosa: { width: 80, height: 72 },
-  tipBox: { marginTop: 18, backgroundColor: colors.beige, borderRadius: 10, padding: 23 },
-  tipTail: {
-    position: 'absolute',
-    top: -14,
-    right: 50,
-    width: 0,
-    height: 0,
-    borderLeftWidth: 11,
-    borderRightWidth: 11,
-    borderBottomWidth: 16,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: colors.beige,
+  // .ch101-turn-badge
+  badge: {
+    alignSelf: 'flex-start',
+    fontSize: 11,
+    fontWeight: '800',
+    lineHeight: 20,
+    color: '#8C7B6B',
+    backgroundColor: '#F5EFE4',
+    borderWidth: 1,
+    borderColor: '#DFD3BA',
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 2,
+    marginBottom: 10,
+    letterSpacing: 0.6,
+    overflow: 'hidden',
   },
+  // .ch101-turn-badge.is-shosa
+  badgeShosa: { color: '#0E7C86', backgroundColor: '#E4F7F6', borderColor: '#AEE3E0' },
+  // .ch101-shosa-speaker-row / .ch101-shosa-mini-avatar
+  shosaRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  avatar: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#E4F7F6' },
 });

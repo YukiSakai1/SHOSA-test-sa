@@ -4,9 +4,9 @@
  */
 import { useState } from 'react';
 import { router } from 'expo-router';
-import { ImageBackground, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ImageBackground, Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CloseButton, CtaButton } from '@/components/ui';
+import { CloseButton, CtaButton, PressScale } from '@/components/ui';
 import { chapter2, roles, type Role } from '@/content/chapter2';
 import { useChapter2 } from '@/features/chapter2/Chapter2Provider';
 import { useLang } from '@/i18n/LanguageProvider';
@@ -49,7 +49,7 @@ export default function RolesScreen() {
                     </View>
                   ))}
                   {/* カード全体をボタンにすると Web でボタンの入れ子になるため、START だけをボタンにする */}
-                  <CtaButton testID={`role-${role.id}`} variant="primary" label={tr(r.start)} onPress={() => setPicked(role)} style={{ marginTop: 10 }} />
+                  <CtaButton testID={`role-${role.id}`} variant="primary" size="small" label={tr(r.start)} onPress={() => setPicked(role)} style={{ marginTop: 10, alignSelf: 'center', width: 230 }} />
                 </View>
               </ImageBackground>
             </View>
@@ -77,9 +77,9 @@ export default function RolesScreen() {
                   }}
                 />
               </View>
-              <Pressable onPress={() => setPicked(null)} style={styles.backLink}>
+              <PressScale onPress={() => setPicked(null)} style={styles.backLink}>
                 <Text style={styles.backLinkText}>{tr(r.back)}</Text>
-              </Pressable>
+              </PressScale>
             </ImageBackground>
           )}
         </View>

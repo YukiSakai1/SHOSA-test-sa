@@ -1,8 +1,10 @@
 /**
  * iOS 風のドラムロール（ホイール）選択。iOS / Android / Web 共通で動く ScrollView 実装。
  * 時刻（時・分）と誕生日（年・月・日）の選択で使う。
+ * M-36：指を離すと、いちばん近い数字が中央の帯に吸着する（snapToInterval）。3D の回転はしない。
  */
 import { useEffect, useRef, type ComponentRef } from 'react';
+import { haptics } from '@/lib/haptics';
 import { Platform, ScrollView, StyleSheet, Text, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 
 const ITEM_H = 40;
@@ -35,10 +37,17 @@ export function WheelPicker<T extends string | number>({ values, value, onChange
     if (v !== undefined && v !== value) onChange(v);
   };
 
+  // M-36：1目盛り動くごとに軽い触覚を出す
+  const lastTick = useRef(index);
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const y = e.nativeEvent.contentOffset.y;
+    const tick = Math.round(y / ITEM_H);
+    if (tick !== lastTick.current) {
+      lastTick.current = tick;
+      haptics.select();
+    }
     // Web には momentum 終了イベントが無いので、スクロールが止まったら確定する
     if (Platform.OS !== 'web') return;
-    const y = e.nativeEvent.contentOffset.y;
     if (settleTimer.current) clearTimeout(settleTimer.current);
     settleTimer.current = setTimeout(() => settle(y), 120);
   };

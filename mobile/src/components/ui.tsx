@@ -1,5 +1,5 @@
 /** 画面をまたいで使う UI 部品。寸法・色は Figma の値に合わせている。 */
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import {
   Animated,
   Easing,
@@ -12,7 +12,9 @@ import {
 } from 'react-native';
 import Svg, { Circle, Path, Polyline } from 'react-native-svg';
 import { useLang } from '@/i18n/LanguageProvider';
+import { haptics } from '@/lib/haptics';
 import { colors } from '@/theme/colors';
+import { motion, nativeDriver, useReducedMotion } from '@/theme/motion';
 
 /** 角の金色の飾り（Figma: Group 258〜261） */
 export function Flourish({ corner, color = colors.goldDark, size = 22 }: { corner: 'tl' | 'tr' | 'bl' | 'br'; color?: string; size?: number }) {
@@ -37,11 +39,69 @@ export function Flourish({ corner, color = colors.goldDark, size = 22 }: { corne
 export type ButtonVariant = 'primary' | 'next' | 'light';
 
 /**
+ * M-01：押した瞬間に 0.95倍に縮み、軽い触覚を出す（0.15秒）。色や影は変えない。
+ * 押せない状態（disabled）のときは反応しない。どのボタンもこれで包む。
+ */
+export function PressScale({
+  onPress,
+  disabled = false,
+  haptic = true,
+  style,
+  containerStyle,
+  children,
+  testID,
+  accessibilityLabel,
+  accessibilityRole = 'button',
+  accessibilityState,
+  hitSlop,
+}: {
+  onPress: () => void;
+  disabled?: boolean;
+  haptic?: boolean;
+  /** 縮む中身のスタイル（背景・角丸・高さなど） */
+  style?: StyleProp<ViewStyle>;
+  /** 押せる範囲（外側）のスタイル。横に並べて flex で伸ばすときなどに使う */
+  containerStyle?: StyleProp<ViewStyle>;
+  children: ReactNode;
+  testID?: string;
+  accessibilityLabel?: string;
+  accessibilityRole?: 'button' | 'radio';
+  accessibilityState?: { disabled?: boolean; checked?: boolean; selected?: boolean };
+  hitSlop?: number;
+}) {
+  const reduced = useReducedMotion();
+  const scale = useRef(new Animated.Value(1)).current;
+  const to = (v: number) =>
+    Animated.timing(scale, { toValue: v, duration: motion.pressMs / 2, easing: Easing.out(Easing.quad), useNativeDriver: nativeDriver }).start();
+  return (
+    <Pressable
+      testID={testID}
+      accessibilityRole={accessibilityRole}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityState={{ disabled, ...accessibilityState }}
+      disabled={disabled}
+      hitSlop={hitSlop}
+      style={containerStyle}
+      onPressIn={() => {
+        if (disabled) return;
+        if (haptic) haptics.tap();
+        if (!reduced) to(motion.pressScale);
+      }}
+      onPressOut={() => to(1)}
+      onPress={onPress}
+    >
+      <Animated.View style={[style, { transform: [{ scale }] }]}>{children}</Animated.View>
+    </Pressable>
+  );
+}
+
+/**
  * 画面下の丸いボタン（Figma: btn 360x48, r=31）
  * - primary: 紫（START・診断へ進む など）
  * - next:    ターコイズ（NEXT）
  * - light:   白地に紫の文字（2章完了の NEXT CHAPTER）
  * disabled のときは灰色（#E0E0E0）で押せない。
+ * M-02：disabled から有効に変わった瞬間に1回だけ小さく弾む（0.3秒）。
  */
 export function CtaButton({
   label,
@@ -49,41 +109,89 @@ export function CtaButton({
   variant = 'next',
   disabled = false,
   pulse = false,
+  size = 'regular',
+  fontSize,
+  disabledTone = 'figma',
+  ledge,
   style,
   testID,
 }: {
   label: string;
   onPress: () => void;
   variant?: ButtonVariant;
+  /** 押せないときの色。figma: #E0E0E0 に白文字 / beige: #DFDDD6 に #9B978F の文字 / grey: #E0E0E0 に #A1A1A1 の文字（index.html 0章） */
+  disabledTone?: 'figma' | 'beige' | 'grey';
+  /** index.html 0章の立体ボタン：下に 3〜4px の濃い色の縁（box-shadow 0 Npx 0）。disabledColor を渡すと押せないときも出す */
+  ledge?: { color: string; depth: number; disabledColor?: string };
   disabled?: boolean;
-  /** タップを促す脈動アニメーション */
+  /** タップを促す脈動アニメーション（M-13：1.5秒周期） */
   pulse?: boolean;
+  /** regular: 高さ 48（Figma）/ tall: 高さ 52・太字 800（index.html の .ch101-cta-btn）/ small: 高さ 40（職種カード内など） */
+  size?: 'regular' | 'tall' | 'small';
+  /** 文字の大きさ（既定 16） */
+  fontSize?: number;
   style?: StyleProp<ViewStyle>;
   testID?: string;
 }) {
-  const scale = usePulse(pulse && !disabled);
+  const reduced = useReducedMotion();
+  const pulseScale = usePulse(pulse && !disabled && !reduced);
+  const bounce = useRef(new Animated.Value(1)).current;
+  const wasDisabled = useRef(disabled);
+  useEffect(() => {
+    if (wasDisabled.current && !disabled && !reduced) {
+      const half = motion.enableBounceMs / 2;
+      Animated.sequence([
+        Animated.timing(bounce, { toValue: 1.06, duration: half, easing: Easing.out(Easing.quad), useNativeDriver: nativeDriver }),
+        Animated.timing(bounce, { toValue: 1, duration: half, easing: Easing.in(Easing.quad), useNativeDriver: nativeDriver }),
+      ]).start();
+    }
+    wasDisabled.current = disabled;
+  }, [disabled, reduced, bounce]);
+
   const base = variant === 'primary' ? colors.purple : variant === 'light' ? colors.white : colors.turquoise;
-  const pressedColor = variant === 'primary' ? colors.purplePressed : variant === 'light' ? '#EEEEEE' : colors.turquoisePressed;
   return (
-    <Animated.View style={[{ alignSelf: 'stretch', transform: [{ scale }] }, style]}>
-      <Pressable
+    <Animated.View style={[{ alignSelf: 'stretch', transform: [{ scale: pulseScale }, { scale: bounce }] }, style]}>
+      {ledge && (!disabled || ledge.disabledColor) && (
+        <View
+          pointerEvents="none"
+          style={[
+            styles.cta,
+            StyleSheet.absoluteFill,
+            { top: ledge.depth, bottom: -ledge.depth, backgroundColor: disabled ? ledge.disabledColor : ledge.color },
+            size === 'tall' && { borderRadius: 999 },
+          ]}
+        />
+      )}
+      <PressScale
         testID={testID}
-        accessibilityRole="button"
-        accessibilityState={{ disabled }}
         disabled={disabled}
         onPress={onPress}
-        style={({ pressed }) => [
+        style={[
           styles.cta,
-          { backgroundColor: disabled ? colors.disabled : pressed ? pressedColor : base },
+          size === 'small' && { height: 40 },
+          size === 'tall' && { height: 52, borderRadius: 999 },
+          { backgroundColor: disabled ? (disabledTone === 'beige' ? '#DFDDD6' : colors.disabled) : base },
         ]}
       >
-        <Text style={[styles.ctaText, variant === 'light' && !disabled && { color: colors.purple }]}>{label}</Text>
-      </Pressable>
+        <Text
+          style={[
+            styles.ctaText,
+            size === 'tall' && { fontWeight: '800' },
+            fontSize !== undefined && { fontSize },
+            ledge && { letterSpacing: 0.54 },
+            variant === 'light' && !disabled && { color: colors.purple },
+            disabled && disabledTone === 'beige' && { color: '#9B978F' },
+            disabled && disabledTone === 'grey' && { color: '#A1A1A1' },
+          ]}
+        >
+          {label}
+        </Text>
+      </PressScale>
     </Animated.View>
   );
 }
 
-/** 1 → 1.04 → 1 をくり返す脈動。enabled が false のときは 1 のまま。 */
+/** 1 → 1.04 → 1 をくり返す脈動（M-13：1.5秒周期）。enabled が false のときは 1 のまま。 */
 export function usePulse(enabled: boolean): Animated.Value {
   const v = useRef(new Animated.Value(1)).current;
   useEffect(() => {
@@ -91,10 +199,11 @@ export function usePulse(enabled: boolean): Animated.Value {
       v.setValue(1);
       return;
     }
+    const half = motion.pulsePeriodMs / 2;
     const loop = Animated.loop(
       Animated.sequence([
-        Animated.timing(v, { toValue: 1.04, duration: 600, easing: Easing.inOut(Easing.quad), useNativeDriver: true }),
-        Animated.timing(v, { toValue: 1, duration: 600, easing: Easing.inOut(Easing.quad), useNativeDriver: true }),
+        Animated.timing(v, { toValue: 1.04, duration: half, easing: Easing.inOut(Easing.quad), useNativeDriver: nativeDriver }),
+        Animated.timing(v, { toValue: 1, duration: half, easing: Easing.inOut(Easing.quad), useNativeDriver: nativeDriver }),
       ]),
     );
     loop.start();
@@ -103,42 +212,40 @@ export function usePulse(enabled: boolean): Animated.Value {
   return v;
 }
 
-/** 日本語 ⇄ 英語の切り替えチップ（Figma: btn_en 48x32） */
+/**
+ * 日本語 ⇄ 英語の切り替えチップ（index.html の .reproduced-lang-chip）。
+ * 画面の右端にくっつき、左側だけが丸い 48×32。枠 #E6D8BD、下に 1px の影。文字は 14px・#333。
+ */
 export function LangToggle({ style }: { style?: StyleProp<ViewStyle> }) {
   const { t, toggleLang } = useLang();
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel="Translate / 言語切り替え"
-      onPress={toggleLang}
-      hitSlop={8}
-      style={[styles.langChip, style]}
-    >
-      <Svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke={colors.purple} strokeWidth={2.6}>
+    <PressScale accessibilityLabel="Translate / 言語切り替え" onPress={toggleLang} hitSlop={8} containerStyle={style} style={styles.langChip}>
+      <Svg width={14} height={12} viewBox="0 0 24 24" fill="none" stroke={colors.text} strokeWidth={2.6}>
         <Path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" strokeLinecap="round" strokeLinejoin="round" />
         <Polyline points="21 3 21 8 16 8" strokeLinecap="round" strokeLinejoin="round" />
       </Svg>
       <Text style={styles.langText}>{t('langToggle')}</Text>
-    </Pressable>
+    </PressScale>
   );
 }
 
 /** 白丸に金の ✕（Figma: Frame 113 / Ellipse 64 + Union） */
 export function CloseButton({ onPress, label }: { onPress: () => void; label: string }) {
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={label} hitSlop={10} onPress={onPress}>
+    <PressScale accessibilityLabel={label} hitSlop={10} onPress={onPress}>
       <Svg width={32} height={32} viewBox="0 0 32 32">
         <Circle cx={16} cy={16} r={15.5} fill={colors.white} stroke={colors.goldBorder} strokeWidth={1} />
         <Path d="M 10.5,10.5 L 21.5,21.5 M 21.5,10.5 L 10.5,21.5" stroke={colors.goldDark} strokeWidth={3} strokeLinecap="round" />
       </Svg>
-    </Pressable>
+    </PressScale>
   );
 }
 
 /** カード右下の「進む」丸ボタン（Figma: Frame 113 32x32） */
 export function AdvanceButton({ onPress, label }: { onPress: () => void; label: string }) {
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} hitSlop={14} style={styles.advance}>
+    <View style={styles.advance}>
+      <PressScale accessibilityLabel={label} onPress={onPress} hitSlop={14}>
       <Svg width={32} height={32} viewBox="0 0 32 32">
         <Circle cx={16} cy={16} r={15.5} fill={colors.white} stroke={colors.goldBorder} strokeWidth={1} />
         <Path
@@ -150,18 +257,50 @@ export function AdvanceButton({ onPress, label }: { onPress: () => void; label: 
           strokeLinejoin="round"
         />
       </Svg>
-    </Pressable>
+      </PressScale>
+    </View>
   );
 }
 
-/** 進捗バー（Figma: Rectangle 44/67/68 — 灰色の枠付きトラック＋紫＋白いハイライト） */
-export function ProgressBar({ percent }: { percent: number }) {
-  const w = `${Math.max(0, Math.min(100, percent))}%` as const;
+/**
+ * 進捗バー（Figma: Rectangle 44/67/68 — 灰色の枠付きトラック＋紫＋白いハイライト）。
+ * M-30：前の画面の位置から今の位置まで 0.4秒で伸びる（戻った時は縮む）。点滅・光はなし。
+ */
+let lastProgress = 0;
+/**
+ * variant:
+ * - 'figma'（既定）：灰色の枠付きトラック＋白いハイライト（0章）
+ * - 'ch1'：index.html の 1章（.ch101-progress-track：高さ 9、#DFDEDE、枠なし）
+ */
+export function ProgressBar({ percent, variant = 'figma' }: { percent: number; variant?: 'figma' | 'ch1' | 'ch0' }) {
+  const reduced = useReducedMotion();
+  const target = Math.max(0, Math.min(100, percent));
+  const w = useRef(new Animated.Value(reduced ? target : lastProgress)).current;
+  useEffect(() => {
+    // 画面が表示されるたびに、直前の位置から伸ばす
+    Animated.timing(w, { toValue: target, duration: reduced ? 0 : motion.progressMs, easing: Easing.out(Easing.cubic), useNativeDriver: false }).start();
+    lastProgress = target;
+  }, [target, reduced, w]);
+  const width = w.interpolate({ inputRange: [0, 100], outputRange: ['0%', '100%'] });
+  if (variant === 'ch0') {
+    return (
+      <View style={styles.trackCh0}>
+        <Animated.View style={[styles.fillCh0, { width }]} />
+      </View>
+    );
+  }
+  if (variant === 'ch1') {
+    return (
+      <View style={styles.trackCh1}>
+        <Animated.View style={[styles.fillCh1, { width }]} />
+      </View>
+    );
+  }
   return (
     <View style={styles.track}>
-      <View style={[styles.fill, { width: w }]}>
+      <Animated.View style={[styles.fill, { width }]}>
         <View style={styles.highlight} />
-      </View>
+      </Animated.View>
     </View>
   );
 }
@@ -174,12 +313,21 @@ const styles = StyleSheet.create({
     height: 32,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 3,
+    gap: 2,
+    paddingLeft: 8,
+    paddingRight: 4,
     backgroundColor: colors.white,
-    borderRadius: 16.7,
+    borderTopLeftRadius: 999,
+    borderBottomLeftRadius: 999,
+    borderWidth: 1,
+    borderRightWidth: 0,
+    borderColor: colors.goldBorder,
+    shadowColor: colors.goldBorder,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
   },
-  langText: { color: colors.purple, fontWeight: '800', fontSize: 11 },
+  langText: { color: colors.text, fontWeight: '700', fontSize: 14, lineHeight: 15 },
   advance: { position: 'absolute', right: 21, bottom: 21 },
   track: {
     flex: 1,
@@ -192,4 +340,9 @@ const styles = StyleSheet.create({
   },
   fill: { height: '100%', backgroundColor: colors.purple, borderRadius: 10, paddingHorizontal: 3, paddingTop: 1 },
   highlight: { height: 3, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.4)' },
+  // index.html 0章（.figma-hearing-progress-bar：#DDDDDD、1px の #C2B7A2 の輪、中に高さ 10 の紫）
+  trackCh0: { height: 12, backgroundColor: '#DDDDDD', borderWidth: 1, borderColor: '#C2B7A2', borderRadius: 999, overflow: 'hidden' },
+  fillCh0: { height: '100%', backgroundColor: colors.purple, borderRadius: 999 },
+  trackCh1: { height: 9, backgroundColor: '#DFDEDE', borderRadius: 999, overflow: 'hidden' },
+  fillCh1: { height: '100%', backgroundColor: colors.purple, borderRadius: 999 },
 });

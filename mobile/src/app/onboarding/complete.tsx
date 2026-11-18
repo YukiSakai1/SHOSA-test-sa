@@ -1,25 +1,65 @@
-/** 適性診断 完了！（Figma CH0-19）：オレンジ背景・メダル・1章解放のお知らせ */
+/**
+ * 適性診断 完了！（index.html #screen-ob-passport、Figma CH0-19）：オレンジ背景・メダル・1章解放のお知らせ。
+ * 「結果を見る」ボタンは紫（360×48）で、左にクリップボードのアイコン（41×50）。脈動する（1.5秒周期）。
+ */
 import { router } from 'expo-router';
-import { Text } from 'react-native';
-import { Celebration, celebrationText } from '@/components/Celebration';
-import { CtaButton } from '@/components/ui';
+import { Animated, Image, StyleSheet, Text, View } from 'react-native';
+import { SvgXml } from 'react-native-svg';
+import { Celebration } from '@/components/Celebration';
+import { PressScale, usePulse } from '@/components/ui';
 import { diagnosisComplete } from '@/content/onboarding';
 import { useLang } from '@/i18n/LanguageProvider';
 import { colors } from '@/theme/colors';
+import { images } from '@/theme/images';
+import { useReducedMotion } from '@/theme/motion';
+import { svgIcons } from '@/theme/svgIcons';
 
 export default function DiagnosisCompleteScreen() {
   const { tr } = useLang();
   const c = diagnosisComplete;
   return (
-    <Celebration
-      background="#FF805C"
-      title={tr(c.title)}
-      medal="medalBadge"
-      footer={<CtaButton testID="see-results" variant="primary" pulse label={tr(c.button)} onPress={() => router.push('/onboarding/result')} />}
-    >
-      <Text style={celebrationText.unlocked}>{tr(c.unlocked)}</Text>
-      <Text style={celebrationText.body}>{tr(c.body)}</Text>
-      <Text style={[celebrationText.body, { color: colors.black, marginTop: 6 }]}>{tr(c.hint)}</Text>
+    <Celebration variant="web" background="#FF805C" title={tr(c.title)} medal="medalBadge" footer={<ResultButton label={tr(c.button)} />}>
+      <Text style={styles.unlocked}>{tr(c.unlocked)}</Text>
+      {/* decor_gold_divider を白くしたもの（brightness(0) invert(1)） */}
+      <Image source={images.goldDivider} style={styles.divider} resizeMode="contain" tintColor={colors.white} />
+      <Text style={styles.body}>{tr(c.body)}</Text>
+      <Text style={styles.hint}>{tr(c.hint)}</Text>
     </Celebration>
   );
 }
+
+function ResultButton({ label }: { label: string }) {
+  const reduced = useReducedMotion();
+  const scale = usePulse(!reduced);
+  return (
+    <Animated.View style={{ transform: [{ scale }] }}>
+      <PressScale testID="see-results" accessibilityRole="button" onPress={() => router.push('/onboarding/result')} style={styles.button}>
+        <View style={styles.icon} pointerEvents="none">
+          <SvgXml xml={svgIcons.resultIcon} width={41} height={50} />
+        </View>
+        <Text style={styles.buttonText}>{label}</Text>
+      </PressScale>
+    </Animated.View>
+  );
+}
+
+const styles = StyleSheet.create({
+  unlocked: { fontSize: 20, lineHeight: 28, fontWeight: '700', color: colors.white, textAlign: 'center', marginBottom: 16 },
+  divider: { alignSelf: 'center', width: 240, height: 13, marginBottom: 20 },
+  body: { fontSize: 16, lineHeight: 24, color: colors.white, textAlign: 'center', marginBottom: 17 },
+  hint: { fontSize: 16, lineHeight: 24, color: colors.white, textAlign: 'center' },
+  button: {
+    height: 48,
+    borderRadius: 999,
+    backgroundColor: colors.purple,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: 'rgb(84,66,179)',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.78,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  icon: { position: 'absolute', left: 32, top: -2 },
+  buttonText: { fontSize: 18, fontWeight: '700', color: colors.white },
+});

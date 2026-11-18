@@ -40,7 +40,8 @@ export const intro = {
       { ja: '日本語応対\n学習', en: 'Japanese for\nguest service' },
     ] as Localized[],
     lead: {
-      ja: 'SHOSA PASSPORTは、\n接客用語・Hospitalityを学びながら、',
+      // index.html と同じ位置で改行
+      ja: 'SHOSA PASSPORTは、\n接客用語・Hospitality\nを学びながら、',
       en: 'SHOSA PASSPORT is an app where you learn\nhotel service language and Hospitality,',
     },
     sub: {
@@ -98,18 +99,21 @@ export const talks = {
     lines: [{ ja: '次は学習スケジュールを\n一緒に考えよう！', en: "Next, let's plan your\nstudy schedule together!" }],
   },
   profileIntro: {
-    lines: [{ ja: 'あなたのプロフィールを\n入力してね。', en: 'Please enter\nyour profile.' }],
+    // index.html：「プロフィール」だけ黒の太字
+    lines: [{ ja: 'あなたの<hl>プロフィール</hl>を\n入力してね。', en: 'Please enter\nyour <hl>profile</hl>.' }],
+    highlight: 'bold',
   },
   aptitudeIntro: {
+    // index.html と同じ位置で改行し、「5段階評価」「現在のあなた」を紫の太字にする
     lines: [
-      { ja: '各項目について、\n指定された5段階評価で回答してね。', en: 'Answer each item using\nthe 5-point scale.' },
+      { ja: '各項目について、指定された\n<hl>5段階評価</hl>で回答してね。', en: 'Answer each item using\nthe <hl>5-point scale</hl>.' },
       {
-        ja: '将来なりたい自分ではなく、\n現在のあなたに最も当てはまる\n選択肢を選んでください。',
-        en: 'Choose the option that fits you\nbest right now, not the person\nyou hope to become.',
+        ja: '将来なりたい自分ではなく、\n<hl>現在のあなた</hl>に最も当てはまる\n選択肢を選んでください。',
+        en: 'Choose the option that fits <hl>you\nbest right now</hl>, not the person\nyou hope to become.',
       },
     ],
   },
-} satisfies Record<string, { lines: Localized[] }>;
+} satisfies Record<string, { lines: Localized[]; highlight?: 'purple' | 'bold' }>;
 
 /* ---------- ヒアリング（CH0-09〜11） ---------- */
 export const hearings: HearingQuestion[] = [
@@ -170,13 +174,15 @@ export const schedule = {
   question: { ja: '学習の時間を決めよう！\n続けやすいタイミングを選んでね。', en: "Let's choose your study time!\nPick a time that's easy to keep up." },
   notifyLabel: { ja: 'お知らせ時間', en: 'Reminder time' },
   editTitle: { ja: 'お知らせ時間を編集', en: 'Edit reminder time' },
+  // 時間帯ごとの時刻の初期値は未定（M-38）。案：朝 7:00、ランチ 12:30、夕食前後 18:00、寝る前 21:30。
+  // 決まるまでは時間帯を選んでも時刻を自動で変えない
   options: [
-    { id: 'morning', label: { ja: '朝起きた後', en: 'After waking up' }, icon: { image: 'timeMorning' }, defaultTime: '07:30' },
-    { id: 'lunch', label: { ja: 'ランチタイム', en: 'Lunch time' }, icon: { image: 'timeLunch' }, defaultTime: '12:30' },
-    { id: 'evening', label: { ja: '夕食前後', en: 'Around dinner' }, icon: { image: 'timeEvening' }, defaultTime: '19:00' },
-    { id: 'night', label: { ja: '寝る前', en: 'Before bed' }, icon: { image: 'timeNight' }, defaultTime: '22:00' },
-    { id: 'other', label: { ja: 'その他', en: 'Other' }, icon: { image: 'timeOther' }, defaultTime: '10:30' },
-  ] satisfies (ChoiceOption & { defaultTime: string })[],
+    { id: 'morning', label: { ja: '朝起きた後', en: 'After waking up' }, icon: { image: 'timeMorning' } },
+    { id: 'lunch', label: { ja: 'ランチタイム', en: 'Lunch time' }, icon: { image: 'timeLunch' } },
+    { id: 'evening', label: { ja: '夕食前後', en: 'Around dinner' }, icon: { image: 'timeEvening' } },
+    { id: 'night', label: { ja: '寝る前', en: 'Before bed' }, icon: { image: 'timeNight' } },
+    { id: 'other', label: { ja: 'その他', en: 'Other' }, icon: { image: 'timeOther' } },
+  ] satisfies ChoiceOption[],
   defaultTime: '10:30',
 } as const;
 

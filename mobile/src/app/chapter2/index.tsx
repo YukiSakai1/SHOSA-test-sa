@@ -7,6 +7,7 @@ import { CtaButton } from '@/components/ui';
 import { chapter2, TENDENCIES, tendencyInfo } from '@/content/chapter2';
 import { useLang } from '@/i18n/LanguageProvider';
 import { colors, fonts } from '@/theme/colors';
+import { layout } from '@/theme/layout';
 import { images } from '@/theme/images';
 
 export default function Chapter2GuideScreen() {
@@ -37,7 +38,7 @@ export default function Chapter2GuideScreen() {
             </View>
           </View>
         </ScrollView>
-        <View style={[styles.bottom, { paddingBottom: insets.bottom + 16 }]}>
+        <View style={[styles.bottom, { paddingBottom: insets.bottom + layout.ctaBottom }]}>
           <CtaButton testID="chapter2-start" label={tr(g.button)} onPress={() => router.push('/chapter2/roles')} />
         </View>
       </View>
@@ -89,5 +90,6 @@ const styles = StyleSheet.create({
   chip: { width: '47%', flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: colors.beige, borderRadius: 8, padding: 8 },
   chipEmoji: { fontSize: 16 },
   chipText: { fontSize: 14, fontWeight: '700', color: colors.black },
-  bottom: { paddingHorizontal: 21, paddingTop: 8 },
+  // アーチの枠線 3px の内側で、ボタン幅が Figma と同じ 360 になる余白
+  bottom: { paddingHorizontal: 18, paddingTop: 8 },
 });

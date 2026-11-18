@@ -37,7 +37,7 @@ export default function HearingScreen() {
       {q.options.map((o) => {
         const isSel = selected?.id === o.id;
         return (
-          <OptionCard key={o.id} testID={`option-${o.id}`} label={tr(o.label)} icon={o.icon} selected={isSel} onPress={() => choose(o.id)}>
+          <OptionCard key={o.id} testID={`option-${o.id}`} label={tr(o.label)} icon={o.icon} compact={o.hasInput} selected={isSel} onPress={() => choose(o.id)}>
             {o.hasInput && isSel && (
               <View style={styles.inputWrap}>
                 <TextInput

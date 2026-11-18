@@ -1,12 +1,13 @@
 /**
- * プロフィール入力（Figma CH0-16'）：性別・名前・出身国・誕生日。
+ * プロフィール入力（index.html #screen-ob-profile1、Figma CH0-16'）：性別・名前・出身国・誕生日。
  * すべて入力済みでエラーがないときだけ NEXT が押せる。
  * エラーは「一度触った項目」だけに表示する（入力前から赤字を出さない）。
  * ルールとメッセージは features/onboarding/validation.ts（暫定仕様）。
  */
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { router } from 'expo-router';
-import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Animated, FlatList, Image, ImageBackground, Pressable, StyleSheet, Text, TextInput, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Appear } from '@/components/Appear';
 import { BottomSheet } from '@/components/BottomSheet';
 import { pad2, range, WheelPicker } from '@/components/WheelPicker';
 import { profileForm } from '@/content/onboarding';
@@ -15,6 +16,9 @@ import { useOnboarding } from '@/features/onboarding/OnboardingProvider';
 import { countChars, NAME_MAX_LENGTH, validateProfile, type ProfileField } from '@/features/onboarding/validation';
 import { useLang } from '@/i18n/LanguageProvider';
 import { colors } from '@/theme/colors';
+import { images } from '@/theme/images';
+import { nativeDriver, useReducedMotion } from '@/theme/motion';
+import { PressScale } from '@/components/ui';
 
 const THIS_YEAR = new Date().getFullYear();
 const YEARS = range(THIS_YEAR - 80, THIS_YEAR - 10);
@@ -46,16 +50,19 @@ export default function ProfileScreen() {
   };
 
   return (
-    <QuestionLayout percent={blockProgress(valid ? 6 : 5)} nextDisabled={!valid} onNext={() => router.push('/onboarding/journey')}>
+    <QuestionLayout background="#FAF8F2" percent={blockProgress(valid ? 6 : 5)} nextDisabled={!valid} onNext={() => router.push('/onboarding/journey')}>
+      {/* QuestionLayout は子要素の間に 10 の間隔を入れるため、フォーム全体を1つにまとめて Figma の縦位置に合わせる */}
+      <View>
       <Text style={styles.title}>{tr(profileForm.title)}</Text>
+      <Image source={images.goldDivider} style={styles.divider} resizeMode="contain" />
 
       {/* 性別 */}
-      <Text style={styles.label}>{tr(profileForm.gender.label)}</Text>
-      <View style={styles.genderRow}>
+      <FieldLabel text={tr(profileForm.gender.label)} done={!!p.gender} />
+      <Shake trigger={!!errorFor('gender')} style={styles.genderRow}>
         {profileForm.gender.options.map((g) => {
           const sel = p.gender === g.id;
           return (
-            <Pressable
+            <PressScale
               key={g.id}
               testID={`gender-${g.id}`}
               accessibilityRole="radio"
@@ -64,18 +71,26 @@ export default function ProfileScreen() {
                 setProfile({ gender: g.id });
                 touch('gender');
               }}
-              style={[styles.genderChip, sel && styles.genderChipSel]}
+              containerStyle={{ flex: 1 }}
             >
-              <Text style={[styles.genderText, sel && { color: colors.purple }]}>{tr(g.label)}</Text>
-            </Pressable>
+              {/* index.html：radio_selected / radio_unselected の画像（116×68） */}
+              <ImageBackground
+                source={sel ? images.radioSelected : images.radioUnselected}
+                resizeMode="stretch"
+                style={styles.genderChip}
+                imageStyle={styles.fill}
+              >
+                <Text style={[styles.genderText, sel && { color: colors.purple }]}>{tr(g.label)}</Text>
+              </ImageBackground>
+            </PressScale>
           );
         })}
-      </View>
+      </Shake>
       <FieldError text={errorFor('gender')} />
 
       {/* 名前 */}
-      <Text style={styles.label}>{tr(profileForm.name.label)}</Text>
-      <View style={[styles.field, errorFor('name') && styles.fieldError]}>
+      <FieldLabel text={tr(profileForm.name.label)} done={!errors.name} />
+      <Shake trigger={!!errorFor('name')} style={[styles.field, errorFor('name') && styles.fieldError]}>
         <TextInput
           testID="name-input"
           value={p.name}
@@ -90,12 +105,12 @@ export default function ProfileScreen() {
         <Text style={[styles.counter, countChars(p.name.trim()) > NAME_MAX_LENGTH && { color: colors.incorrect }]}>
           {countChars(p.name.trim())}/{NAME_MAX_LENGTH}
         </Text>
-      </View>
+      </Shake>
       <Text style={styles.help}>{tr(profileForm.name.help)}</Text>
       <FieldError text={errorFor('name') ?? (countChars(p.name.trim()) > NAME_MAX_LENGTH && errors.name ? tr(errors.name) : null)} />
 
       {/* 出身国 */}
-      <Text style={styles.label}>{tr(profileForm.country.label)}</Text>
+      <FieldLabel text={tr(profileForm.country.label)} done={!!p.countryId} />
       <SelectField
         testID="country-select"
         value={country ? tr(country.label) : null}
@@ -106,7 +121,7 @@ export default function ProfileScreen() {
       <FieldError text={errorFor('countryId')} />
 
       {/* 誕生日 */}
-      <Text style={styles.label}>{tr(profileForm.birthday.label)}</Text>
+      <FieldLabel text={tr(profileForm.birthday.label)} done={!!p.birthday} />
       <SelectField
         testID="birthday-select"
         value={p.birthday ? p.birthday.replace(/-/g, '/') : null}
@@ -115,6 +130,7 @@ export default function ProfileScreen() {
         onPress={openBirthday}
       />
       <FieldError text={errorFor('birthday')} />
+      </View>
 
       <BottomSheet
         visible={sheet === 'country'}
@@ -184,11 +200,43 @@ export default function ProfileScreen() {
 
 function SelectField({ value, placeholder, error, onPress, testID }: { value: string | null; placeholder: string; error: boolean; onPress: () => void; testID: string }) {
   return (
+    <Shake trigger={error}>
     <Pressable testID={testID} accessibilityRole="button" onPress={onPress} style={[styles.field, error && styles.fieldError]}>
       <Text style={[styles.input, !value && { color: colors.placeholder }]}>{value ?? placeholder}</Text>
-      <Text style={styles.chevron}>⌄</Text>
+      <Text style={styles.chevron}>∨</Text>
     </Pressable>
+    </Shake>
   );
+}
+
+/** 項目名。入力済みなら右に ✓ を出す（要点 CH0-15/16'：入力済みのチェック） */
+function FieldLabel({ text, done }: { text: string; done: boolean }) {
+  return (
+    <View style={styles.labelRow}>
+      <Text style={styles.labelText}>{text}</Text>
+      {done && (
+        <Appear from="pop" duration={300}>
+          <Text style={styles.check}>✓</Text>
+        </Appear>
+      )}
+    </View>
+  );
+}
+
+/** エラーが出た瞬間に横に揺れる（要点 CH0-15/16'：エラー時の横揺れ。視差効果を減らす ON のときは揺らさない） */
+function Shake({ trigger, style, children }: { trigger: boolean; style?: StyleProp<ViewStyle>; children: ReactNode }) {
+  const reduced = useReducedMotion();
+  const x = useRef(new Animated.Value(0)).current;
+  const was = useRef(trigger);
+  useEffect(() => {
+    if (trigger && !was.current && !reduced) {
+      Animated.sequence(
+        [8, -8, 6, -6, 0].map((v) => Animated.timing(x, { toValue: v, duration: 50, useNativeDriver: nativeDriver })),
+      ).start();
+    }
+    was.current = trigger;
+  }, [trigger, reduced, x]);
+  return <Animated.View style={[style, { transform: [{ translateX: x }] }]}>{children}</Animated.View>;
 }
 
 function FieldError({ text }: { text: string | null }) {
@@ -201,36 +249,33 @@ function FieldError({ text }: { text: string | null }) {
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 18, fontWeight: '700', color: colors.text, textAlign: 'center', marginTop: 8, marginBottom: 6 },
-  label: { fontSize: 16, fontWeight: '700', color: colors.text, marginTop: 12 },
-  genderRow: { flexDirection: 'row', gap: 10 },
-  genderChip: {
-    flex: 1,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: colors.white,
-    borderWidth: 1.5,
-    borderColor: colors.goldBorder,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  genderChipSel: { borderColor: colors.purple, borderWidth: 2, backgroundColor: '#F1EEFF' },
+  // 縦位置は index.html（タイトル 73 / 区切り線 110 / 性別 143 / 名前 257 / 出身国 409 / 誕生日 523）
+  title: { fontSize: 18, lineHeight: 27, fontWeight: '700', color: colors.text, textAlign: 'center', marginTop: 27 },
+  divider: { alignSelf: 'center', width: 240, height: 13, marginTop: 10 },
+  labelRow: { flexDirection: 'row', alignItems: 'center', gap: 6, height: 16, marginTop: 20, marginBottom: 10 },
+  labelText: { fontSize: 16, lineHeight: 16, fontWeight: '700', color: colors.text },
+  check: { fontSize: 16, lineHeight: 16, fontWeight: '900', color: colors.turquoise },
+  genderRow: { flexDirection: 'row', gap: 6 },
+  genderChip: { height: 68, alignItems: 'center', justifyContent: 'center' },
+  fill: { width: '100%', height: '100%' },
   genderText: { fontSize: 16, fontWeight: '700', color: colors.text },
+  // 入力欄：白・2px #DDDDDD の枠・角丸 10、高さ 68
   field: {
-    height: 52,
+    height: 68,
     backgroundColor: colors.white,
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.goldBorder,
-    paddingHorizontal: 16,
+    borderWidth: 2,
+    borderColor: '#DDDDDD',
+    paddingLeft: 16,
+    paddingRight: 16,
     flexDirection: 'row',
     alignItems: 'center',
   },
-  fieldError: { borderColor: colors.incorrect, borderWidth: 1.5 },
+  fieldError: { borderColor: colors.incorrect },
   input: { flex: 1, fontSize: 16, fontWeight: '700', color: colors.text },
   counter: { fontSize: 12, color: colors.placeholder },
-  chevron: { fontSize: 18, color: colors.goldDark, marginTop: -6 },
-  help: { fontSize: 12, lineHeight: 18, color: colors.black, marginTop: 6 },
+  chevron: { fontSize: 14, fontWeight: '800', color: '#9CA3AF' },
+  help: { fontSize: 12, lineHeight: 16, color: colors.black, marginTop: 6 },
   error: { fontSize: 12, color: colors.incorrect, marginTop: 4, fontWeight: '700' },
   countryRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: colors.goldBorder },
   countryText: { fontSize: 16, fontWeight: '700', color: colors.text },

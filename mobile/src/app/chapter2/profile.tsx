@@ -12,6 +12,7 @@ import { useChapter2 } from '@/features/chapter2/Chapter2Provider';
 import { scoreRole } from '@/features/chapter2/scoring';
 import { useLang } from '@/i18n/LanguageProvider';
 import { colors } from '@/theme/colors';
+import { layout } from '@/theme/layout';
 
 export default function Chapter2ProfileScreen() {
   const params = useLocalSearchParams<{ role: string }>();
@@ -67,7 +68,7 @@ export default function Chapter2ProfileScreen() {
           </View>
         ))}
       </ScrollView>
-      <View style={[styles.bottom, { paddingBottom: insets.bottom + 16 }]}>
+      <View style={[styles.bottom, { paddingBottom: insets.bottom + layout.ctaBottom }]}>
         <CtaButton
           testID="c2-profile-next"
           label={tr(p.button)}

@@ -15,7 +15,6 @@ export default function DiagnosisCompleteScreen() {
     <MilestoneCard title={tr(c.title)} body={tr(c.body)}>
       <CtaButton
         testID="view-results"
-        variant="primary"
         pulse
         label={tr(c.button)}
         onPress={() => router.push({ pathname: '/chapter2/result', params: { role: role.id } })}

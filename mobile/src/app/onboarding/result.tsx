@@ -1,11 +1,21 @@
 /**
- * 適性診断 結果（Figma CH0-20'）。
+ * 適性診断 結果（index.html #screen-ob-result、Figma CH0-20'）。
  * 1位の職種だけを表示し、2位以降は「1章を進めよう」でロックする。
  * NEXT で 0章を完了扱いにして、1章のガイドへ進む。
+ *
+ * index.html と同じく、紙のレポート画像（Group 384.png：370×626、見出し・「2位以降を閲覧するには…」の鍵の帯まで描かれている）を
+ * (24,33) に置き、その上に 1位の内容（リボン・職種名・割合・アイコン・強み3つ）を重ねる。
+ * 背景は「適性診断 完了！」のオレンジ（#FF805C）を 74% の黒で暗くしたもの。
+ *
+ * M-14：レポートの紙が下からせり上がる（0.6秒）→ M-15：第1位の割合を 0 からカウントアップ（1秒）
+ * → M-16：強み3つを上から 0.3秒おきに1つずつ表示 → M-17：2位以降は画像の鍵の帯で隠す
  */
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Polygon } from 'react-native-svg';
+import { Appear } from '@/components/Appear';
 import { Icon } from '@/components/Icon';
 import { CtaButton } from '@/components/ui';
 import { diagnosisResult } from '@/content/onboarding';
@@ -13,14 +23,24 @@ import { rankRoles } from '@/features/onboarding/diagnosis';
 import { useOnboarding } from '@/features/onboarding/OnboardingProvider';
 import { useLang } from '@/i18n/LanguageProvider';
 import { colors, fonts } from '@/theme/colors';
+import { images } from '@/theme/images';
+import { layout } from '@/theme/layout';
+import { useReducedMotion } from '@/theme/motion';
 
-const DARK_TEAL = '#0095A2';
+const PAPER_MS = 600;
+const COUNT_MS = 1000;
+const STRENGTH_STEP_MS = 300;
+const GOLD = '#B09D79';
+/** 紙の画像の中で、下の鍵の帯が始まる位置（69.968%）。強みが長くてもこの帯の下に隠れる */
+const PAPER_W = 370;
+const PAPER_H = 626;
+const LOCK_TOP = Math.round(PAPER_H * 0.69968);
 
 export default function DiagnosisResultScreen() {
   const insets = useSafeAreaInsets();
   const { tr } = useLang();
   const { record, update } = useOnboarding();
-  const [first, second] = rankRoles(record.aptitude);
+  const [first] = rankRoles(record.aptitude);
   const r = diagnosisResult;
 
   const finish = () => {
@@ -30,107 +50,117 @@ export default function DiagnosisResultScreen() {
   };
 
   return (
-    <View style={[styles.screen, { paddingTop: insets.top + 12 }]}>
-      {/* Figma では「適性診断 完了！」画面の上にシートとして重なる */}
+    <View style={styles.screen}>
       <View style={styles.dim} />
-      <View style={styles.titleBar}>
-        <Text style={styles.titleText}>{tr(r.title)}</Text>
-      </View>
-      <ScrollView contentContainerStyle={styles.scroll}>
-        <View style={styles.paper}>
-          <Text style={styles.heading}>{r.heading}</Text>
-          <Text style={styles.subheading}>{tr(r.subheading)}</Text>
-
-          {first && (
-            <View style={styles.rankCard} testID="rank-1">
-              <View style={styles.rankHead}>
-                <View style={styles.rankBadge}>
-                  <Text style={styles.rankNo}>NO</Text>
-                  <Text style={styles.rankNum}>1</Text>
+      <Appear from="rise" duration={PAPER_MS} distance={120} style={[styles.paper, { top: insets.top + 33 }]}>
+        <Image source={images.resultPaper} style={styles.paperImg} resizeMode="stretch" />
+        {first && (
+          <View style={styles.content} testID="rank-1">
+            <View style={styles.mainRow}>
+              <View>
+                {/* リボン（右端が 7px 切り欠き） */}
+                <View style={styles.ribbon}>
+                  <Svg style={StyleSheet.absoluteFill} width={46} height={23}>
+                    <Polygon points="0,0 46,0 39,11.5 46,23 0,23" fill={GOLD} />
+                  </Svg>
+                  <Text style={styles.ribbonNo}>NO</Text>
+                  <Text style={styles.ribbonNum}>1</Text>
                 </View>
-                <Text style={styles.roleName}>{first.role.name}</Text>
-                <Text style={styles.percent}>
-                  {first.matchPercent}
-                  <Text style={styles.percentSign}>%</Text>
-                </Text>
-                <View style={styles.roleIcon}>
-                  <Icon icon={first.role.icon} size={40} />
+                <View style={styles.nameRow}>
+                  <Text style={styles.roleName}>{first.role.name}</Text>
+                  <Text style={styles.score}>
+                    <CountUp to={first.matchPercent} delay={PAPER_MS} duration={COUNT_MS} />
+                    <Text style={styles.percentSign}>%</Text>
+                  </Text>
                 </View>
               </View>
-              <Text style={styles.strengthLabel}>{tr(r.strengthsLabel)}</Text>
+              <View style={styles.avatar}>
+                <Icon icon={first.role.icon} size={50} />
+              </View>
+            </View>
+            <View style={styles.banner}>
+              <Text style={styles.bannerText}>{tr(r.strengthsLabel)}</Text>
+            </View>
+            <View style={styles.strengths}>
               {first.role.strengths.map((s, i) => (
-                <Text key={i} style={styles.strength}>
-                  ★ {tr(s)}
-                </Text>
+                <Appear key={i} from="none" delay={PAPER_MS + COUNT_MS + i * STRENGTH_STEP_MS} duration={STRENGTH_STEP_MS} style={styles.strengthRow}>
+                  <Text style={styles.star}>★</Text>
+                  <Text style={styles.strengthText}>{tr(s)}</Text>
+                </Appear>
               ))}
             </View>
-          )}
-
-          {second && (
-            <View style={styles.lockedCard}>
-              <View style={styles.rankHead}>
-                <View style={[styles.rankBadge, { backgroundColor: '#A1A1A1' }]}>
-                  <Text style={styles.rankNo}>NO</Text>
-                  <Text style={styles.rankNum}>2</Text>
-                </View>
-                <Text style={[styles.roleName, { opacity: 0.25 }]}>{second.role.name}</Text>
-              </View>
-              <View style={styles.lockOverlay}>
-                <Text style={styles.lockIcon}>🔒</Text>
-                <Text style={styles.lockText}>{tr(r.lockedNote)}</Text>
-              </View>
-            </View>
-          )}
+          </View>
+        )}
+        {/* .ch20-figma-under：同じ画像の下 30% を一番上に重ね、鍵の帯で強みのはみ出しを隠す */}
+        <View style={styles.under} pointerEvents="none">
+          <Image source={images.resultPaper} style={[styles.paperImg, { top: -LOCK_TOP }]} resizeMode="stretch" />
         </View>
-      </ScrollView>
-      <View style={[styles.bottom, { paddingBottom: insets.bottom + 16 }]}>
-        <CtaButton testID="result-next" label={tr(r.button)} onPress={finish} />
+      </Appear>
+      <View style={[styles.bottom, { top: insets.top + 701 }]}>
+        <CtaButton testID="result-next" variant="primary" fontSize={18} ledge={{ color: '#4D3CA8', depth: 3 }} label={tr(r.button)} onPress={finish} />
       </View>
     </View>
   );
 }
 
+/** M-15：0 から to までカウントアップする（点滅させない） */
+function CountUp({ to, delay, duration }: { to: number; delay: number; duration: number }) {
+  const reduced = useReducedMotion();
+  const [n, setN] = useState(reduced ? to : 0);
+  useEffect(() => {
+    if (reduced) {
+      setN(to);
+      return;
+    }
+    let raf = 0;
+    const timer = setTimeout(() => {
+      const start = Date.now();
+      const tick = () => {
+        const p = Math.min(1, (Date.now() - start) / duration);
+        setN(Math.round(to * (1 - Math.pow(1 - p, 3))));
+        if (p < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+    }, delay);
+    return () => {
+      clearTimeout(timer);
+      cancelAnimationFrame(raf);
+    };
+  }, [to, delay, duration, reduced]);
+  return <>{n}</>;
+}
+
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#FF805C' },
-  dim: { ...StyleSheet.absoluteFill, backgroundColor: 'rgba(0,0,0,0.55)' },
-  titleBar: {
-    alignSelf: 'center',
-    backgroundColor: colors.teal,
-    borderRadius: 999,
-    paddingHorizontal: 28,
-    paddingVertical: 8,
-    marginBottom: 12,
+  dim: { ...StyleSheet.absoluteFill, backgroundColor: 'rgba(0,0,0,0.74)' },
+  paper: {
+    position: 'absolute',
+    left: 24,
+    width: PAPER_W,
+    height: PAPER_H,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.07,
+    shadowRadius: 20,
   },
-  titleText: { fontSize: 22, fontWeight: '700', color: colors.white },
-  scroll: { paddingHorizontal: 16, paddingBottom: 16 },
-  paper: { backgroundColor: colors.beige, borderRadius: 14, padding: 18 },
-  heading: { fontFamily: fonts.montserrat, fontSize: 22, color: DARK_TEAL },
-  subheading: { fontSize: 12, fontWeight: '700', color: DARK_TEAL, marginTop: 2 },
-  rankCard: { marginTop: 14, backgroundColor: colors.white, borderRadius: 10, padding: 14, gap: 6 },
-  rankHead: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  rankBadge: { width: 40, height: 40, borderRadius: 6, backgroundColor: colors.goldDark, alignItems: 'center', justifyContent: 'center' },
-  rankNo: { fontSize: 9, fontWeight: '800', color: colors.white, marginBottom: -4 },
-  rankNum: { fontSize: 20, fontWeight: '700', color: colors.white },
-  roleName: { flex: 1, flexShrink: 1, fontFamily: fonts.montserrat, fontSize: 20, color: colors.black },
-  percent: { fontSize: 33, fontWeight: '700', color: colors.goldDark },
-  percentSign: { fontSize: 18, fontWeight: '900' },
-  roleIcon: { width: 50, height: 50, borderRadius: 25, backgroundColor: colors.beige, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
-  strengthLabel: {
-    alignSelf: 'flex-start',
-    marginTop: 8,
-    backgroundColor: colors.goldDark,
-    color: colors.white,
-    fontSize: 12,
-    fontWeight: '700',
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    borderRadius: 4,
-    overflow: 'hidden',
-  },
-  strength: { fontSize: 14, lineHeight: 21, color: colors.black },
-  lockedCard: { marginTop: 12, backgroundColor: colors.white, borderRadius: 10, padding: 14, minHeight: 120, overflow: 'hidden' },
-  lockOverlay: { ...StyleSheet.absoluteFill, backgroundColor: 'rgba(255,255,255,0.75)', alignItems: 'center', justifyContent: 'center', gap: 6 },
-  lockIcon: { fontSize: 26 },
-  lockText: { fontSize: 18, color: '#828282', textAlign: 'center', lineHeight: 26 },
-  bottom: { paddingHorizontal: 21, paddingTop: 8 },
+  paperImg: { position: 'absolute', left: 0, top: 0, width: PAPER_W, height: PAPER_H },
+  // 1位の内容：紙の左上から (23,160)、幅 310
+  content: { position: 'absolute', left: 23, top: 160, width: 310 },
+  mainRow: { flexDirection: 'row', justifyContent: 'space-between', height: 78 },
+  ribbon: { width: 46, height: 23, marginTop: 8, flexDirection: 'row', alignItems: 'center', paddingLeft: 6 },
+  ribbonNo: { fontSize: 10, fontWeight: '800', color: colors.white },
+  ribbonNum: { fontSize: 19, lineHeight: 19, fontWeight: '700', color: colors.white },
+  nameRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginTop: 2, height: 32 },
+  roleName: { fontFamily: fonts.montserrat, fontSize: 19, lineHeight: 19, color: colors.black, marginTop: 11 },
+  score: { fontSize: 32, lineHeight: 32, fontWeight: '700', color: GOLD },
+  percentSign: { fontSize: 17, lineHeight: 32, fontWeight: '900' },
+  avatar: { width: 78, height: 78, borderRadius: 39, backgroundColor: colors.beige, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  banner: { height: 20, marginTop: 13, backgroundColor: GOLD, paddingHorizontal: 5, justifyContent: 'center' },
+  bannerText: { fontSize: 11.5, lineHeight: 20, fontWeight: '700', color: colors.white },
+  strengths: { marginTop: 13, gap: 12 },
+  strengthRow: { flexDirection: 'row', gap: 6 },
+  star: { fontSize: 18, lineHeight: 18, color: '#F8B600' },
+  strengthText: { flex: 1, fontSize: 12, lineHeight: 18, color: colors.black },
+  under: { position: 'absolute', left: 0, top: LOCK_TOP, width: PAPER_W, height: PAPER_H - LOCK_TOP, overflow: 'hidden' },
+  bottom: { position: 'absolute', left: layout.sideMargin, right: layout.sideMargin },
 });

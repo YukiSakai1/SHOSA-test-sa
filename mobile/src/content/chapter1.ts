@@ -30,7 +30,8 @@ export const chapter1: Chapter1Data = {
     // Figma CH1-END の文言（Web版は「2章：JOB診断」だった）
     unlockLabel: { ja: '2章：Omotenashi Style診断 が\n解放されました', en: 'Chapter 2: Omotenashi Style Assessment\nhas been unlocked' },
     body: {
-      ja: 'プロの仕事を観察し、日本の宿泊業の現場で求められるOmotenashi Mindsetを体験することができました！',
+      // index.html と同じ位置で改行
+      ja: 'プロの仕事を観察し、\n日本の宿泊業の現場で求められる\nOmotenashi Mindsetを\n体験することができました！',
       en: "You observed the work of pros and experienced the Omotenashi Mindset required in Japan's hospitality industry!",
     },
     note: {

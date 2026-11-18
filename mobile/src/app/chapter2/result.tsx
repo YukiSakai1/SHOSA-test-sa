@@ -12,6 +12,7 @@ import { useChapter2 } from '@/features/chapter2/Chapter2Provider';
 import { scoreRole } from '@/features/chapter2/scoring';
 import { useLang } from '@/i18n/LanguageProvider';
 import { colors } from '@/theme/colors';
+import { layout } from '@/theme/layout';
 
 const DARK_TEAL = '#0095A2';
 
@@ -49,7 +50,7 @@ export default function Chapter2ResultScreen() {
           </View>
         </View>
       </ScrollView>
-      <View style={[styles.bottom, { paddingBottom: insets.bottom + 16 }]}>
+      <View style={[styles.bottom, { paddingBottom: insets.bottom + layout.ctaBottom }]}>
         <CtaButton testID="c2-result-next" label={tr(r.button)} onPress={() => router.push({ pathname: '/chapter2/profile', params: { role: role.id } })} />
       </View>
     </View>
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
   rankRowHi: { backgroundColor: '#E1F4F5', borderWidth: 1.5, borderColor: colors.teal },
   rankNum: { fontSize: 14, fontWeight: '700', color: colors.teal, width: 12 },
   rankEmoji: { fontSize: 13 },
-  rankName: { flex: 1, fontSize: 13, fontWeight: '700', color: colors.text },
+  rankName: { flex: 1, fontSize: 14, fontWeight: '700', color: colors.text },
   section: { gap: 8 },
   sectionLabel: { alignSelf: 'flex-start', backgroundColor: colors.teal, color: colors.white, fontSize: 14, fontWeight: '700', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 6, overflow: 'hidden' },
   tendencyLine: { fontSize: 16, lineHeight: 24, fontWeight: '700', color: '#2D9AA4', textAlign: 'center' },

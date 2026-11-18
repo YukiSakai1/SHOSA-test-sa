@@ -7,16 +7,14 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
-import { Animated, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Animated, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Svg, { Path } from 'react-native-svg';
-import { CtaButton, usePulse } from '@/components/ui';
+import { CtaButton, usePulse, PressScale } from '@/components/ui';
 import { chapter1, chapter1LessonCount, parseLessonIndex } from '@/content/chapter1';
 import type { ChoiceId } from '@/content/types';
 import { FocusModal } from '@/features/chapter1/FocusModal';
-import { ChapterHeader, progressPercent } from '@/features/chapter1/PlayLayout';
+import { Ch1Flourish, ChapterHeader, progressPercent } from '@/features/chapter1/PlayLayout';
 import { useLang } from '@/i18n/LanguageProvider';
-import { colors } from '@/theme/colors';
 import { images } from '@/theme/images';
 
 const BUBBLE_DELAY_MS = 1500;
@@ -59,52 +57,54 @@ export default function ResultScreen() {
   };
 
   return (
-    <View style={[styles.screen, { paddingTop: insets.top }]}>
-      <ChapterHeader percent={progressPercent(index, 4)} />
+    <View style={styles.screen}>
+      {/* .ch101-result-header-bar：背景 #E8DECB */}
+      <ChapterHeader percent={progressPercent(index, 4)} style={styles.header} />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} bounces={false}>
+        {/* .ch101-teal-result-card */}
         <View style={styles.tealCard}>
           <View style={styles.statusRow}>
-            <View style={[styles.statusIcon, { backgroundColor: isCorrect ? colors.correct : colors.incorrect }]}>
-              <Svg width={14} height={14} viewBox="0 0 14 14">
-                {isCorrect ? (
-                  <Path d="M 2,7.5 L 5.5,11 L 12,3.5" stroke={colors.white} strokeWidth={2.6} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                ) : (
-                  <Path d="M 3,3 L 11,11 M 11,3 L 3,11" stroke={colors.white} strokeWidth={2.6} strokeLinecap="round" />
-                )}
-              </Svg>
+            <View style={[styles.statusIcon, !isCorrect && styles.statusIconWrong]}>
+              <Text style={styles.statusMark}>{isCorrect ? '✔' : '✕'}</Text>
             </View>
             <Text testID="result-title" style={styles.statusTitle}>
               {isCorrect ? t('correct') : t('incorrect')}
             </Text>
           </View>
           <Text style={styles.explanation}>{tr(lesson.reason)}</Text>
-        </View>
-        <View style={[styles.lower, { paddingBottom: insets.bottom + 20 }]}>
+          {/* .ch101-result-mascot-row：下のパネルに 20px 重なる */}
           <View style={styles.mascotRow}>
-            <View style={styles.mascotCol}>
-              <Image source={images.floorShadow} style={styles.shadow} resizeMode="contain" />
-              <Image source={images.mascotFace} style={styles.mascot} resizeMode="contain" />
-            </View>
+            <Image source={images.mascotFace} style={styles.mascot} resizeMode="contain" />
+            <Image source={images.floorShadow} style={styles.shadow} resizeMode="contain" />
           </View>
+          <Ch1Flourish corner="bl" color="#E6D8BD" />
+          <Ch1Flourish corner="br" color="#E6D8BD" />
+        </View>
+        {/* .ch101-result-lower-panel */}
+        <View style={[styles.lower, { paddingBottom: insets.bottom + 24 }]}>
           <Animated.View style={[styles.bubble, { opacity: bubbleOpacity }]}>
             <View style={styles.pointer} />
             <Text style={styles.bubbleText}>{tr(lesson.shosaPrompt)}</Text>
           </Animated.View>
-          <Animated.View style={{ transform: [{ scale: focusScale }] }}>
-            <Pressable
-              testID="focus-button"
-              accessibilityRole="button"
-              onPress={() => {
-                setFocusOpen(true);
-                setFocusSeen(true);
-              }}
-              style={({ pressed }) => [styles.focusBtn, pressed && { opacity: 0.85 }]}
-            >
-              <Image source={images.iconFocus} style={styles.focusIcon} resizeMode="contain" />
-              <Text style={styles.focusLabel}>{t('focusButton')}</Text>
-            </Pressable>
+          {/* .ch101-focus-action-btn：下に #A89572 の影（box-shadow: 0 4px 0） */}
+          <Animated.View style={[styles.focusWrap, { transform: [{ scale: focusScale }] }]}>
+            <View style={styles.focusShadow}>
+              <PressScale
+                testID="focus-button"
+                onPress={() => {
+                  setFocusOpen(true);
+                  setFocusSeen(true);
+                }}
+                style={styles.focusBtn}
+              >
+                <Image source={images.iconFocus} style={styles.focusIcon} resizeMode="contain" />
+                <Text style={styles.focusLabel}>{t('focusButton')}</Text>
+              </PressScale>
+            </View>
           </Animated.View>
-          <CtaButton testID="result-next" label={t('next')} disabled={!focusSeen} onPress={goNext} />
+          <View style={styles.nextWrap}>
+            <CtaButton testID="result-next" size="tall" fontSize={17} label={t('next')} disabled={!focusSeen} onPress={goNext} />
+          </View>
         </View>
       </ScrollView>
       <FocusModal lesson={lesson} visible={focusOpen} onClose={() => setFocusOpen(false)} />
@@ -113,40 +113,67 @@ export default function ResultScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.playBackground },
-  tealCard: { backgroundColor: colors.teal, paddingHorizontal: 21, paddingTop: 20, paddingBottom: 24 },
-  statusRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  statusIcon: { width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
-  statusTitle: { fontSize: 22, fontWeight: '700', color: colors.white },
-  explanation: { marginTop: 16, fontSize: 16, lineHeight: 24, color: colors.white, fontWeight: '700' },
-  lower: { flexGrow: 1, backgroundColor: colors.mint, paddingHorizontal: 21, paddingTop: 12, gap: 14 },
-  mascotRow: { alignItems: 'flex-start', paddingLeft: 20 },
-  mascotCol: { width: 150, height: 140, alignItems: 'center', justifyContent: 'flex-end' },
-  mascot: { width: 150, height: 136 },
-  shadow: { position: 'absolute', bottom: 0, width: 103, height: 23 },
-  bubble: { backgroundColor: colors.white, borderRadius: 10, paddingHorizontal: 33, paddingVertical: 24, marginTop: 6 },
+  screen: { flex: 1, backgroundColor: '#D3F2F1' },
+  header: { backgroundColor: '#E8DECB', paddingBottom: 12 },
+  tealCard: { backgroundColor: '#18A5B1', paddingTop: 24, paddingHorizontal: 20, paddingBottom: 20, alignItems: 'center', zIndex: 3 },
+  statusRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
+  statusIcon: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#00C9C3',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  statusIconWrong: { backgroundColor: '#E55353' },
+  statusMark: { color: '#FFFFFF', fontSize: 12, fontWeight: '800', lineHeight: 14 },
+  statusTitle: { fontSize: 20, fontWeight: '800', color: '#FFFFFF', letterSpacing: 1 },
+  explanation: { marginTop: 16, marginBottom: 10, fontSize: 14, lineHeight: 22.4, color: '#FFFFFF', fontWeight: '700', textAlign: 'center', maxWidth: 330 },
+  mascotRow: { alignItems: 'center', marginTop: 6, marginBottom: -20, zIndex: 3 },
+  mascot: { width: 140, height: 127 },
+  shadow: { width: 100, height: 22, marginTop: -8 },
+  lower: { flexGrow: 1, backgroundColor: '#D3F2F1', paddingTop: 30, paddingHorizontal: 18, alignItems: 'center' },
+  bubble: {
+    width: '100%',
+    maxWidth: 340,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    paddingVertical: 18,
+    paddingHorizontal: 16,
+    marginBottom: 22,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 14,
+  },
   pointer: {
     position: 'absolute',
-    top: -20,
-    left: 150,
+    top: -10,
+    alignSelf: 'center',
     width: 0,
     height: 0,
-    borderLeftWidth: 0,
-    borderRightWidth: 34,
-    borderBottomWidth: 24,
+    borderLeftWidth: 10,
+    borderRightWidth: 10,
+    borderBottomWidth: 10,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderBottomColor: colors.white,
+    borderBottomColor: '#FFFFFF',
   },
-  bubbleText: { fontSize: 16, lineHeight: 24, color: colors.black },
+  bubbleText: { fontSize: 14.5, lineHeight: 23.2, color: '#2B2B2B', textAlign: 'center', fontWeight: '700' },
+  focusWrap: { width: '100%', maxWidth: 340, marginBottom: 16 },
+  focusShadow: { borderRadius: 14, backgroundColor: '#A89572', paddingBottom: 4 },
   focusBtn: {
-    height: 48,
+    height: 52,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.goldButton,
-    borderRadius: 10,
+    backgroundColor: '#CAB896',
+    borderRadius: 14,
+    paddingLeft: 20,
   },
-  focusIcon: { position: 'absolute', left: 26, top: -15, width: 46, height: 63 },
-  focusLabel: { fontSize: 18, fontWeight: '700', color: colors.white },
+  focusIcon: { position: 'absolute', left: 14, top: 1, width: 36, height: 50 },
+  focusLabel: { fontSize: 16, fontWeight: '800', color: '#FFFFFF' },
+  nextWrap: { width: '100%', maxWidth: 340 },
 });

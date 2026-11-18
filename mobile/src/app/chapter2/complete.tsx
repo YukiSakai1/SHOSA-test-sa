@@ -5,7 +5,7 @@
  */
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { Text } from 'react-native';
-import { Celebration, celebrationText } from '@/components/Celebration';
+import { Celebration, CelebrationDivider, celebrationText } from '@/components/Celebration';
 import { CtaButton } from '@/components/ui';
 import { chapter2, fill, findRole } from '@/content/chapter2';
 import { useLang } from '@/i18n/LanguageProvider';
@@ -24,12 +24,14 @@ export default function Chapter2CompleteScreen() {
       medal="medalChapter1"
       footer={
         <>
-          <CtaButton testID="next-chapter" variant="light" label={tr(e.nextChapter)} onPress={() => router.dismissTo('/')} />
-          <CtaButton testID="another-role" variant="primary" pulse label={tr(e.anotherRole)} onPress={() => router.dismissTo('/chapter2/roles')} />
+          {/* Figma CH2-06：上が紫、下が白 */}
+          <CtaButton testID="next-chapter" variant="primary" pulse label={tr(e.nextChapter)} onPress={() => router.dismissTo('/')} />
+          <CtaButton testID="another-role" variant="light" label={tr(e.anotherRole)} onPress={() => router.dismissTo('/chapter2/roles')} />
         </>
       }
     >
       <Text style={celebrationText.unlocked}>{tr(e.lead)}</Text>
+      <CelebrationDivider />
       <Text style={celebrationText.body}>{tr(e.body)}</Text>
     </Celebration>
   );
