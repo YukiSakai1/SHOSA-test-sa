@@ -160,15 +160,21 @@ function WebSunburst() {
 }
 
 /**
- * index.html .ch19-trophy-halo（プログラム描画）：直径 270 の後光（白 → 薄い金色）を 14px ぼかす。
- * 0.55秒後に 0.85倍から現れ（ch19HaloFadeIn）、2.8秒で 0.95倍・85% ⇔ 1.08倍・100% を行き来する（ch19HaloPulse）。
+ * トロフィーの後ろの白い光（index.html .ch19-trophy-halo をもとに、白いもやとして強めたもの）。どの背景色でも白く見えるようにしている。
+ * - 内側の後光：直径 270 の白（中心 98% → 外へ消える）を 18px ぼかす。0.55秒後に 0.85倍から現れ、2.4秒で
+ *   55% ⇔ 100%・0.92倍 ⇔ 1.12倍 を行き来する（脈動をはっきり見せる）
+ * - 外側のもや：直径 330 の白（中心 40%）を 24px ぼかし、後光と逆の位相で 1.15倍 ⇔ 0.95倍・70% ⇔ 30% に脈動する
  */
 const HALO = 135;
-const HALO_PAD = 45; // ぼかしがはみ出す分
+const HALO_PAD = 55; // ぼかしがはみ出す分
+const MIST = 165;
+const MIST_PAD = 70;
 function WebHalo() {
   const reduced = useReducedMotion();
   const haloId = useSvgId('ch19halo');
   const blurId = useSvgId('ch19blur');
+  const mistId = useSvgId('ch19mist');
+  const mistBlurId = useSvgId('ch19mistblur');
   const enter = useRef(new Animated.Value(reduced ? 1 : 0)).current;
   const pulse = useRef(new Animated.Value(0)).current;
   useEffect(() => {
@@ -176,8 +182,8 @@ function WebHalo() {
     const intro = Animated.timing(enter, { toValue: 1, duration: 600, delay: 550, easing: Easing.out(Easing.quad), useNativeDriver: nativeDriver });
     const loop = Animated.loop(
       Animated.sequence([
-        Animated.timing(pulse, { toValue: 1, duration: 2800, easing: Easing.inOut(Easing.ease), useNativeDriver: nativeDriver }),
-        Animated.timing(pulse, { toValue: 0, duration: 2800, easing: Easing.inOut(Easing.ease), useNativeDriver: nativeDriver }),
+        Animated.timing(pulse, { toValue: 1, duration: 2400, easing: Easing.inOut(Easing.ease), useNativeDriver: nativeDriver }),
+        Animated.timing(pulse, { toValue: 0, duration: 2400, easing: Easing.inOut(Easing.ease), useNativeDriver: nativeDriver }),
       ]),
     );
     intro.start(() => loop.start());
@@ -186,31 +192,50 @@ function WebHalo() {
       loop.stop();
     };
   }, [reduced, enter, pulse]);
-  const opacity = Animated.multiply(enter, pulse.interpolate({ inputRange: [0, 1], outputRange: [0.85, 1] }));
+  const opacity = Animated.multiply(enter, pulse.interpolate({ inputRange: [0, 1], outputRange: [0.55, 1] }));
   const scale = Animated.multiply(
     enter.interpolate({ inputRange: [0, 1], outputRange: [0.85, 1] }),
-    pulse.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1.08] }),
+    pulse.interpolate({ inputRange: [0, 1], outputRange: [0.92, 1.12] }),
   );
+  const mistOpacity = Animated.multiply(enter, pulse.interpolate({ inputRange: [0, 1], outputRange: [0.7, 0.3] }));
+  const mistScale = pulse.interpolate({ inputRange: [0, 1], outputRange: [1.15, 0.95] });
   const size = (HALO + HALO_PAD) * 2;
+  const mistSize = (MIST + MIST_PAD) * 2;
   return (
-    <Animated.View pointerEvents="none" style={[styles.haloWeb, { opacity, transform: [{ scale }] }]}>
-      <Svg width={size} height={size}>
-        <Defs>
-          {/* CSS の radial-gradient(circle) は角までの距離（135×√2）が 100%。25/50/68/80% を半径に直した位置 */}
-          <RadialGradient id={haloId} cx={size / 2} cy={size / 2} r={HALO * Math.SQRT2} gradientUnits="userSpaceOnUse">
-            <Stop offset="0" stopColor="#FFFFFF" stopOpacity={0.98} />
-            <Stop offset="0.25" stopColor="rgb(255,245,200)" stopOpacity={0.8} />
-            <Stop offset="0.5" stopColor="rgb(255,215,140)" stopOpacity={0.42} />
-            <Stop offset="0.68" stopColor="rgb(255,185,110)" stopOpacity={0.15} />
-            <Stop offset="0.8" stopColor="rgb(255,185,110)" stopOpacity={0} />
-          </RadialGradient>
-          <Filter id={blurId} x="-30%" y="-30%" width="160%" height="160%">
-            <FeGaussianBlur stdDeviation={14} />
-          </Filter>
-        </Defs>
-        <Circle cx={size / 2} cy={size / 2} r={HALO} fill={`url(#${haloId})`} filter={`url(#${blurId})`} />
-      </Svg>
-    </Animated.View>
+    <>
+      <Animated.View pointerEvents="none" style={[styles.mistWeb, { opacity: mistOpacity, transform: [{ scale: mistScale }] }]}>
+        <Svg width={mistSize} height={mistSize}>
+          <Defs>
+            <RadialGradient id={mistId} cx={mistSize / 2} cy={mistSize / 2} r={MIST} gradientUnits="userSpaceOnUse">
+              <Stop offset="0" stopColor="#FFFFFF" stopOpacity={0.4} />
+              <Stop offset="0.55" stopColor="#FFFFFF" stopOpacity={0.22} />
+              <Stop offset="1" stopColor="#FFFFFF" stopOpacity={0} />
+            </RadialGradient>
+            <Filter id={mistBlurId} x="-30%" y="-30%" width="160%" height="160%">
+              <FeGaussianBlur stdDeviation={24} />
+            </Filter>
+          </Defs>
+          <Circle cx={mistSize / 2} cy={mistSize / 2} r={MIST} fill={`url(#${mistId})`} filter={`url(#${mistBlurId})`} />
+        </Svg>
+      </Animated.View>
+      <Animated.View pointerEvents="none" style={[styles.haloWeb, { opacity, transform: [{ scale }] }]}>
+        <Svg width={size} height={size}>
+          <Defs>
+            <RadialGradient id={haloId} cx={size / 2} cy={size / 2} r={HALO * Math.SQRT2} gradientUnits="userSpaceOnUse">
+              <Stop offset="0" stopColor="#FFFFFF" stopOpacity={0.98} />
+              <Stop offset="0.25" stopColor="#FFFFFF" stopOpacity={0.78} />
+              <Stop offset="0.5" stopColor="#FFFFFF" stopOpacity={0.4} />
+              <Stop offset="0.68" stopColor="#FFFFFF" stopOpacity={0.14} />
+              <Stop offset="0.8" stopColor="#FFFFFF" stopOpacity={0} />
+            </RadialGradient>
+            <Filter id={blurId} x="-30%" y="-30%" width="160%" height="160%">
+              <FeGaussianBlur stdDeviation={18} />
+            </Filter>
+          </Defs>
+          <Circle cx={size / 2} cy={size / 2} r={HALO} fill={`url(#${haloId})`} filter={`url(#${blurId})`} />
+        </Svg>
+      </Animated.View>
+    </>
   );
 }
 
@@ -306,10 +331,11 @@ const styles = StyleSheet.create({
   // --- variant="web"（index.html #screen-ob-passport）---
   langWeb: { position: 'absolute', right: 0, zIndex: 10 },
   titleBoxWeb: { height: 69, justifyContent: 'center' },
-  titleWeb: { fontSize: 22, lineHeight: 26.4, fontWeight: '700', color: colors.white },
+  titleWeb: { fontSize: 22, lineHeight: 26.4, fontWeight: '700', color: colors.white, textAlign: 'center' },
   stageWeb: { width: 180, height: 205, marginTop: 17, alignItems: 'center', justifyContent: 'center' },
   sunburstWeb: { position: 'absolute', width: SUN * 2, height: SUN * 2, left: 90 - SUN, top: 102.5 - SUN },
   haloWeb: { position: 'absolute', left: 90 - HALO - HALO_PAD, top: 102.5 - HALO - HALO_PAD },
+  mistWeb: { position: 'absolute', left: 90 - MIST - MIST_PAD, top: 102.5 - MIST - MIST_PAD },
   medalWrapWeb: { width: 180, height: 205 },
   medalWeb: { width: 180, height: 205 },
   bodyWeb: { marginTop: 76 },

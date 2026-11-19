@@ -1,7 +1,7 @@
 /**
- * 第1章 会話（index.html #screen-ch101-sit2）。
- * 1/2：「状況 1 / 2」バッジ → 話者名 → セリフ（line1）
- * 2/2：「SHOSAの視点 2 / 2」バッジ → SHOSA のアイコンと名前 → SHOSA の視点（line2）
+ * 第1章 会話（Figma CH1-L01-02）。
+ * 1/2：話者名（Bold 16・#B09D79）→ 17 あけてセリフ（line1）
+ * 2/2：話者名とセリフは右へ寄り（左 125・幅 236）、左に SHOSA の顔（80×72）と影。その下に吹き出し（#F6F1E8・360×118）に SHOSA の視点（line2）
  * 3回目のタップで問題へ。
  */
 import { useState } from 'react';
@@ -12,6 +12,8 @@ import { chapter1, parseLessonIndex } from '@/content/chapter1';
 import { Ch1AdvanceButton, PlayLayout, playTextStyles, progressPercent } from '@/features/chapter1/PlayLayout';
 import { useLang } from '@/i18n/LanguageProvider';
 import { images } from '@/theme/images';
+
+const BUBBLE = '#F6F1E8';
 
 export default function DialogueScreen() {
   const { lesson: raw } = useLocalSearchParams<{ lesson: string }>();
@@ -29,51 +31,54 @@ export default function DialogueScreen() {
 
   return (
     <PlayLayout percent={progressPercent(index, 2)} image={lesson.sceneImage} imageAlt={tr(lesson.title)} label={t('situationLabel')}>
-      {turn === 1 ? (
-        <View key="turn1">
-          <Text style={styles.badge}>{t('sceneTurn1')}</Text>
-          <Text style={playTextStyles.speaker}>
-            {tr(lesson.speaker)}
-            {colon}
-          </Text>
-          <Text style={[playTextStyles.narrative, { marginTop: 18 }]}>{tr(lesson.line1)}</Text>
-        </View>
-      ) : (
-        <Appear key="turn2" from="none" duration={300}>
-          <Text style={[styles.badge, styles.badgeShosa]}>{t('sceneTurn2')}</Text>
-          <View style={styles.shosaRow}>
-            <Image source={images.mascotFace} style={styles.avatar} resizeMode="contain" />
-            <Text style={[playTextStyles.speaker, { color: '#18A5B1' }]}>SHOSA{colon}</Text>
+      {/* 話者名とセリフ。2/2 では右（左 125・幅 236）に寄る */}
+      <View style={turn === 2 && styles.shifted}>
+        <Text style={playTextStyles.speaker}>
+          {tr(lesson.speaker)}
+          {colon}
+        </Text>
+        <Text style={[playTextStyles.narrative, { marginTop: 17 }]}>{tr(lesson.line1)}</Text>
+      </View>
+      {turn === 2 && (
+        <View style={StyleSheet.absoluteFill} pointerEvents="none">
+        <Appear from="none" duration={300} style={StyleSheet.absoluteFill}>
+          {/* SHOSA の顔（80×72、カードの左 21・上 94）と足元の影（55×13） */}
+          <View style={styles.shosaGroup}>
+            <View style={styles.shadow} />
+            <Image source={images.mascotFace} style={styles.shosa} resizeMode="contain" />
           </View>
-          <Text style={[playTextStyles.narrative, { marginTop: 14 }]}>{tr(lesson.line2)}</Text>
+          <View style={styles.tail} />
+          <View style={styles.bubble}>
+            <Text style={playTextStyles.narrative}>{tr(lesson.line2)}</Text>
+          </View>
         </Appear>
+        </View>
       )}
-      <Ch1AdvanceButton label={t('next')} onPress={advance} />
+      <Ch1AdvanceButton label={t('next')} onPress={advance} turn={turn} />
+      {turn === 2 && <View style={{ height: 250 }} />}
     </PlayLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  // .ch101-turn-badge
-  badge: {
-    alignSelf: 'flex-start',
-    fontSize: 11,
-    fontWeight: '800',
-    lineHeight: 20,
-    color: '#8C7B6B',
-    backgroundColor: '#F5EFE4',
-    borderWidth: 1,
-    borderColor: '#DFD3BA',
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 2,
-    marginBottom: 10,
-    letterSpacing: 0.6,
-    overflow: 'hidden',
+  shifted: { marginLeft: 84 },
+  shosaGroup: { position: 'absolute', left: 21, top: 94, width: 80, height: 75 },
+  shadow: { position: 'absolute', left: 13, top: 63, width: 55, height: 13, borderRadius: 7, backgroundColor: 'rgba(0,0,0,0.10)' },
+  shosa: { width: 80, height: 72 },
+  // 吹き出しの三角（23×16、左 50・上 178）
+  tail: {
+    position: 'absolute',
+    left: 50,
+    top: 178,
+    width: 0,
+    height: 0,
+    borderLeftWidth: 11.5,
+    borderRightWidth: 11.5,
+    borderBottomWidth: 16,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: BUBBLE,
   },
-  // .ch101-turn-badge.is-shosa
-  badgeShosa: { color: '#0E7C86', backgroundColor: '#E4F7F6', borderColor: '#AEE3E0' },
-  // .ch101-shosa-speaker-row / .ch101-shosa-mini-avatar
-  shosaRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  avatar: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#E4F7F6' },
+  // 吹き出し（左 21・上 194・幅 360・高さ 118、角 10。文字は左右 23・上 23）
+  bubble: { position: 'absolute', left: 21, right: 21, top: 194, minHeight: 118, borderRadius: 10, backgroundColor: BUBBLE, paddingHorizontal: 23, paddingTop: 23, paddingBottom: 23 },
 });

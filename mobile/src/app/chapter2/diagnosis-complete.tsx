@@ -17,7 +17,7 @@ export default function DiagnosisCompleteScreen() {
       <CtaButton
         testID="view-results"
         pulse
-        icon={{ source: images.resultButtonIcon, width: 34, height: 50 }}
+        icon={{ source: images.resultButtonIcon, width: 40, height: 56 }}
         label={tr(c.button)}
         onPress={() => router.push({ pathname: '/chapter2/result', params: { role: role.id } })}
       />

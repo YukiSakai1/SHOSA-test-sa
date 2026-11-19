@@ -1,5 +1,8 @@
 /**
  * 第1章 結果＆解説（Figma CH1-L01-04 / テンプレ4）。
+ * 位置は Figma の画面（402×874）から。上から：ヘッダー → 色つきの帯（正解は #18A5B1、不正解は #DC6988。高さ 229、上に #E6D8BD の帯）
+ *   → 正否（丸 26 + 22 Bold）→ 解説（16 Bold・白・中央）→ SHOSA（150×136。帯の下に 71 はみ出す）
+ *   → 吹き出し（白・340×162・角 10）→ SHOSA Focus（360×48・#CAB896）→ NEXT（360×48）。
  * Figma の注記どおりに動く：
  * - 正否表示から 1.5 秒後に SHOSA の吹き出しが出て、同時に「SHOSA Focus」ボタンが脈動を始める
  * - NEXT は最初 Disabled（灰色）。SHOSA Focus モーダルを一度開くと Active になり、閉じても Active のまま
@@ -9,15 +12,19 @@ import { useEffect, useRef, useState } from 'react';
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { Animated, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { PatternBackground, patterns } from '@/components/PatternBackground';
 import { CtaButton, usePulse, PressScale } from '@/components/ui';
 import { chapter1, chapter1LessonCount, parseLessonIndex } from '@/content/chapter1';
 import type { ChoiceId } from '@/content/types';
 import { FocusModal } from '@/features/chapter1/FocusModal';
-import { Ch1Flourish, ChapterHeader, progressPercent } from '@/features/chapter1/PlayLayout';
+import { Ch1Flourish, ChapterHeader, ch1, progressPercent } from '@/features/chapter1/PlayLayout';
 import { useLang } from '@/i18n/LanguageProvider';
 import { images } from '@/theme/images';
 
 const BUBBLE_DELAY_MS = 1500;
+/** 帯の高さと、全体の高さ（帯の上端 = Figma の y=125 を 0 とする） */
+const BAND_H = 229;
+const PANEL_H = 679;
 
 function parseChoice(raw: string | undefined): ChoiceId | null {
   return raw === 'A' || raw === 'B' ? raw : null;
@@ -57,36 +64,36 @@ export default function ResultScreen() {
   };
 
   return (
-    <View style={styles.screen}>
-      {/* .ch101-result-header-bar：背景 #E8DECB */}
-      <ChapterHeader percent={progressPercent(index, 4)} style={styles.header} />
+    <PatternBackground color={ch1.screenBg} patternColor={patterns.beige.patternColor} tile={patterns.beige.tile}>
+      <ChapterHeader percent={progressPercent(index, 4)} style={{ paddingBottom: 20 }} />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} bounces={false}>
-        {/* .ch101-teal-result-card */}
-        <View style={styles.tealCard}>
-          <View style={styles.statusRow}>
-            <View style={[styles.statusIcon, !isCorrect && styles.statusIconWrong]}>
-              <Text style={styles.statusMark}>{isCorrect ? '✔' : '✕'}</Text>
+        <View style={[styles.panel, { minHeight: PANEL_H + insets.bottom + 24 }]}>
+          {/* 色つきの帯（上 16 は #E6D8BD、角に金の飾り） */}
+          <View style={[styles.band, { backgroundColor: isCorrect ? '#18A5B1' : '#DC6988' }]}>
+            <View style={styles.bandStrip} />
+            <Ch1Flourish corner="tl" edge={2} />
+            <Ch1Flourish corner="tr" edge={2} />
+            <View style={styles.statusRow}>
+              <View style={[styles.statusIcon, !isCorrect && styles.statusIconWrong]}>
+                <Text style={styles.statusMark}>{isCorrect ? '✓' : '✕'}</Text>
+              </View>
+              <Text testID="result-title" style={styles.statusTitle}>
+                {isCorrect ? t('correct') : t('incorrect')}
+              </Text>
             </View>
-            <Text testID="result-title" style={styles.statusTitle}>
-              {isCorrect ? t('correct') : t('incorrect')}
-            </Text>
+            <Text style={styles.explanation}>{tr(lesson.reason)}</Text>
           </View>
-          <Text style={styles.explanation}>{tr(lesson.reason)}</Text>
-          {/* .ch101-result-mascot-row：下のパネルに 20px 重なる */}
-          <View style={styles.mascotRow}>
-            <Image source={images.mascotFace} style={styles.mascot} resizeMode="contain" />
-            <Image source={images.floorShadow} style={styles.shadow} resizeMode="contain" />
-          </View>
-          <Ch1Flourish corner="bl" color="#E6D8BD" />
-          <Ch1Flourish corner="br" color="#E6D8BD" />
-        </View>
-        {/* .ch101-result-lower-panel */}
-        <View style={[styles.lower, { paddingBottom: insets.bottom + 24 }]}>
-          <Animated.View style={[styles.bubble, { opacity: bubbleOpacity }]}>
+          {/* SHOSA（150×136）と足元の影（103×23）。帯の下に 71 はみ出す */}
+          <Image source={images.floorShadow} style={styles.shadow} resizeMode="contain" />
+          <Image source={images.mascotFace} style={styles.mascot} resizeMode="contain" />
+          {/* 吹き出し：三角（34×24）と白いカード（左右 31・高さ 162・角 10） */}
+          <Animated.View style={[StyleSheet.absoluteFill, { opacity: bubbleOpacity }]} pointerEvents="none">
             <View style={styles.pointer} />
-            <Text style={styles.bubbleText}>{tr(lesson.shosaPrompt)}</Text>
+            <View style={styles.bubble}>
+              <Text style={styles.bubbleText}>{tr(lesson.shosaPrompt)}</Text>
+            </View>
           </Animated.View>
-          {/* .ch101-focus-action-btn：下に #A89572 の影（box-shadow: 0 4px 0） */}
+          {/* SHOSA Focus（360×48・#CAB896・角 10）。左のアイコン（46×63）は上に 15 はみ出す */}
           <Animated.View style={[styles.focusWrap, { transform: [{ scale: focusScale }] }]}>
             <View style={styles.focusShadow}>
               <PressScale
@@ -103,77 +110,52 @@ export default function ResultScreen() {
             </View>
           </Animated.View>
           <View style={styles.nextWrap}>
-            <CtaButton testID="result-next" size="tall" fontSize={17} label={t('next')} disabled={!focusSeen} onPress={goNext} />
+            <CtaButton testID="result-next" label={t('next')} disabled={!focusSeen} onPress={goNext} />
           </View>
         </View>
       </ScrollView>
       <FocusModal lesson={lesson} visible={focusOpen} onClose={() => setFocusOpen(false)} />
-    </View>
+    </PatternBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#D3F2F1' },
-  header: { backgroundColor: '#E8DECB', paddingBottom: 12 },
-  tealCard: { backgroundColor: '#18A5B1', paddingTop: 24, paddingHorizontal: 20, paddingBottom: 20, alignItems: 'center', zIndex: 3 },
-  statusRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
-  statusIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#00C9C3',
-    borderWidth: 1.5,
-    borderColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  statusIconWrong: { backgroundColor: '#E55353' },
-  statusMark: { color: '#FFFFFF', fontSize: 14, fontWeight: '800', lineHeight: 16 },
-  statusTitle: { fontSize: 20, fontWeight: '800', color: '#FFFFFF', letterSpacing: 1 },
-  explanation: { marginTop: 16, marginBottom: 10, fontSize: 14, lineHeight: 22.4, color: '#FFFFFF', fontWeight: '700', textAlign: 'center', maxWidth: 330 },
-  mascotRow: { alignItems: 'center', marginTop: 6, marginBottom: -20, zIndex: 3 },
-  mascot: { width: 140, height: 127 },
-  shadow: { width: 100, height: 22, marginTop: -8 },
-  lower: { flexGrow: 1, backgroundColor: '#D3F2F1', paddingTop: 30, paddingHorizontal: 18, alignItems: 'center' },
-  bubble: {
-    width: '100%',
-    maxWidth: 340,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    paddingVertical: 18,
-    paddingHorizontal: 16,
-    marginBottom: 22,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 14,
-  },
+  panel: { flexGrow: 1, backgroundColor: '#D3F2F1' },
+  band: { position: 'absolute', top: 0, left: 0, right: 0, height: BAND_H, alignItems: 'center' },
+  bandStrip: { position: 'absolute', top: 0, left: 0, right: 0, height: 16, backgroundColor: ch1.line },
+  // 正否：上から 31（Figma y=156）。丸 26 + 10 + 22 Bold
+  statusRow: { position: 'absolute', top: 31, flexDirection: 'row', alignItems: 'center', gap: 10 },
+  statusIcon: { width: 26, height: 26, borderRadius: 13, backgroundColor: '#00C9C3', alignItems: 'center', justifyContent: 'center' },
+  statusIconWrong: { backgroundColor: '#E41042' },
+  statusMark: { color: '#FFFFFF', fontSize: 15, fontWeight: '800', lineHeight: 17 },
+  statusTitle: { fontSize: 22, lineHeight: 26, fontWeight: '700', color: '#FFFFFF' },
+  // 解説：上から 77（y=202）、左右 21、16 Bold・行の高さ 24
+  explanation: { position: 'absolute', top: 77, left: 21, right: 21, fontSize: 16, lineHeight: 24, fontWeight: '700', color: '#FFFFFF', textAlign: 'center' },
+  // SHOSA：上から 164（y=289）。影はその足元（y=406）
+  mascot: { position: 'absolute', top: 164, alignSelf: 'center', width: 150, height: 136 },
+  shadow: { position: 'absolute', top: 281, alignSelf: 'center', width: 103, height: 23 },
+  // 吹き出し：三角は上から 315（y=440）、カードは 339（y=464）
   pointer: {
     position: 'absolute',
-    top: -10,
+    top: 315,
     alignSelf: 'center',
     width: 0,
     height: 0,
-    borderLeftWidth: 10,
-    borderRightWidth: 10,
-    borderBottomWidth: 10,
+    borderLeftWidth: 17,
+    borderRightWidth: 17,
+    borderBottomWidth: 24,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
     borderBottomColor: '#FFFFFF',
   },
-  bubbleText: { fontSize: 14.5, lineHeight: 23.2, color: '#2B2B2B', textAlign: 'center', fontWeight: '700' },
-  focusWrap: { width: '100%', maxWidth: 340, marginBottom: 16 },
-  focusShadow: { borderRadius: 14, backgroundColor: '#A89572', paddingBottom: 4 },
-  focusBtn: {
-    height: 52,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#CAB896',
-    borderRadius: 14,
-    paddingLeft: 20,
-  },
-  focusIcon: { position: 'absolute', left: 14, top: 1, width: 36, height: 50 },
-  focusLabel: { fontSize: 16, fontWeight: '800', color: '#FFFFFF' },
-  nextWrap: { width: '100%', maxWidth: 340 },
+  bubble: { position: 'absolute', top: 339, left: 31, right: 31, minHeight: 162, borderRadius: 10, backgroundColor: '#FFFFFF', paddingHorizontal: 33, paddingVertical: 33 },
+  bubbleText: { fontSize: 16, lineHeight: 24, color: '#000000', textAlign: 'center' },
+  // SHOSA Focus：上から 556（y=681）。下に #A89572 の影（box-shadow: 0 4px 0）
+  focusWrap: { position: 'absolute', top: 556, left: 21, right: 21 },
+  focusShadow: { borderRadius: 10, backgroundColor: '#A89572', paddingBottom: 4 },
+  focusBtn: { height: 48, alignItems: 'center', justifyContent: 'center', backgroundColor: '#CAB896', borderRadius: 10 },
+  focusIcon: { position: 'absolute', left: 26, top: -15, width: 46, height: 63 },
+  focusLabel: { fontSize: 18, lineHeight: 18, fontWeight: '700', letterSpacing: 0.54, color: '#FFFFFF' },
+  // NEXT：上から 631（y=756）
+  nextWrap: { position: 'absolute', top: 631, left: 21, right: 21 },
 });

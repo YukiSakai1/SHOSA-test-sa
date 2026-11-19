@@ -8,7 +8,7 @@ import type { Chapter1Data } from './types';
 export const chapter1: Chapter1Data = {
   guide: {
     badgeNumber: '101',
-    title: { ja: '1章：Omotenashi Mindset', en: 'Chapter 1: Omotenashi Mindset' },
+    title: { ja: 'Omotenashi Mindset', en: 'Omotenashi Mindset' },
     subtitle: {
       ja: 'ホテルの一日に寄り添う「プロの思考と選択」',
       en: "Follow a hotel day through a pro's thinking and choices",
@@ -27,10 +27,13 @@ export const chapter1: Chapter1Data = {
   },
   end: {
     title: { ja: '1章 学習完了！', en: 'Chapter 1 Complete!' },
-    // index.html の文言（Figma は「2章：Omotenashi Style診断」）
-    unlockLabel: { ja: '2章：JOB診断 が解放されました', en: 'Chapter 2: JOB Assessment has been unlocked' },
+    // Figma CH1-END の文言と改行（index.html は「2章：JOB診断」）
+    unlockLabel: {
+      ja: '2章：Omotenashi Style診断 が\n解放されました',
+      en: 'Chapter 2: Omotenashi Style Assessment\nhas been unlocked',
+    },
     body: {
-      ja: 'プロの仕事を観察し、日本の宿泊業の現場で求められるOmotenashi Mindsetを体験することができました！',
+      ja: 'プロの仕事を観察し、\n日本の宿泊業の現場で求められる\nOmotenashi Mindsetを\n体験することができました！',
       en: "You observed the work of pros and experienced the Omotenashi Mindset required in Japan's hospitality industry!",
     },
     note: {
@@ -45,7 +48,7 @@ export const chapter1: Chapter1Data = {
       time: '12:45',
       title: { ja: '出勤前の身だしなみチェック', en: 'Pre-Shift Grooming Check' },
       narration: {
-        ja: '時刻は12:45。午後のシフトインを前に、バックヤードの姿見の前へ。',
+        ja: '時刻は12:45。午後のシフトインを前に、\nバックヤードの姿見の前へ。',
         en: "It's 12:45. Before your afternoon shift begins, you head to the full-length mirror in the back-of-house area.",
       },
       sceneImage: 'sceneL01Mirror',
@@ -55,7 +58,7 @@ export const chapter1: Chapter1Data = {
         en: '(15 minutes until my shift. Belongings checked. Last step: a final grooming check.)',
       },
       line2: {
-        ja: '勤務開始直前の最終点検ですね。プロは鏡に映る姿だけでなく、目に見えない部分まで配慮を行き届かせます。',
+        ja: '勤務開始直前の最終点検ですね。\nプロは鏡に映る姿だけでなく、目に見えない部分まで配慮を行き届かせます。',
         en: "This is your last check before the shift begins. Professionals attend not only to what the mirror shows, but also to what can't be seen.",
       },
       situationTag: {

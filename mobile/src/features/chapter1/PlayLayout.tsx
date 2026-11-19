@@ -6,22 +6,30 @@
  *   下：白いカード（上端に 1.5px の線、角に金の飾り 24px、内側の余白 20）
  */
 import { useState, type ReactNode } from 'react';
-import { Image, ScrollView, StyleSheet, Text, useWindowDimensions, View, type ImageSourcePropType, type StyleProp, type ViewStyle } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Svg, { Circle, Path } from 'react-native-svg';
+import Svg, { Circle, Defs, LinearGradient, Path, Rect, Stop, SvgXml } from 'react-native-svg';
 import { router, type Href } from 'expo-router';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { PatternBackground, patterns } from '@/components/PatternBackground';
+import { CARD_TOP_XML } from '@/features/chapter1/cardTopArt';
+import { fonts } from '@/theme/colors';
+import { useSvgId } from '@/lib/useSvgId';
 import { LangToggle, PressScale, ProgressBar } from '@/components/ui';
 import { useLang } from '@/i18n/LanguageProvider';
 import { images, type ImageKey } from '@/theme/images';
 import { chapter1LessonCount } from '@/content/chapter1';
 
-/** index.html の 1章の色 */
+/** 1章の色（Figma CH1-L01 の各画面） */
 export const ch1 = {
-  screenBg: '#ECE7DE',
+  screenBg: '#E8DECB',
   sceneBg: '#E8E2D8',
   cardLine: '#ECE4D8',
   gold: '#C4A265',
+  /** Figma のラベル（SITUATION / QUESTION）の色と、会話の話者名の色 */
+  label: '#DAC397',
+  speaker: '#B09D79',
+  line: '#E6D8BD',
   ink: '#2B2B2B',
   brown: '#8C7B6B',
   closeIcon: '#8E8E93',
@@ -36,7 +44,8 @@ export function progressPercent(lessonIndex: number, stepInLesson: 1 | 2 | 3 | 4
 }
 
 /**
- * ヘッダー（.ch101-header-bar）：上 14・左 16・下 10 の余白。✕・進捗バー（最大幅 250、左右 12）・EN。
+ * ヘッダー（Figma：セーフエリアの下 14、高さ 32）。左に ✕ の丸（32・白・#E6D8BD の枠・金茶の ✕）、
+ * 進捗バー（0章と同じ：幅 276・高さ 12）、右端に EN。画面の左端から 21。
  * exitTo は ✕ で中断したときの戻り先（既定はタイトル）。
  */
 export function ChapterHeader({ percent, exitTo = '/', style }: { percent: number; exitTo?: Href; style?: StyleProp<ViewStyle> }) {
@@ -46,10 +55,12 @@ export function ChapterHeader({ percent, exitTo = '/', style }: { percent: numbe
   return (
     <View style={[styles.header, { paddingTop: insets.top + 14 }, style]}>
       <PressScale accessibilityLabel={t('close')} hitSlop={6} onPress={() => setConfirming(true)} style={styles.close}>
-        <Text style={styles.closeText}>✕</Text>
+        <Svg width={15} height={15} viewBox="0 0 15 15">
+          <Path d="M1.5 1.5 L13.5 13.5 M13.5 1.5 L1.5 13.5" stroke={ch1.speaker} strokeWidth={3} strokeLinecap="round" />
+        </Svg>
       </PressScale>
       <View style={styles.trackWrap}>
-        <ProgressBar percent={percent} variant="ch1" />
+        <ProgressBar percent={percent} variant="ch0" />
       </View>
       <LangToggle style={{ marginLeft: 'auto' }} />
       <ConfirmDialog
@@ -68,8 +79,8 @@ export function ChapterHeader({ percent, exitTo = '/', style }: { percent: numbe
   );
 }
 
-/** 角の金の飾り（index.html の .ch101-flourish：24px、角から 6px） */
-export function Ch1Flourish({ corner, color = ch1.gold }: { corner: 'tl' | 'tr' | 'bl' | 'br'; color?: string }) {
+/** 角の金の飾り（24px、角から 6px。edge を渡すと左右だけその距離にする：レッスンのカードは 2） */
+export function Ch1Flourish({ corner, color = ch1.gold, edge = 6 }: { corner: 'tl' | 'tr' | 'bl' | 'br'; color?: string; edge?: number }) {
   const d = {
     tl: 'M 3,3 C 10,5 15,10 17,17 C 10,15 5,10 3,3 Z M 3,3 L 12,4 M 3,3 L 4,12',
     tr: 'M 21,3 C 14,5 9,10 7,17 C 14,15 19,10 21,3 Z M 21,3 L 12,4 M 21,3 L 20,12',
@@ -80,7 +91,7 @@ export function Ch1Flourish({ corner, color = ch1.gold }: { corner: 'tl' | 'tr' 
     position: 'absolute',
     zIndex: 2,
     ...(corner[0] === 't' ? { top: 6 } : { bottom: 6 }),
-    ...(corner[1] === 'l' ? { left: 6 } : { right: 6 }),
+    ...(corner[1] === 'l' ? { left: edge } : { right: edge }),
   };
   return (
     <Svg width={24} height={24} viewBox="0 0 24 24" style={pos} pointerEvents="none">
@@ -89,13 +100,14 @@ export function Ch1Flourish({ corner, color = ch1.gold }: { corner: 'tl' | 'tr' 
   );
 }
 
-/** カード右下の「進む」ボタン（.ch101-advance-btn：上から 225・右 24、38×38 の中に 32 のアイコン） */
-export function Ch1AdvanceButton({ onPress, label }: { onPress: () => void; label: string }) {
+/** カード右下の「進む」ボタン（Figma：32×32 の白い丸、枠 #E6D8BD、カードの上から 173・右から 21） */
+export function Ch1AdvanceButton({ onPress, label, turn = 1 }: { onPress: () => void; label: string; turn?: 1 | 2 }) {
   return (
-    <View style={styles.advance}>
+    // 会話の 2/2 では吹き出しの下（カードの上から 332）に移る
+    <View style={[styles.advance, turn === 2 && { top: 332 }]}>
       <PressScale accessibilityLabel={label} onPress={onPress} hitSlop={10} style={styles.advanceHit}>
         <Svg width={32} height={32} viewBox="0 0 32 32">
-          <Circle cx={16} cy={16} r={14} fill="#FFFFFF" stroke={ch1.gold} strokeWidth={1.5} />
+          <Circle cx={16} cy={16} r={15.5} fill="#FFFFFF" stroke={ch1.line} strokeWidth={1} />
           <Path d="M 12,16 L 20,16 M 16,11 L 20.5,16 L 16,21" fill="none" stroke={ch1.gold} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
           <Path d="M 12,13.5 C 13,15 13,17 12,18.5" fill="none" stroke={ch1.gold} strokeWidth={1.5} strokeLinecap="round" />
         </Svg>
@@ -115,87 +127,82 @@ interface Props {
 
 export function PlayLayout({ percent, exitTo, image, imageAlt, label, children }: Props) {
   const insets = useSafeAreaInsets();
-  const { width: windowW } = useWindowDimensions();
-  const [sceneW, setSceneW] = useState(Math.min(windowW, 402));
+  const gradId = useSvgId('scenefade');
   return (
-    <View style={styles.screen}>
-      <ChapterHeader percent={percent} exitTo={exitTo} />
+    // 背景は Figma の #E8DECB にベージュの菱形とドットの柄
+    <PatternBackground color={ch1.screenBg} patternColor={patterns.beige.patternColor} tile={patterns.beige.tile}>
+      {/* ヘッダー（高さ 32）の下から場面画像まで 20 */}
+      <ChapterHeader percent={percent} exitTo={exitTo} style={{ paddingBottom: 20 }} />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} bounces={false}>
-        <View style={styles.scene} onLayout={(e) => setSceneW(e.nativeEvent.layout.width)}>
-          {/* index.html .ch101-illustration-wrap img：object-fit: cover; object-position: 50% 0%（上端をそろえて切り取る） */}
-          <Image
-            source={images[image]}
-            accessibilityLabel={imageAlt}
-            style={[styles.sceneImg, { height: Math.max(SCENE_H, sceneW / aspectOf(images[image])) }]}
-            resizeMode="cover"
-          />
+        {/* 場面画像（Figma：402×342） */}
+        <View style={styles.scene}>
+          <Image source={images[image]} accessibilityLabel={imageAlt} style={styles.sceneImg} resizeMode="cover" />
+          {/* 下の 40 は透明 → 黒 20% のグラデーション */}
+          <Svg style={styles.sceneFade} width="100%" height={40} preserveAspectRatio="none" pointerEvents="none">
+            <Defs>
+              <LinearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+                <Stop offset="0" stopColor="#000000" stopOpacity={0} />
+                <Stop offset="1" stopColor="#000000" stopOpacity={0.2} />
+              </LinearGradient>
+            </Defs>
+            <Rect width="100%" height="100%" fill={`url(#${gradId})`} />
+          </Svg>
         </View>
+        {/* 白いカード：場面画像に 10 かさなる。上の角は内側に丸く欠け、縁に #E6D8BD の帯 */}
         <View style={[styles.card, { paddingBottom: insets.bottom + 28 }]}>
-          <Ch1Flourish corner="tl" />
-          <Ch1Flourish corner="tr" />
+          <View style={styles.cardFill} />
+          <SvgXml xml={CARD_TOP_XML} width="100%" height={16} preserveAspectRatio="none" style={styles.cardTop} />
+          <Ch1Flourish corner="tl" edge={2} />
+          <Ch1Flourish corner="tr" edge={2} />
           <Text style={styles.cardLabel}>{label}</Text>
           {children}
         </View>
       </ScrollView>
-    </View>
+    </PatternBackground>
   );
 }
 
-const SCENE_H = 275;
-
-/** 画像の縦横比（幅 ÷ 高さ）。取れないときは 1章の場面画像（402×342）の比率 */
-function aspectOf(source: ImageSourcePropType): number {
-  const meta = Image.resolveAssetSource?.(source);
-  return meta?.width && meta?.height ? meta.width / meta.height : 402 / 342;
-}
-
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: ch1.screenBg },
-  header: { flexDirection: 'row', alignItems: 'center', paddingLeft: 16, paddingBottom: 10, zIndex: 20 },
+  // ヘッダー：左 21、✕の丸 32、進捗バー（0章と同じ）は ✕ の 10 右・幅 276、EN は右端
+  header: { flexDirection: 'row', alignItems: 'center', paddingLeft: 21, zIndex: 20 },
   close: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.06)',
+    borderColor: ch1.line,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 5,
-    elevation: 2,
   },
-  closeText: { color: ch1.closeIcon, fontSize: 17, fontWeight: '700', lineHeight: 17 },
-  trackWrap: { flex: 1, maxWidth: 250, marginHorizontal: 12 },
-  scene: { width: '100%', height: 275, backgroundColor: ch1.sceneBg, overflow: 'hidden' },
-  // 幅いっぱいに置き、はみ出した下側を切る（画面が細くて高さが足りないときは 275 に合わせて左右を切る）
-  sceneImg: { width: '100%' },
-  card: {
-    flexGrow: 1,
-    backgroundColor: '#FFFFFF',
-    borderTopWidth: 1.5,
-    borderTopColor: ch1.cardLine,
-    paddingTop: 20,
-    paddingHorizontal: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.02,
-    shadowRadius: 10,
+  trackWrap: { flex: 1, maxWidth: 276, marginLeft: 10, marginRight: 15 },
+  scene: { width: '100%', aspectRatio: 402 / 342, backgroundColor: ch1.sceneBg, overflow: 'hidden' },
+  sceneImg: { width: '100%', height: '100%' },
+  sceneFade: { position: 'absolute', left: 0, right: 0, bottom: 0 },
+  // 白いカード：Figma の y=457（場面画像の下端 467 の 10 上）。ラベルは上から 30、文字は左右 41
+  card: { flexGrow: 1, marginTop: -10, paddingTop: 30, paddingHorizontal: 41 },
+  cardFill: { position: 'absolute', top: 15, left: 0, right: 0, bottom: 0, backgroundColor: '#FFFFFF' },
+  cardTop: { position: 'absolute', top: 0, left: 0, right: 0 },
+  cardLabel: {
+    textAlign: 'center',
+    fontFamily: fonts.montserrat,
+    fontSize: 14,
+    lineHeight: 14,
+    letterSpacing: -0.42,
+    color: ch1.label,
+    marginBottom: 20,
+    // Figma：DROP_SHADOW（0, 1.5）、ぼかし 0、#897759
+    textShadowColor: '#897759',
+    textShadowOffset: { width: 0, height: 1.5 },
+    textShadowRadius: 0,
   },
-  cardLabel: { textAlign: 'center', fontSize: 13, fontWeight: '800', color: ch1.gold, letterSpacing: 2.5, marginBottom: 20 },
-  advance: { position: 'absolute', top: 225, right: 24 },
-  advanceHit: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center' },
+  advance: { position: 'absolute', top: 173, right: 21 },
+  advanceHit: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
 });
 
-/** index.html の本文スタイル */
+/** Figma の本文スタイル（Noto Sans CJK JP 16 / 行の高さ 24） */
 export const playTextStyles = StyleSheet.create({
-  /** .ch101-lesson-meta */
-  meta: { textAlign: 'center', fontSize: 12, fontWeight: '700', color: ch1.brown, marginTop: -10, marginBottom: 14, letterSpacing: 0.4 },
-  /** .ch101-narrative-text */
-  narrative: { fontSize: 15, lineHeight: 27.75, color: ch1.ink },
-  /** .ch101-speaker-name */
-  speaker: { color: ch1.brown, fontWeight: '800', fontSize: 15, lineHeight: 27.75 },
+  narrative: { fontSize: 16, lineHeight: 24, color: '#000000' },
+  /** 話者名（Bold 16・#B09D79） */
+  speaker: { color: ch1.speaker, fontWeight: '700', fontSize: 16, lineHeight: 16 },
 });
-

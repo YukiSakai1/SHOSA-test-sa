@@ -32,7 +32,7 @@ export default function JourneyScreen() {
   const [leaving, setLeaving] = useState(false);
   const steps = journey.steps;
   return (
-    <PatternBackground {...patterns.beigeLines} align="center" style={{ paddingTop: insets.top }}>
+    <PatternBackground {...patterns.beige} align="center" style={{ paddingTop: insets.top }}>
       <LangToggle style={[styles.lang, { top: insets.top + 14 }]} />
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <Text style={styles.subtitle}>{tr(journey.subtitle)}</Text>
@@ -90,17 +90,52 @@ export default function JourneyScreen() {
  * 現在地の開いた扉（index.html .journey-door-frame）。
  * 黄色い開口部（12Vector）＋枠（11Vector）、扉板（Group.png 33×101）が開いて、SHOSA がのぞき込む。
  * - 光：扉の左上から右へ広がる台形（5px ぼかし）と、開口部のやわらかい光の輪（10px ぼかし）
+ *   ＋ そのまわりのにじみ（drop-shadow の代わりに、同じ形を広くぼかした層。脈動で 0.15 → 0.75 に変わる）
+ *   いちばん弱いときは index.html（光 0.85・にじみ 0.35）より弱め（光 0.65・にじみ 0.15）
  *   doorBeamIn（0.68秒後に 0.65秒）→ doorBeamPulse（3.2秒で明るさと大きさが行き来する）
  * - SHOSA：shosaPeekEntry（0.72秒後に左から）→ shosaPeekBreathe（3秒周期で 2px 上下、影も縮む）
  * - START を押したとき（burst）：扉が大きく開き（door-swing-wide）、光が強くなり（light-burst）、SHOSA が一歩前へ出る
  * 視差効果を減らす ON のときは静止。
  */
-function OpenDoor({ burst }: { burst: boolean }) {
-  const reduced = useReducedMotion();
+/** 光の形：台形のコーン（blurBeam）と、開口部のやわらかい輪（blurGlow）。ぼかしの強さだけが違う */
+function BeamArt({ blurBeam, blurGlow }: { blurBeam: number; blurGlow: number }) {
   const beamId = useSvgId('beam');
   const glowId = useSvgId('glow');
-  const blur5 = useSvgId('blur5');
-  const blur10 = useSvgId('blur10');
+  const blurA = useSvgId('blurA');
+  const blurB = useSvgId('blurB');
+  return (
+    <Svg width={180} height={190}>
+      <Defs>
+        <LinearGradient id={beamId} x1="0" y1="0" x2="1" y2="0">
+          <Stop offset="0" stopColor="rgb(255,246,160)" stopOpacity={0.78} />
+          <Stop offset="0.35" stopColor="rgb(255,240,140)" stopOpacity={0.58} />
+          <Stop offset="0.65" stopColor="rgb(255,235,120)" stopOpacity={0.28} />
+          <Stop offset="0.85" stopColor="rgb(255,230,100)" stopOpacity={0.08} />
+          <Stop offset="1" stopColor="rgb(255,230,100)" stopOpacity={0} />
+        </LinearGradient>
+        <RadialGradient id={glowId} cx="20%" cy="50%" rx="85%" ry="60%">
+          <Stop offset="0" stopColor="rgb(255,252,195)" stopOpacity={0.85} />
+          <Stop offset="0.38" stopColor="rgb(255,240,150)" stopOpacity={0.48} />
+          <Stop offset="0.65" stopColor="rgb(255,225,110)" stopOpacity={0.15} />
+          <Stop offset="0.82" stopColor="rgb(255,225,110)" stopOpacity={0} />
+        </RadialGradient>
+        <Filter id={blurA} x="-30%" y="-30%" width="160%" height="160%">
+          <FeGaussianBlur stdDeviation={blurBeam} />
+        </Filter>
+        <Filter id={blurB} x="-40%" y="-40%" width="180%" height="180%">
+          <FeGaussianBlur stdDeviation={blurGlow} />
+        </Filter>
+      </Defs>
+      <G x={20} y={20}>
+        <Polygon points="0,32 140,0 140,150 0,125" fill={`url(#${beamId})`} filter={`url(#${blurA})`} />
+        <Rect x={0} y={15} width={120} height={120} fill={`url(#${glowId})`} filter={`url(#${blurB})`} />
+      </G>
+    </Svg>
+  );
+}
+
+function OpenDoor({ burst }: { burst: boolean }) {
+  const reduced = useReducedMotion();
   const beam = useRef(new Animated.Value(reduced ? 1 : 0)).current;
   const pulse = useRef(new Animated.Value(0)).current;
   const panel = useRef(new Animated.Value(reduced ? 1 : 0)).current;
@@ -141,8 +176,12 @@ function OpenDoor({ burst }: { burst: boolean }) {
   }, [burst, go]);
 
   const beamOpacity = Animated.add(
-    Animated.multiply(beam, pulse.interpolate({ inputRange: [0, 1], outputRange: [0.85, 1] })),
+    Animated.multiply(beam, pulse.interpolate({ inputRange: [0, 1], outputRange: [0.65, 1] })),
     go.interpolate({ inputRange: [0, 1], outputRange: [0, 0.35] }),
+  );
+  const haloOpacity = Animated.multiply(
+    beam,
+    Animated.add(pulse.interpolate({ inputRange: [0, 1], outputRange: [0.15, 0.75] }), go.interpolate({ inputRange: [0, 1], outputRange: [0, 0.25] })),
   );
   const beamScale = Animated.multiply(
     Animated.multiply(beam.interpolate({ inputRange: [0, 1], outputRange: [0.88, 1] }), pulse.interpolate({ inputRange: [0, 1], outputRange: [0.98, 1.02] })),
@@ -154,35 +193,13 @@ function OpenDoor({ burst }: { burst: boolean }) {
   );
   return (
     <>
+      {/* 光のにじみ（index.html doorBeamPulse の drop-shadow：4px・弱い → 14px・強い を行き来する）。光の形のまま外側へ広くぼかす */}
+      <Animated.View pointerEvents="none" style={[styles.beam, { opacity: haloOpacity, transform: [{ scale: beamScale }] }]}>
+        <BeamArt blurBeam={9} blurGlow={13} />
+      </Animated.View>
       {/* 光（140×150、扉の左上から右へ。ぼかしがはみ出すよう、まわりに 20 の余白を取って描く） */}
       <Animated.View pointerEvents="none" style={[styles.beam, { opacity: beamOpacity, transform: [{ scale: beamScale }] }]}>
-        <Svg width={180} height={190}>
-          <Defs>
-            <LinearGradient id={beamId} x1="0" y1="0" x2="1" y2="0">
-              <Stop offset="0" stopColor="rgb(255,246,160)" stopOpacity={0.78} />
-              <Stop offset="0.35" stopColor="rgb(255,240,140)" stopOpacity={0.58} />
-              <Stop offset="0.65" stopColor="rgb(255,235,120)" stopOpacity={0.28} />
-              <Stop offset="0.85" stopColor="rgb(255,230,100)" stopOpacity={0.08} />
-              <Stop offset="1" stopColor="rgb(255,230,100)" stopOpacity={0} />
-            </LinearGradient>
-            <RadialGradient id={glowId} cx="20%" cy="50%" rx="85%" ry="60%">
-              <Stop offset="0" stopColor="rgb(255,252,195)" stopOpacity={0.85} />
-              <Stop offset="0.38" stopColor="rgb(255,240,150)" stopOpacity={0.48} />
-              <Stop offset="0.65" stopColor="rgb(255,225,110)" stopOpacity={0.15} />
-              <Stop offset="0.82" stopColor="rgb(255,225,110)" stopOpacity={0} />
-            </RadialGradient>
-            <Filter id={blur5} x="-30%" y="-30%" width="160%" height="160%">
-              <FeGaussianBlur stdDeviation={5} />
-            </Filter>
-            <Filter id={blur10} x="-40%" y="-40%" width="180%" height="180%">
-              <FeGaussianBlur stdDeviation={10} />
-            </Filter>
-          </Defs>
-          <G x={20} y={20}>
-            <Polygon points="0,32 140,0 140,150 0,125" fill={`url(#${beamId})`} filter={`url(#${blur5})`} />
-            <Rect x={0} y={15} width={120} height={120} fill={`url(#${glowId})`} filter={`url(#${blur10})`} />
-          </G>
-        </Svg>
+        <BeamArt blurBeam={5} blurGlow={10} />
       </Animated.View>
       <View style={styles.opening}>
         <Image source={images.journeyDoorway} style={styles.door} resizeMode="stretch" />

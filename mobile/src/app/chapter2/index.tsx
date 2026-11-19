@@ -87,9 +87,10 @@ const styles = StyleSheet.create({
   },
   resultsLead: { fontSize: 12, color: colors.black, textAlign: 'center' },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' },
-  chip: { width: '47%', flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: colors.beige, borderRadius: 8, padding: 8 },
+  // 英語の「Communication」でも枠に収まるよう、余白を少なめにして文字は縮められるようにする
+  chip: { width: '48%', flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: colors.beige, borderRadius: 8, paddingHorizontal: 6, paddingVertical: 8 },
   chipIcon: { width: 24, height: 24 },
-  chipText: { fontSize: 14, fontWeight: '700', color: colors.black },
+  chipText: { flexShrink: 1, fontSize: 13, fontWeight: '700', color: colors.black },
   // アーチの枠線 3px の内側で、ボタン幅が Figma と同じ 360 になる余白
   bottom: { paddingHorizontal: 18, paddingTop: 8 },
 });

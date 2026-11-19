@@ -175,8 +175,9 @@ export const schedule = {
   notifyLabel: { ja: 'お知らせ時間', en: 'Notify time' },
   editTitle: { ja: 'お知らせ時間を編集', en: 'Edit Notification Time' },
   submit: { ja: '設定を完了する', en: 'Done' },
-  // 時間帯ごとの時刻の初期値は未定（M-38）。案：朝 7:00、ランチ 12:30、夕食前後 18:00、寝る前 21:30。
-  // 決まるまでは時間帯を選んでも時刻を自動で変えない
+  // M-38：時間帯を選ぶと、お知らせ時間が下の時刻に変わる（index.html の defaultTimes と同じ）。
+  // 「その他」は変えない。ユーザーが時刻を自分で編集した後は、時間帯を選んでも変えない
+  defaultTimes: { morning: '07:00', lunch: '12:30', evening: '18:00', night: '21:30' } as Record<string, string>,
   options: [
     { id: 'morning', label: { ja: '朝起きた後', en: 'After waking up' }, icon: { image: 'timeMorning' } },
     { id: 'lunch', label: { ja: 'ランチタイム', en: 'Lunchtime' }, icon: { image: 'timeLunch' } },

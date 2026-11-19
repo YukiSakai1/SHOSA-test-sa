@@ -11,6 +11,7 @@ import { SvgXml } from 'react-native-svg';
 import { Appear } from '@/components/Appear';
 import { PatternBackground, patterns } from '@/components/PatternBackground';
 import { PressScale } from '@/components/ui';
+import { CHAPTER2_ENABLED } from '@/lib/features';
 import { useChapter1Completed } from '@/features/chapter1/progress';
 import { useOnboarding } from '@/features/onboarding/OnboardingProvider';
 import { useLang } from '@/i18n/LanguageProvider';
@@ -49,7 +50,7 @@ export default function TitleScreen() {
   const start = () => {
     if (!record.completed) router.push('/onboarding/language');
     else if (!chapter1Done) router.push('/chapter1');
-    else router.push('/chapter2');
+    else router.push(CHAPTER2_ENABLED ? '/chapter2' : '/chapter1');
   };
 
   // M-26：Google / Apple は押したボタンの中にスピナーを出し、他の2つを押せなくする。電話番号は遷移だけ

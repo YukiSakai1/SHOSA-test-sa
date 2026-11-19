@@ -755,6 +755,8 @@ function applyAppLanguage(lang) {
     if (!dict)
         return;
     updateAllLangToggleButtons(lang);
+    // 英語のときだけ文字の大きさを変える CSS（html[lang="en"]）のために、言語を html に反映する
+    document.documentElement.setAttribute('lang', lang);
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (key && dict[key]) {

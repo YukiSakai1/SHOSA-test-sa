@@ -1,7 +1,6 @@
 /**
  * 柄つきの背景。index.html / Figma のタイル柄を SVG の Pattern で敷き詰める。
  * - diamond：菱形とドット（pattern_turquoise.svg / pattern_beige.svg と同じ。元は 180px タイル）
- * - lines：細い菱形の線と端のドット（index.html の --shosa-beige-pattern。95.46px タイル、#E6D8BD の 25%）
  * - image：画像を並べる（tileImage。例：カーペット carpet_beige.jpg を幅 200 で）
  *
  * 注意（Web）：Svg は width / height を属性で渡さないと 300×150 のままになり、柄が見えなくなる。
@@ -9,7 +8,7 @@
  */
 import { useState, type ReactNode } from 'react';
 import { StyleSheet, View, type ImageSourcePropType, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, Defs, G, Image as SvgImage, Path, Pattern, Polygon, Rect } from 'react-native-svg';
+import Svg, { Circle, Defs, Image as SvgImage, Pattern, Polygon, Rect } from 'react-native-svg';
 import { useSvgId } from '@/lib/useSvgId';
 
 interface Props {
@@ -18,7 +17,7 @@ interface Props {
   patternColor: string;
   /** タイルの一辺（px） */
   tile?: number;
-  variant?: 'diamond' | 'lines' | 'image';
+  variant?: 'diamond' | 'image';
   /** variant="image" のときに並べる画像と、その高さ（幅は tile） */
   tileImage?: ImageSourcePropType;
   tileHeight?: number;
@@ -51,8 +50,6 @@ export function PatternBackground({
           <Pattern id={id} patternUnits="userSpaceOnUse" x={x} y={0} width={tile} height={tileH}>
             {variant === 'image' && tileImage ? (
               <SvgImage href={tileImage} width={tile} height={tileH} preserveAspectRatio="none" />
-            ) : variant === 'lines' ? (
-              <LinesTile tile={tile} color={patternColor} />
             ) : (
               <DiamondTile tile={tile} color={patternColor} />
             )}
@@ -87,36 +84,13 @@ function DiamondTile({ tile, color }: { tile: number; color: string }) {
   );
 }
 
-function LinesTile({ tile, color }: { tile: number; color: string }) {
-  const s = tile / 95.46;
-  return (
-    <G scale={s} opacity={0.25}>
-      <Path
-        fill="none"
-        stroke={color}
-        strokeWidth={2.4}
-        d="M43.63 4.1 L4.1 43.63 M51.83 4.1 L91.36 43.63 M91.36 51.83 L51.83 91.36 M43.63 91.36 L4.1 51.83"
-      />
-      {[
-        [47.73, 0],
-        [95.46, 47.73],
-        [47.73, 95.46],
-        [0, 47.73],
-      ].map(([cx, cy], i) => (
-        <Circle key={i} cx={cx} cy={cy} r={3.22} fill={color} />
-      ))}
-    </G>
-  );
-}
-
 export const patterns = {
   // index.html .figma-ch0-01-screen：pattern_turquoise.svg を 160px で敷く（位置は左上から）
   turquoise: { color: '#00C9C3', patternColor: 'rgba(255,255,255,0.22)', tile: 160 },
   // index.html .figma-carousel-screen（イントロ）：同じ柄を 90px で、中央上から
   turquoiseSmall: { color: '#00C9C3', patternColor: 'rgba(255,255,255,0.22)', tile: 90, align: 'center' },
-  // Figma（2章で使用）
-  beige: { color: '#F6F1E8', patternColor: 'rgba(175,145,110,0.30)' },
-  // index.html の 0章（言語選択・ヒアリング・時間・プロフィール・ジャーニー・結果）
-  beigeLines: { color: '#F6F1E8', patternColor: '#E6D8BD', tile: 95.46, variant: 'lines' },
+  // ベージュの背景（言語選択・ヒアリング・時間・プロフィール・ジャーニー・結果、1章レッスン、2章など）。
+  // スタート画面（turquoise）と同じ、やや引きのばした菱形とドットの柄を、ベージュで
+  beige: { color: '#F6F1E8', patternColor: 'rgba(196,162,101,0.22)', tile: 160 },
   sky: { color: '#6DCAF1', patternColor: 'rgba(255,255,255,0.22)' },
 } as const;

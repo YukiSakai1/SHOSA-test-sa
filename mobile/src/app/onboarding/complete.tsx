@@ -34,8 +34,9 @@ function ResultButton({ label }: { label: string }) {
   return (
     <Animated.View style={{ transform: [{ scale }] }}>
       <PressScale testID="see-results" accessibilityRole="button" onPress={() => router.push('/onboarding/result')} style={styles.button}>
+        {/* Figma の icon（40×56）：ボタンの左 34・下端にそろえ、上に 8 はみ出す。絵は少し傾いた（-10°）クリップボードで、枠より一回り大きい（50×62） */}
         <View style={styles.icon} pointerEvents="none">
-          <SvgXml xml={svgIcons.resultIcon} width={41} height={50} />
+          <SvgXml xml={svgIcons.resultIcon} width={50} height={62} style={styles.iconSvg} />
         </View>
         <Text style={styles.buttonText}>{label}</Text>
       </PressScale>
@@ -60,6 +61,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 4,
   },
-  icon: { position: 'absolute', left: 32, top: -2 },
-  buttonText: { fontSize: 18, fontWeight: '700', color: colors.white },
+  icon: { position: 'absolute', left: 34, bottom: 0, width: 40, height: 56 },
+  iconSvg: { position: 'absolute', left: -5, top: -3 },
+  buttonText: { fontSize: 18, fontWeight: '800', color: colors.white },
 });

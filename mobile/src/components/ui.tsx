@@ -126,7 +126,7 @@ export function CtaButton({
   disabledTone?: 'figma' | 'beige' | 'grey';
   /** index.html 0章の立体ボタン：下に 3〜4px の濃い色の縁（box-shadow 0 Npx 0）。disabledColor を渡すと押せないときも出す */
   ledge?: { color: string; depth: number; disabledColor?: string };
-  /** ボタンの左端に置く画像（例：診断完了の「結果を見る」のアイコン）。左から 24、縦は中央 */
+  /** ボタンの左に置く画像（例：「結果を見る」のクリップボード）。左から 34、下端をボタンの下端にそろえる（高さ 56 なら上に 8 はみ出す。Figma） */
   icon?: { source: ImageSourcePropType; width: number; height: number };
   disabled?: boolean;
   /** タップを促す脈動アニメーション（M-13：1.5秒周期） */
@@ -191,7 +191,7 @@ export function CtaButton({
         >
           {label}
         </Text>
-        {icon && <Image source={icon.source} style={{ position: 'absolute', left: 24, width: icon.width, height: icon.height }} resizeMode="contain" />}
+        {icon && <Image source={icon.source} style={{ position: 'absolute', left: 34, bottom: 0, width: icon.width, height: icon.height }} resizeMode="contain" />}
       </PressScale>
     </Animated.View>
   );

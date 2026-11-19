@@ -64,7 +64,7 @@ export function OnboardingHeader({ percent, showLang = true, showBack = false }:
 
 /**
  * 小さい SHOSA（110×100）と足元の影（index.html .langselect-mascot / .langselect-shadow）。
- * - 影は SHOSA の手前に重ねる（足元が少し暗くなる）。75×17、黒 10%、SHOSA の上端から 86
+ * - 影は SHOSA が話す画面と同じ、ぼかした床の影の画像（floorShadow）を SHOSA の後ろに。75×17、SHOSA の上端から 86
  * - mascotBreathe / mascotShadowBreatheOrigin：2.2秒周期で SHOSA が 3px 上下し、影が 0.95倍に縮む
  * 視差効果を減らす ON のときは動かさない。言語選択・ヒアリング・学習時間で使う。
  */
@@ -86,21 +86,24 @@ export function SmallMascot({ style }: { style?: StyleProp<ViewStyle> }) {
   const scale = b.interpolate({ inputRange: [0, 1], outputRange: [1, 0.95] });
   return (
     <View style={[styles.mascotSmall, style]}>
+      {/* 影は SHOSA の後ろ。SHOSA が話す画面と同じ、ぼかした床の影の画像（floorShadow）を使う */}
+      <Animated.Image source={images.floorShadow} style={[styles.mascotSmallShadow, { transform: [{ scale }] }]} resizeMode="contain" />
       <Animated.Image source={images.mascotFace} style={[styles.mascotSmall, { transform: [{ translateY }] }]} resizeMode="contain" />
-      <Animated.View pointerEvents="none" style={[styles.mascotSmallShadow, { transform: [{ scale }] }]} />
     </View>
   );
 }
 
 /** SHOSA（110x100）＋白い吹き出し */
 export function MascotBubble({ text, variant = 'hearing' }: { text: Localized; variant?: 'hearing' | 'schedule' }) {
-  const { tr } = useLang();
+  const { lang, tr } = useLang();
+  // 学習時間の英語は文が長く 4行になるため、文字を少し小さくして 98 の高さに収める（index.html の html[lang="en"] と同じ）
+  const compact = variant === 'schedule' && lang === 'en';
   return (
     <View style={[styles.mascotRow, variant === 'schedule' && styles.mascotRowSchedule]}>
       <SmallMascot />
-      <View style={[styles.bubble, variant === 'schedule' && { paddingTop: 19 }]}>
+      <View style={[styles.bubble, variant === 'schedule' && { paddingTop: 19 }, compact && styles.bubbleCompact]}>
         <View style={styles.bubbleTail} />
-        <Text style={styles.bubbleText}>{tr(text)}</Text>
+        <Text style={[styles.bubbleText, compact && styles.bubbleTextCompact]}>{tr(text)}</Text>
       </View>
     </View>
   );
@@ -202,7 +205,7 @@ export function QuestionLayout({
   const fadeId = useSvgId('fade');
   return (
     <PatternBackground
-      {...patterns.beigeLines}
+      {...patterns.beige}
       {...(background ? { color: background } : null)}
       align={heroVariant === 'schedule' ? 'center' : 'left'}
       style={{ paddingTop: insets.top }}
@@ -284,7 +287,7 @@ export function TalkLayout({
   const top = 0;
   return (
     <View style={[styles.room, style]}>
-      <PatternBackground {...patterns.beigeLines} color="#FAF8F2" align="center" style={[styles.wall, { height: top + 380 }]} />
+      <PatternBackground {...patterns.beige} color="#FAF8F2" align="center" style={[styles.wall, { height: top + 380 }]} />
       <Svg style={[styles.floor, { top: top + 334 }]} width="100%" viewBox="0 0 402 540" preserveAspectRatio="none" pointerEvents="none">
         <Defs>
           <Pattern id={carpetId} patternUnits="userSpaceOnUse" width={160} height={55.5}>
@@ -313,7 +316,7 @@ export function TalkLayout({
         distance={12}
         delay={700}
         duration={400}
-        style={[styles.talkBubble, { top: top + 431 }, bubbleHeight !== undefined && { height: bubbleHeight, justifyContent: 'center', paddingVertical: 0 }]}
+        style={[styles.talkBubble, { top: top + 431 }, bubbleHeight !== undefined && { minHeight: bubbleHeight, justifyContent: 'center', paddingVertical: 0 }]}
       >
         <Svg style={styles.talkBubbleTail} width={34} height={25} viewBox="0 0 44 26" preserveAspectRatio="none">
           <Path d="M18.8 3.8C20.2 1.4 23.8 1.4 25.2 3.8L44 26H0Z" fill={colors.white} />
@@ -401,6 +404,7 @@ function TalkMascot({ top }: { top: number }) {
 /**
  * 壁のランプ（Group 224.png）と後ろの光の輪（直径 100）。
  * index.html：最初の 1.2秒は明滅（ch07HaloFlicker）、そのあと 2.8秒周期でゆっくり明るさが変わる（ch07HaloPulse）。
+ * ただし最大の明るさは index.html より弱め（不透明度の山 1 → 0.8、脈動の谷 0.8 → 0.65、大きさの山 1.1〜1.2 → 1.06〜1.15）。
  * 視差効果を減らす ON のときは静止。
  */
 function Lamp({ style }: { style: StyleProp<ViewStyle> }) {
@@ -415,15 +419,16 @@ function Lamp({ style }: { style: StyleProp<ViewStyle> }) {
         Animated.timing(o, { toValue: to, duration: ms, useNativeDriver: nativeDriver }),
         Animated.timing(s, { toValue: scale, duration: ms, useNativeDriver: nativeDriver }),
       ]);
+    // 最大の明るさは index.html（不透明度 1・大きさ 1.1〜1.2）より弱めにしている（強すぎるため）：山は 0.8・1.06〜1.15
     const flicker = Animated.sequence([
-      step(1, 1.15, 144),
+      step(0.8, 1.12, 144),
       step(0.2, 0.8, 120),
-      step(1, 1.2, 156),
+      step(0.8, 1.15, 156),
       step(0.45, 0.9, 156),
-      step(1, 1.1, 144),
-      step(0.8, 0.98, 480),
+      step(0.8, 1.06, 144),
+      step(0.65, 0.98, 480),
     ]);
-    const pulse = Animated.loop(Animated.sequence([step(1, 1.1, 1400), step(0.8, 0.98, 1400)]));
+    const pulse = Animated.loop(Animated.sequence([step(0.8, 1.06, 1400), step(0.65, 0.98, 1400)]));
     const all = Animated.sequence([flicker, pulse]);
     all.start();
     return () => all.stop();
@@ -456,12 +461,13 @@ const styles = StyleSheet.create({
   headerTrackInner: { width: '100%', maxWidth: 276 },
   scroll: { ...centered, paddingHorizontal: 21, paddingBottom: 16 },
   // SHOSA（110×100）は (28,66)、吹き出しはその右 22。選択肢は SHOSA の下 28 から
-  // 高さは SHOSA（100）に固定。吹き出しが長くなっても下の選択肢は動かない（index.html と同じ）
-  mascotRow: { flexDirection: 'row', alignItems: 'flex-start', height: 100, marginTop: 20, marginBottom: 28, marginLeft: 7, marginRight: 7 },
+  // 高さは最低 SHOSA（100）。英語で吹き出しが 4行以上になっても文字がはみ出さないよう、内容に合わせて伸ばす（下の選択肢がその分下がる）
+  mascotRow: { flexDirection: 'row', alignItems: 'flex-start', minHeight: 100, marginTop: 20, marginBottom: 28, marginLeft: 7, marginRight: 7 },
   // 時間選択（index.html）は SHOSA が (28,73)。選択肢は同じ y194 から
   mascotRowSchedule: { marginTop: 27, marginBottom: 21 },
   mascotSmall: { width: 110, height: 100 },
-  mascotSmallShadow: { position: 'absolute', left: 17, top: 86, width: 75, height: 17, borderRadius: 999, backgroundColor: 'rgba(0,0,0,0.10)' },
+  // SHOSA が話す画面の影（115×26）と同じ縦横比で、小さい SHOSA（110×100）の足元に置く
+  mascotSmallShadow: { position: 'absolute', left: 17, top: 86, width: 75, height: 17 },
   bubble: { flex: 1, marginLeft: 22, minHeight: 72, backgroundColor: colors.white, borderRadius: 6, paddingHorizontal: 18, paddingVertical: 14 },
   bubbleTail: {
     position: 'absolute',
@@ -477,6 +483,8 @@ const styles = StyleSheet.create({
     borderRightColor: colors.white,
   },
   bubbleText: { fontSize: 16, lineHeight: 22, color: colors.black },
+  bubbleCompact: { minHeight: 98, paddingTop: 13, paddingBottom: 13, paddingLeft: 16, paddingRight: 8 },
+  bubbleTextCompact: { fontSize: 14, lineHeight: 18 },
   options: { gap: 10 },
   // .frame248-option-btn：360×68、アイコン 40 は左 34、文字はアイコンの右 22
   option: { justifyContent: 'center', paddingLeft: 34, paddingRight: 20, paddingVertical: 12 },

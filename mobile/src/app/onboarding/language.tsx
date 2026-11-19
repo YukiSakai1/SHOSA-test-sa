@@ -28,7 +28,7 @@ export default function LanguageScreen() {
   const [selected, setSelected] = useState<Lang>(lang);
 
   return (
-    <PatternBackground {...patterns.beigeLines} align="center" style={{ paddingTop: insets.top }}>
+    <PatternBackground {...patterns.beige} align="center" style={{ paddingTop: insets.top }}>
       <Appear from="none" duration={300} style={styles.hero}>
         <SmallMascot />
         <ImageBackground source={images.speechBubbleTail} resizeMode="contain" style={styles.bubble} imageStyle={styles.fill}>

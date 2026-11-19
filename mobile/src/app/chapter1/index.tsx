@@ -1,115 +1,136 @@
 /**
- * 第1章 ガイダンス（index.html #screen-ch101-intro）。
- * クリーム色の背景（#FAF8F2）に、上部がアーチ型で金の縁取りのカード（.ch101-arch-card）。
- * カードの中：101・タイトル・副題 → SHOSA（幅 135）→ 白い説明カード（角に金の飾り）。下にターコイズの START。
+ * 第1章 ガイダンス（Figma CH0-08）。
+ * 空色の背景（#6DCAF1）に、上がアーチ型のクリーム色の面（features/chapter1/guideArt.ts：Figma のベクターをそのまま SVG にしたもの）。
+ * 面の中：101（Montserrat 34・#DAC397・金茶の影）→ タイトル（Montserrat 22）→ 副題（12）→ SHOSA（170×114）
+ *   → 白い説明カード（上下に 28 の帯、枠は #E6D8BD、角に金の飾り）。下に紫の START（360×48）。
+ * 位置は Figma の画面（402×874、上のステータスバー 59 を含む）から。セーフエリアの上端からの距離で置く。
  */
 import { router } from 'expo-router';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Svg, { Path } from 'react-native-svg';
+import { SvgXml } from 'react-native-svg';
+import { PatternBackground, patterns } from '@/components/PatternBackground';
 import { RichText } from '@/components/RichText';
 import { CtaButton, LangToggle } from '@/components/ui';
 import { chapter1 } from '@/content/chapter1';
-import { Ch1Flourish, ch1 } from '@/features/chapter1/PlayLayout';
+import { GUIDE_ART_XML } from '@/features/chapter1/guideArt';
+import { Ch1Flourish } from '@/features/chapter1/PlayLayout';
 import { useLang } from '@/i18n/LanguageProvider';
+import { colors, fonts } from '@/theme/colors';
 import { images } from '@/theme/images';
+import { layout } from '@/theme/layout';
+
+/** Figma の画面でのステータスバーの高さ（iPhone 17 Pro の上のセーフエリア） */
+const FIGMA_TOP = 59;
+const CARD_LINE = '#E6D8BD';
 
 export default function Chapter1IntroScreen() {
-  const { tr } = useLang();
+  const { lang, tr } = useLang();
   const insets = useSafeAreaInsets();
   const { guide } = chapter1;
+  // 英語は文が長いため、本文を少し小さくし、副題を 1行に収めて、スクロールなしで START の上に収める
+  const en = lang === 'en';
+  // Figma の y（画面の上端から）を、セーフエリアの上端からの距離に直す
+  const y = (figmaY: number) => insets.top + figmaY - FIGMA_TOP;
 
   return (
-    <View style={[styles.screen, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 24 }]}>
+    <PatternBackground {...patterns.sky}>
+      {/* アーチ型の面（Figma では画面の上から 73、402×801） */}
+      <View pointerEvents="none" style={[styles.art, { top: y(73) }]}>
+        <SvgXml xml={GUIDE_ART_XML} width="100%" height="100%" preserveAspectRatio="xMidYMin slice" />
+      </View>
       <LangToggle style={[styles.lang, { top: insets.top + 14 }]} />
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-        <View style={styles.archCard}>
-          {/* .ch101-arch-header：カードの上に 38px はみ出すアーチ（index.html の SVG と同じパス） */}
-          <View style={styles.archHeader}>
-            <Svg width="100%" height="100%" viewBox="0 0 350 115" preserveAspectRatio="none">
-              <Path d="M 0,115 L 0,44 C 18,44 32,38 50,42 C 78,48 110,14 175,14 C 240,14 272,48 300,42 C 318,38 332,44 350,44 L 350,115 Z" fill="#FAF7F2" />
-              <Path d="M 1,115 L 1,44 C 18,44 32,38 50,42 C 78,48 110,14 175,14 C 240,14 272,48 300,42 C 318,38 332,44 349,44 L 349,115" fill="none" stroke={ch1.gold} strokeWidth={2.5} />
-              <Path d="M 6,115 L 6,48 C 22,48 35,43 52,46 C 78,52 108,20 175,20 C 242,20 272,52 298,46 C 315,43 328,48 344,48 L 344,115" fill="none" stroke="#D8C39D" strokeWidth={1.2} />
-            </Svg>
-            <View style={styles.badgeContent}>
-              <Text style={styles.badgeNumber}>{guide.badgeNumber}</Text>
-              <Text style={styles.title}>{tr(guide.title)}</Text>
-              <Text style={styles.subtitle}>{tr(guide.subtitle)}</Text>
-            </View>
-          </View>
-          <View style={styles.body}>
-            <Image source={images.mascotIntro} style={styles.mascot} resizeMode="contain" />
-            <View style={styles.descCard}>
-              <Ch1Flourish corner="tl" />
-              <Ch1Flourish corner="tr" />
-              <Ch1Flourish corner="bl" />
-              <Ch1Flourish corner="br" />
-              {guide.paragraphs.map((p, i) => (
-                <RichText key={i} style={[styles.para, i > 0 && { marginTop: 14 }]}>
-                  {tr(p)}
-                </RichText>
-              ))}
-            </View>
-          </View>
+
+      <ScrollView
+        style={StyleSheet.absoluteFill}
+        contentContainerStyle={{ paddingTop: y(112), paddingBottom: insets.bottom + layout.ctaBottom + 48 + 24, alignItems: 'center' }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* 101・タイトル・副題（幅 252 の中央そろえ） */}
+        <View style={styles.titleBox}>
+          <Text style={styles.badge}>{guide.badgeNumber}</Text>
+          <Text style={styles.title}>{tr(guide.title)}</Text>
+          <Text style={[styles.subtitle, en && styles.subtitleEn]}>{tr(guide.subtitle)}</Text>
         </View>
-        <View style={styles.bottom}>
-          <CtaButton
-            testID="chapter1-start"
-            label={tr(guide.button)}
-            size="tall"
-            onPress={() => router.push({ pathname: '/chapter1/[lesson]/situation', params: { lesson: '0' } })}
-          />
+        {/* SHOSA（170×114）。カードの上の帯が足元を 12 かくす */}
+        <Image source={images.mascotIntro} style={styles.mascot} resizeMode="contain" />
+        <View style={styles.card}>
+          <View style={styles.cap} />
+          <View style={styles.cardBody}>
+            {guide.paragraphs.map((p, i) => (
+              <RichText key={i} style={[styles.para, en && styles.paraEn, i > 0 && { marginTop: en ? 12 : 17 }]}>
+                {tr(p)}
+              </RichText>
+            ))}
+          </View>
+          <View style={[styles.cap, styles.capBottom]} />
+          <Ch1Flourish corner="tl" />
+          <Ch1Flourish corner="tr" />
+          <Ch1Flourish corner="bl" />
+          <Ch1Flourish corner="br" />
         </View>
       </ScrollView>
-    </View>
+
+      <View style={[styles.bottom, { paddingBottom: insets.bottom + layout.ctaBottom }]}>
+        <CtaButton
+          testID="chapter1-start"
+          variant="primary"
+          label={tr(guide.button)}
+          onPress={() => router.push({ pathname: '/chapter1/[lesson]/situation', params: { lesson: '0' } })}
+        />
+      </View>
+    </PatternBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  // .ch101-intro-screen：背景はページの #FAF8F2、余白 16
-  screen: { flex: 1, backgroundColor: '#FAF8F2' },
-  // EN はセーフエリアの下 14（index.html の --safe-top + 14）
+  art: { position: 'absolute', left: 0, right: 0, aspectRatio: 402 / 801 },
   lang: { position: 'absolute', right: 0, zIndex: 10 },
-  scroll: { paddingHorizontal: 16 },
-  // .ch101-arch-card
-  archCard: {
-    marginTop: 16,
-    backgroundColor: '#FAF7F2',
-    borderLeftWidth: 2.5,
-    borderRightWidth: 2.5,
-    borderBottomWidth: 2.5,
-    borderColor: ch1.gold,
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.08,
-    shadowRadius: 24,
+  // Frame 415：幅 252、101（34）→ 15 → タイトル（22）→ 9 → 副題（12）
+  titleBox: { width: 252, alignItems: 'center', overflow: 'visible' },
+  badge: {
+    fontFamily: fonts.montserrat,
+    fontSize: 34,
+    lineHeight: 34,
+    letterSpacing: -1,
+    color: '#DAC397',
+    // Figma：DROP_SHADOW（0, 1.47）、ぼかし 0、#897759
+    textShadowColor: '#897759',
+    textShadowOffset: { width: 0, height: 1.5 },
+    textShadowRadius: 0,
   },
-  // .ch101-arch-header（幅 +5px、上に -38px、高さ 125）
-  archHeader: { marginTop: -38, marginLeft: -2.5, marginRight: -2.5, height: 125 },
-  badgeContent: { position: 'absolute', top: 26, left: 0, right: 0, alignItems: 'center' },
-  badgeNumber: { fontSize: 32, fontWeight: '800', color: ch1.gold, lineHeight: 32, letterSpacing: 1 },
-  title: { fontSize: 20, fontWeight: '800', color: ch1.ink, marginTop: 6, marginBottom: 2, lineHeight: 24 },
-  subtitle: { fontSize: 12.5, fontWeight: '600', color: '#4A4A4A' },
-  // .ch101-arch-body
-  body: { paddingTop: 12, paddingHorizontal: 18, paddingBottom: 22, alignItems: 'center' },
-  // .ch101-intro-mascot-wrap / img（幅 135）
-  mascot: { width: 135, height: 91, marginTop: 4, marginBottom: 12 },
-  // .ch101-desc-card
-  descCard: {
-    alignSelf: 'stretch',
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E6DEC8',
-    borderRadius: 8,
-    padding: 22,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
+  title: { fontFamily: fonts.montserrat, fontSize: 22, lineHeight: 22, color: '#333333', marginTop: 15, textAlign: 'center' },
+  subtitle: { fontSize: 12, lineHeight: 12, fontWeight: '700', color: '#333333', marginTop: 9, textAlign: 'center' },
+  // 英語：副題を 1行にするため、幅を 340（カードの幅）まで広げ、文字を少し小さくする
+  subtitleEn: { width: 340, fontSize: 11, lineHeight: 12 },
+  // 副題の下端（204）から SHOSA の上端（228）まで 24
+  mascot: { width: 170, height: 114, marginTop: 24 },
+  // SHOSA の下端（342）より 12 上に、カードの上の帯（330）
+  card: { width: 340, marginTop: -12 },
+  // Frame 255 / 290：高さ 28、白、上・左・右に #E6D8BD の 5px の枠、上の角は 10
+  cap: {
+    height: 28,
+    backgroundColor: colors.white,
+    borderTopWidth: 5,
+    borderLeftWidth: 5,
+    borderRightWidth: 5,
+    borderColor: CARD_LINE,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
   },
-  para: { fontSize: 13.5, lineHeight: 24.3, color: '#333333' },
-  // .ch101-intro-bottom（上 24）
-  bottom: { marginTop: 24 },
+  capBottom: { borderTopWidth: 0, borderBottomWidth: 5, borderTopLeftRadius: 0, borderTopRightRadius: 0, borderBottomLeftRadius: 10, borderBottomRightRadius: 10 },
+  // Frame 291：高さ 301、白、枠 1。文字は左右 34・上 10 から
+  cardBody: {
+    minHeight: 301,
+    backgroundColor: colors.white,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderColor: CARD_LINE,
+    paddingHorizontal: 34,
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  para: { fontSize: 16, lineHeight: 24, color: '#000000' },
+  paraEn: { fontSize: 14, lineHeight: 20 },
+  bottom: { position: 'absolute', left: 21, right: 21, bottom: 0 },
 });

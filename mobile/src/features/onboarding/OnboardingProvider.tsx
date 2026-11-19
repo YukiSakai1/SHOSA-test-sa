@@ -26,7 +26,8 @@ export interface ProfileInput {
 
 export interface OnboardingRecord {
   hearing: Partial<Record<HearingKey, HearingAnswer>>;
-  schedule: { timeSlot: string | null; notifyTime: string; notifyEnabled: boolean };
+  /** userCustomizedTime：お知らせ時間を自分で編集したら true（以後、時間帯を選んでも時刻は変えない） */
+  schedule: { timeSlot: string | null; notifyTime: string; notifyEnabled: boolean; userCustomizedTime?: boolean };
   profile: ProfileInput;
   /** キーは `q${問題番号}`、値は 1〜5 */
   aptitude: Record<string, number>;

@@ -7167,11 +7167,6 @@ main:has(.ch101-intro-screen:not(.hidden)) {
   padding: 0 !important;
 }
 
-body:has(.ch101-play-screen:not(.hidden)) {
-  background-color: #ECE7DE !important;
-  background-image: url("../assets/images/pattern_beige.svg") !important;
-}
-
 /* Common elements across Chapter 101 */
 .ch101-intro-screen,
 .ch101-play-screen {
@@ -7406,8 +7401,13 @@ body:has(.ch101-play-screen:not(.hidden)) {
 /* ---------------------------------------------------------
    2. Scenario Screens (Header & Common Play Panels)
    --------------------------------------------------------- */
+/* 背景は 0章と同じ細い線の柄（--shosa-beige-pattern、95.46px）。枠の外は body の既定の柄 */
 .ch101-play-screen {
-  background: #ECE7DE;
+  background-color: #F6F1E8;
+  background-image: var(--shosa-beige-pattern);
+  background-size: 95.46px 95.46px;
+  background-repeat: repeat;
+  background-position: 0 0;
   padding: 0;
 }
 
@@ -9417,7 +9417,8 @@ body:has(.ch101-play-screen:not(.hidden)) {
   gap: 8px;
   margin: 0;
   max-width: 346px;
-  height: 103.3px;
+  /* 英語で吹き出しが長くなっても文字がはみ出さないよう、高さは内容に合わせて伸ばす（最低 103.3） */
+  min-height: 103.3px;
   align-items: flex-start;
   justify-content: flex-start;
 }
@@ -9448,13 +9449,15 @@ body:has(.ch101-play-screen:not(.hidden)) {
   background: rgba(0, 0, 0, 0.1);
 }
 
-/* bubble 228x98: body 214x98 at x14, tail 20x14 at y59, text 16/22 at (18,16) */
+/* bubble 228x98: body 214x98 at x14, tail 20x14 at y59, text 16/22 at (18,16)
+   高さは内容に合わせて伸ばす（3行で 98。英語で 4行になったときは文字の下にも上と同じ 16 の余白） */
 #screen-ob-schedule-time .langselect-bubble {
   flex: 0 0 228px;
   width: 228px;
-  height: 98px;
+  min-height: 98px;
   margin-top: 2.7px;
-  padding: 0 0 0 14px;
+  padding: 0 0 16px 14px;
+  box-sizing: border-box;
   background: none;
   align-items: flex-start;
   justify-content: flex-start;
@@ -9477,6 +9480,18 @@ body:has(.ch101-play-screen:not(.hidden)) {
   height: 14px;
   background: #FFFFFF;
   clip-path: polygon(0 50%, 100% 0, 100% 100%);
+}
+
+/* 英語は文が長く 4行になるため、文字を少し小さくして 98 の高さに収める（上下の余白 13、14px / 行の高さ 18 を 4行） */
+html[lang="en"] #screen-ob-schedule-time .langselect-bubble {
+  padding-bottom: 13px;
+}
+
+html[lang="en"] #screen-ob-schedule-time .langselect-bubble p {
+  width: 190px;
+  margin: 13px 0 0 16px;
+  font-size: 14px;
+  line-height: 18px;
 }
 
 #screen-ob-schedule-time .langselect-bubble p {

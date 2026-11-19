@@ -1,5 +1,6 @@
 import { Montserrat_700Bold, useFonts } from '@expo-google-fonts/montserrat';
-import { Stack, usePathname } from 'expo-router';
+import { router, Stack, usePathname } from 'expo-router';
+import { CHAPTER2_ENABLED } from '@/lib/features';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, type ComponentProps, type ReactNode } from 'react';
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
@@ -27,8 +28,7 @@ const STAGE_FRAME = { x: 0, y: 0, width: STAGE_W, height: STAGE_H };
  * スマホ枠の外（PC の背景）。index.html の body:has(...) と同じく、表示中の画面で変える。
  * - タイトル・イントロ・1章ガイド：ターコイズの菱形（90px、中央から）
  * - SHOSA が話す画面：カーペット（carpet_beige.jpg を幅 200 で）
- * - 1章のレッスン：#ECE7DE にベージュの菱形（pattern_beige.svg を 95.46px、中央から）
- * - それ以外：#FAF8F2 にベージュの線の柄（95.46px、中央から）
+ * - それ以外：#FAF8F2 にベージュの菱形とドットの柄（スタート画面と同じ形。160px、中央から）
  */
 const TALK_SCREENS = ['/onboarding/greet', '/onboarding/schedule-intro', '/onboarding/profile-intro', '/onboarding/aptitude-intro'];
 function backdropFor(pathname: string): ComponentProps<typeof PatternBackground> {
@@ -36,11 +36,7 @@ function backdropFor(pathname: string): ComponentProps<typeof PatternBackground>
   if (TALK_SCREENS.includes(pathname)) {
     return { color: '#BFA889', patternColor: 'transparent', variant: 'image', tileImage: images.carpetBeige, tile: 200, tileHeight: (200 * 181) / 522 };
   }
-  if (/^\/chapter1\/[^/]+\/(situation|dialogue|question|result)/.test(pathname)) {
-    // pattern_beige.svg を body の大きさ（95.46px・中央から）で敷く
-    return { color: '#ECE7DE', patternColor: 'rgba(175,145,110,0.42)', tile: 95.46, align: 'center' };
-  }
-  return { ...patterns.beigeLines, color: '#FAF8F2', align: 'center' };
+  return { ...patterns.beige, color: '#FAF8F2', align: 'center' };
 }
 
 function PhoneFrame({ children }: { children: ReactNode }) {
@@ -91,6 +87,15 @@ function useWebRobotoFont() {
   }, []);
 }
 
+/** 2章を出さないあいだ、/chapter2 以下の画面を開こうとしたらタイトルへ戻す */
+function Chapter2Guard() {
+  const pathname = usePathname();
+  useEffect(() => {
+    if (!CHAPTER2_ENABLED && pathname.startsWith('/chapter2')) router.replace('/');
+  }, [pathname]);
+  return null;
+}
+
 export default function RootLayout() {
   useWebRobotoFont();
   const [fontsLoaded, fontError] = useFonts({ Montserrat_700Bold });
@@ -119,6 +124,7 @@ export default function RootLayout() {
                 <Stack.Screen name="onboarding/complete" options={{ gestureEnabled: false, animation: 'fade' }} />
                 <Stack.Screen name="chapter2/complete" options={{ gestureEnabled: false, animation: 'fade' }} />
               </Stack>
+              <Chapter2Guard />
               </LangFade>
             </PhoneFrame>
           </Chapter2Provider>

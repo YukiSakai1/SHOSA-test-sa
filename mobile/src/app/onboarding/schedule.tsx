@@ -1,8 +1,8 @@
 /**
  * 学習スケジュール（index.html #screen-ob-schedule-time、Figma CH0-22）。
  * - M-33：時間帯カードは1つだけ選べる（選ぶと紫になり枠が一瞬ふくらむ）
- * - M-38：時間帯ごとの時刻の初期値は**未定**のため、時間帯を選んでも時刻は自動で変えない。
- *         時刻が変わったときは数字がクロスフェード（0.2秒）。「その他」も時刻を変えない
+ * - M-38：時間帯を選ぶと時刻が既定値に変わる（朝 07:00・ランチ 12:30・夕食前後 18:00・寝る前 21:30）。
+ *         ただし時刻を自分で編集した後は変えない。「その他」も変えない。時刻が変わったときは数字がクロスフェード（0.2秒）
  * - M-34 / M-35 / M-36：時刻をタップすると編集シート（ホイール）が開く
  * - M-37：トグルは軽い触覚付き。NEXT は「時間帯の選択」と「お知らせ ON」の両方がそろったときだけ押せる
  * 「その他」を選ぶと編集シートを自動で開く（Web版と同じ）。
@@ -38,7 +38,12 @@ export default function ScheduleScreen() {
   };
 
   const choose = (id: string) => {
-    update((r) => ({ ...r, schedule: { ...r.schedule, timeSlot: id } }));
+    update((r) => {
+      // 自分で時刻を編集した後でなければ、時間帯の既定の時刻に変える（index.html と同じ）
+      const preset = schedule.defaultTimes[id];
+      const notifyTime = !r.schedule.userCustomizedTime && preset ? preset : r.schedule.notifyTime;
+      return { ...r, schedule: { ...r.schedule, timeSlot: id, notifyTime } };
+    });
     if (id === 'other') openEditor();
   };
 
@@ -96,7 +101,7 @@ export default function ScheduleScreen() {
         confirmLabel={tr(schedule.submit)}
         onClose={() => setEditing(false)}
         onConfirm={() => {
-          update((r) => ({ ...r, schedule: { ...r.schedule, notifyTime: `${pad2(draft.h)}:${pad2(draft.m)}` } }));
+          update((r) => ({ ...r, schedule: { ...r.schedule, notifyTime: `${pad2(draft.h)}:${pad2(draft.m)}`, userCustomizedTime: true } }));
           setEditing(false);
         }}
       >

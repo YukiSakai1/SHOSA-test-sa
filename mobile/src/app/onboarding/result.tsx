@@ -51,7 +51,7 @@ export default function DiagnosisResultScreen() {
   };
 
   return (
-    <PatternBackground {...patterns.beigeLines} color="#FF805C">
+    <PatternBackground {...patterns.beige} color="#FF805C" patternColor="rgba(255,255,255,0.18)">
       <View style={styles.dim} />
       <Appear from="rise" duration={PAPER_MS} distance={120} style={[styles.paper, { top: insets.top + 33 }]}>
         <Image source={images.resultPaper} style={styles.paperImg} resizeMode="stretch" />
