@@ -287,7 +287,8 @@ export function TalkLayout({
   const top = 0;
   return (
     <View style={[styles.room, style]}>
-      <PatternBackground {...patterns.beige} color="#FAF8F2" align="center" style={[styles.wall, { height: top + 380 }]} />
+      {/* 壁の柄は他の画面（160）よりやや小さく（128） */}
+      <PatternBackground {...patterns.beige} tile={128} color="#FAF8F2" align="center" style={[styles.wall, { height: top + 380 }]} />
       <Svg style={[styles.floor, { top: top + 334 }]} width="100%" viewBox="0 0 402 540" preserveAspectRatio="none" pointerEvents="none">
         <Defs>
           <Pattern id={carpetId} patternUnits="userSpaceOnUse" width={160} height={55.5}>

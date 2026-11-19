@@ -6,10 +6,9 @@
  * 背景は水色。紙吹雪と成功の触覚も 0章と同じ。
  */
 import { router } from 'expo-router';
-import { Image, StyleSheet, Text } from 'react-native';
-import { Celebration } from '@/components/Celebration';
+import { StyleSheet, Text } from 'react-native';
+import { Celebration, CelebrationDivider } from '@/components/Celebration';
 import { colors } from '@/theme/colors';
-import { images } from '@/theme/images';
 import { CtaButton } from '@/components/ui';
 import { chapter1 } from '@/content/chapter1';
 import { markChapter1Completed } from '@/features/chapter1/progress';
@@ -36,13 +35,9 @@ export default function Chapter1CompleteScreen() {
       footer={<CtaButton testID="chapter1-finish" variant="primary" pulse label={tr(end.button)} onPress={() => void finish()} />}
     >
       {/* Figma CH1-END：解放の文言（20 Bold）→ 16 → 区切り線（240×13）→ 20 → 本文（16 / 24）→ 6 → 注記（12 / 24）。0章の完了画面と同じ間隔 */}
-      {/* 2章を出さないあいだは、「2章が解放されました」の文言と区切り線を出さない */}
-      {CHAPTER2_ENABLED && (
-        <>
-          <Text style={styles.unlocked}>{tr(end.unlockLabel)}</Text>
-          <Image source={images.goldDivider} style={styles.divider} resizeMode="contain" tintColor={colors.white} />
-        </>
-      )}
+      {/* 2章を出さないあいだは「2章が解放されました」の文言だけ出さない。区切り線（frames.png）は Figma どおり本文の上に置く */}
+      {CHAPTER2_ENABLED && <Text style={styles.unlocked}>{tr(end.unlockLabel)}</Text>}
+      <CelebrationDivider style={styles.divider} />
       <Text style={styles.body}>{tr(end.body)}</Text>
       <Text style={styles.note}>{tr(end.note)}</Text>
     </Celebration>
@@ -51,7 +46,7 @@ export default function Chapter1CompleteScreen() {
 
 const styles = StyleSheet.create({
   unlocked: { fontSize: 20, lineHeight: 28, fontWeight: '700', color: colors.white, textAlign: 'center', marginBottom: 16 },
-  divider: { alignSelf: 'center', width: 240, height: 13, marginBottom: 20 },
+  divider: { marginTop: 0, marginBottom: 20 },
   body: { fontSize: 16, lineHeight: 24, color: colors.white, textAlign: 'center' },
   note: { fontSize: 12, lineHeight: 24, color: colors.white, textAlign: 'center', marginTop: 6 },
 });

@@ -68,6 +68,8 @@ export const images = {
   timeNight: require('../../assets/images/time_night.png'),
   timeOther: require('../../assets/images/time_other.png'),
   cardBorderOtherExpanded: require('../../assets/images/card_border_other_expanded.png'),
+  // Figma の区切り線（frames：240×13、#E6D8BD。完了画面では白く着色して使う）
+  frames: require('../../assets/images/frames.png'),
   goldDivider: require('../../assets/images/gold_divider.png'),
   radioSelected: require('../../assets/images/radio_selected.png'),
   radioUnselected: require('../../assets/images/radio_unselected.png'),

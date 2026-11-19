@@ -3,14 +3,13 @@
  * 「結果を見る」ボタンは紫（360×48）で、左にクリップボードのアイコン（41×50）。脈動する（1.5秒周期）。
  */
 import { router } from 'expo-router';
-import { Animated, Image, StyleSheet, Text, View } from 'react-native';
+import { Animated, StyleSheet, Text, View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { Celebration } from '@/components/Celebration';
+import { Celebration, CelebrationDivider } from '@/components/Celebration';
 import { PressScale, usePulse } from '@/components/ui';
 import { diagnosisComplete } from '@/content/onboarding';
 import { useLang } from '@/i18n/LanguageProvider';
 import { colors } from '@/theme/colors';
-import { images } from '@/theme/images';
 import { useReducedMotion } from '@/theme/motion';
 import { svgIcons } from '@/theme/svgIcons';
 
@@ -20,8 +19,8 @@ export default function DiagnosisCompleteScreen() {
   return (
     <Celebration variant="web" background="#FF805C" title={tr(c.title)} medal="medalBadge" footer={<ResultButton label={tr(c.button)} />}>
       <Text style={styles.unlocked}>{tr(c.unlocked)}</Text>
-      {/* decor_gold_divider を白くしたもの（brightness(0) invert(1)） */}
-      <Image source={images.goldDivider} style={styles.divider} resizeMode="contain" tintColor={colors.white} />
+      {/* Figma の区切り線（星形のきらめきと、先の細い線） */}
+      <CelebrationDivider style={styles.divider} />
       <Text style={styles.body}>{tr(c.body)}</Text>
       <Text style={styles.hint}>{tr(c.hint)}</Text>
     </Celebration>
@@ -46,7 +45,7 @@ function ResultButton({ label }: { label: string }) {
 
 const styles = StyleSheet.create({
   unlocked: { fontSize: 20, lineHeight: 28, fontWeight: '700', color: colors.white, textAlign: 'center', marginBottom: 16 },
-  divider: { alignSelf: 'center', width: 240, height: 13, marginBottom: 20 },
+  divider: { marginTop: 0, marginBottom: 20 },
   body: { fontSize: 16, lineHeight: 24, color: colors.white, textAlign: 'center', marginBottom: 17 },
   hint: { fontSize: 16, lineHeight: 24, color: colors.white, textAlign: 'center' },
   button: {

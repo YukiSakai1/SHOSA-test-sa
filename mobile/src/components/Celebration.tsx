@@ -7,7 +7,7 @@
  * M-04：視差効果を減らす ON のときは、落下・回転・光・紙吹雪なしでフェードだけ。
  */
 import { Children, useEffect, useRef, type ReactNode } from 'react';
-import { Animated, Easing, Image, StyleSheet, Text, View } from 'react-native';
+import { Animated, Easing, Image, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Mask, Path, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Appear } from '@/components/Appear';
@@ -103,8 +103,8 @@ export function Celebration({ background, title, medal, children, footer, varian
 }
 
 /**
- * index.html .ch19-programmatic-sunburst（プログラム描画）：
- * 白 22% の光線を 7.5° おきに 24本（直径 540）。中心から外へ消えていくマスク（中心 100% → 35% で 85% → 70% で 0）。
+ * トロフィーの後ろの放射線（Figma の bg3：直径 540）。白 28% の光線が 12本、30° おきで、1本の幅は約 12°（太くて少ない）。
+ * 外のふちだけ、ゆるやかに消える（半径の 80% まではそのまま）。
  * 0.35秒後に 0.8秒で 0.9倍から現れ（ch19SunburstFadeIn）、24秒で 1回転し続ける（ch19SunburstSpin）。
  */
 const SUN = 270;
@@ -131,25 +131,25 @@ function WebSunburst() {
     <Animated.View pointerEvents="none" style={[styles.sunburstWeb, { opacity: enter, transform: [{ scale }, { rotate }] }]}>
       <Svg width={SUN * 2} height={SUN * 2} viewBox={`${-SUN} ${-SUN} ${SUN * 2} ${SUN * 2}`}>
         <Defs>
-          {/* CSS の radial-gradient(circle) は角までの距離（270×√2）が 100%。35% → 半径の 0.495、70% → 0.99 */}
           <RadialGradient id={fadeId} cx={0} cy={0} r={SUN} gradientUnits="userSpaceOnUse">
             <Stop offset="0" stopColor="#FFFFFF" stopOpacity={1} />
-            <Stop offset="0.495" stopColor="#FFFFFF" stopOpacity={0.85} />
-            <Stop offset="0.99" stopColor="#FFFFFF" stopOpacity={0} />
+            <Stop offset="0.8" stopColor="#FFFFFF" stopOpacity={1} />
+            <Stop offset="1" stopColor="#FFFFFF" stopOpacity={0} />
           </RadialGradient>
           <Mask id={maskId} x={-SUN} y={-SUN} width={SUN * 2} height={SUN * 2} maskUnits="userSpaceOnUse">
             <Rect x={-SUN} y={-SUN} width={SUN * 2} height={SUN * 2} fill={`url(#${fadeId})`} />
           </Mask>
         </Defs>
         <G mask={`url(#${maskId})`}>
-          {Array.from({ length: 24 }, (_, i) => {
-            const a0 = (i * 15 * Math.PI) / 180;
-            const a1 = ((i * 15 + 7.5) * Math.PI) / 180;
+          {Array.from({ length: 12 }, (_, i) => {
+            // 上（0°）を中心に、左右 6° ずつ（幅 12°）
+            const a0 = ((i * 30 - 6) * Math.PI) / 180;
+            const a1 = ((i * 30 + 6) * Math.PI) / 180;
             return (
               <Path
                 key={i}
                 d={`M0,0 L${SUN * Math.sin(a0)},${-SUN * Math.cos(a0)} A${SUN},${SUN} 0 0 1 ${SUN * Math.sin(a1)},${-SUN * Math.cos(a1)} Z`}
-                fill="rgba(255,255,255,0.22)"
+                fill="rgba(255,255,255,0.28)"
               />
             );
           })}
@@ -162,7 +162,7 @@ function WebSunburst() {
 /**
  * トロフィーの後ろの白い光（index.html .ch19-trophy-halo をもとに、白いもやとして強めたもの）。どの背景色でも白く見えるようにしている。
  * - 内側の後光：直径 270 の白（中心 98% → 外へ消える）を 18px ぼかす。0.55秒後に 0.85倍から現れ、2.4秒で
- *   55% ⇔ 100%・0.92倍 ⇔ 1.12倍 を行き来する（脈動をはっきり見せる）
+ *   55% ⇔ 100%・0.92倍 ⇔ 1.2倍 を行き来する（最大のときを強く、脈動をはっきり見せる）
  * - 外側のもや：直径 330 の白（中心 40%）を 24px ぼかし、後光と逆の位相で 1.15倍 ⇔ 0.95倍・70% ⇔ 30% に脈動する
  */
 const HALO = 135;
@@ -195,9 +195,9 @@ function WebHalo() {
   const opacity = Animated.multiply(enter, pulse.interpolate({ inputRange: [0, 1], outputRange: [0.55, 1] }));
   const scale = Animated.multiply(
     enter.interpolate({ inputRange: [0, 1], outputRange: [0.85, 1] }),
-    pulse.interpolate({ inputRange: [0, 1], outputRange: [0.92, 1.12] }),
+    pulse.interpolate({ inputRange: [0, 1], outputRange: [0.92, 1.2] }),
   );
-  const mistOpacity = Animated.multiply(enter, pulse.interpolate({ inputRange: [0, 1], outputRange: [0.7, 0.3] }));
+  const mistOpacity = Animated.multiply(enter, pulse.interpolate({ inputRange: [0, 1], outputRange: [0.8, 0.35] }));
   const mistScale = pulse.interpolate({ inputRange: [0, 1], outputRange: [1.15, 0.95] });
   const size = (HALO + HALO_PAD) * 2;
   const mistSize = (MIST + MIST_PAD) * 2;
@@ -207,8 +207,8 @@ function WebHalo() {
         <Svg width={mistSize} height={mistSize}>
           <Defs>
             <RadialGradient id={mistId} cx={mistSize / 2} cy={mistSize / 2} r={MIST} gradientUnits="userSpaceOnUse">
-              <Stop offset="0" stopColor="#FFFFFF" stopOpacity={0.4} />
-              <Stop offset="0.55" stopColor="#FFFFFF" stopOpacity={0.22} />
+              <Stop offset="0" stopColor="#FFFFFF" stopOpacity={0.55} />
+              <Stop offset="0.55" stopColor="#FFFFFF" stopOpacity={0.32} />
               <Stop offset="1" stopColor="#FFFFFF" stopOpacity={0} />
             </RadialGradient>
             <Filter id={mistBlurId} x="-30%" y="-30%" width="160%" height="160%">
@@ -222,11 +222,11 @@ function WebHalo() {
         <Svg width={size} height={size}>
           <Defs>
             <RadialGradient id={haloId} cx={size / 2} cy={size / 2} r={HALO * Math.SQRT2} gradientUnits="userSpaceOnUse">
-              <Stop offset="0" stopColor="#FFFFFF" stopOpacity={0.98} />
-              <Stop offset="0.25" stopColor="#FFFFFF" stopOpacity={0.78} />
-              <Stop offset="0.5" stopColor="#FFFFFF" stopOpacity={0.4} />
-              <Stop offset="0.68" stopColor="#FFFFFF" stopOpacity={0.14} />
-              <Stop offset="0.8" stopColor="#FFFFFF" stopOpacity={0} />
+              <Stop offset="0" stopColor="#FFFFFF" stopOpacity={1} />
+              <Stop offset="0.25" stopColor="#FFFFFF" stopOpacity={0.92} />
+              <Stop offset="0.5" stopColor="#FFFFFF" stopOpacity={0.58} />
+              <Stop offset="0.68" stopColor="#FFFFFF" stopOpacity={0.26} />
+              <Stop offset="0.86" stopColor="#FFFFFF" stopOpacity={0} />
             </RadialGradient>
             <Filter id={blurId} x="-30%" y="-30%" width="160%" height="160%">
               <FeGaussianBlur stdDeviation={18} />
@@ -304,9 +304,16 @@ function Shine({ delay }: { delay: number }) {
   );
 }
 
-/** 解放の文言と本文の間の区切り線（Figma の frames 240×13） */
-export function CelebrationDivider() {
-  return <Image source={images.goldDivider} style={{ width: 240, height: 13, alignSelf: 'center', marginTop: 8, tintColor: colors.white }} resizeMode="contain" />;
+/**
+ * 解放の文言と本文の間の区切り線（Figma の frames：幅 240×13）。assets の frames.png（#E6D8BD）を白く着色して使う。
+ * 星形のきらめき 7つ（中央ほど大きい）と、先の細くなる左右の線。
+ */
+export function CelebrationDivider({ style }: { style?: StyleProp<ViewStyle> }) {
+  return (
+    <View style={[{ alignSelf: 'center', marginTop: 8 }, style]}>
+      <Image source={images.frames} style={{ width: 240, height: 13 }} resizeMode="contain" tintColor={colors.white} />
+    </View>
+  );
 }
 
 export const celebrationText = StyleSheet.create({

@@ -2,6 +2,7 @@
  * 第1章 2択問題（Figma CH1-L01-03）。
  * QUESTION → 問題文（左そろえ・Regular 16 / 24）→ 20 あけて選択肢（360×95 のカードを 10 あけて2つ）。
  * 選択肢カード：左 34 に丸（30・白・#DDDDDD の枠）、その 22 右から文字（幅 240・Bold 15 / 21・#333333）。
+ * 丸の中身は Figma に指定がないため、いまは空のまま（仮）。
  */
 import { useCallback, useState } from 'react';
 import { Redirect, router, useFocusEffect, useLocalSearchParams } from 'expo-router';
