@@ -46,9 +46,9 @@ export function progressPercent(lessonIndex: number, stepInLesson: 1 | 2 | 3 | 4
 /**
  * ヘッダー（Figma：セーフエリアの下 14、高さ 32）。左に ✕ の丸（32・白・#E6D8BD の枠・金茶の ✕）、
  * 進捗バー（0章と同じ：幅 276・高さ 12）、右端に EN。画面の左端から 21。
- * exitTo は ✕ で中断したときの戻り先（既定はタイトル）。
+ * exitTo は ✕ で中断したときの戻り先（既定はタイトル）。bare は ✕ だけ（進捗バーと EN を出さない：2章のシナリオ完了など）。
  */
-export function ChapterHeader({ percent, exitTo = '/', style }: { percent: number; exitTo?: Href; style?: StyleProp<ViewStyle> }) {
+export function ChapterHeader({ percent, exitTo = '/', style, bare = false }: { percent: number; exitTo?: Href; style?: StyleProp<ViewStyle>; bare?: boolean }) {
   const { t } = useLang();
   const insets = useSafeAreaInsets();
   const [confirming, setConfirming] = useState(false);
@@ -59,10 +59,14 @@ export function ChapterHeader({ percent, exitTo = '/', style }: { percent: numbe
           <Path d="M1.5 1.5 L13.5 13.5 M13.5 1.5 L1.5 13.5" stroke={ch1.speaker} strokeWidth={3} strokeLinecap="round" />
         </Svg>
       </PressScale>
-      <View style={styles.trackWrap}>
-        <ProgressBar percent={percent} variant="ch0" />
-      </View>
-      <LangToggle style={{ marginLeft: 'auto' }} />
+      {!bare && (
+        <>
+          <View style={styles.trackWrap}>
+            <ProgressBar percent={percent} variant="ch0" />
+          </View>
+          <LangToggle style={{ marginLeft: 'auto' }} />
+        </>
+      )}
       <ConfirmDialog
         visible={confirming}
         title={t('exitConfirmTitle')}
@@ -127,10 +131,10 @@ export function Ch1CardLeaf({ corner, edge = 2, color = ch1.line }: { corner: 't
 }
 
 /** カード右下の「進む」ボタン（Figma：32×32 の白い丸、枠 #E6D8BD、カードの上から 173・右から 21） */
-export function Ch1AdvanceButton({ onPress, label, turn = 1 }: { onPress: () => void; label: string; turn?: 1 | 2 }) {
+export function Ch1AdvanceButton({ onPress, label, turn = 1, inline = false }: { onPress: () => void; label: string; turn?: 1 | 2; inline?: boolean }) {
   return (
-    // 会話の 2/2 では吹き出しの下（カードの上から 332）に移る
-    <View style={[styles.advance, turn === 2 && { top: 332 }]}>
+    // 会話の 2/2 では吹き出しの下（カードの上から 332）に移る。inline は文の下 20 に右そろえで置く（2章：段落の数で文の長さが変わるため）
+    <View style={inline ? styles.advanceInline : [styles.advance, turn === 2 && { top: 332 }]}>
       <PressScale accessibilityLabel={label} onPress={onPress} hitSlop={10} style={styles.advanceHit}>
         <Svg width={32} height={32} viewBox="0 0 32 32">
           <Circle cx={16} cy={16} r={15.5} fill="#FFFFFF" stroke={ch1.line} strokeWidth={1} />
@@ -145,13 +149,16 @@ export function Ch1AdvanceButton({ onPress, label, turn = 1 }: { onPress: () => 
 interface Props {
   percent: number;
   exitTo?: Href;
-  image: ImageKey;
-  imageAlt: string;
+  /** 場面画像。無いとき（2章の Question）は、ヘッダーの下から白いカードが始まる */
+  image?: ImageKey;
+  imageAlt?: string;
   label: string;
   children: ReactNode;
+  /** 画面下に固定するボタン（2章の Question の NEXT。幅 360・下端から 32） */
+  footer?: ReactNode;
 }
 
-export function PlayLayout({ percent, exitTo, image, imageAlt, label, children }: Props) {
+export function PlayLayout({ percent, exitTo, image, imageAlt, label, children, footer }: Props) {
   const insets = useSafeAreaInsets();
   const gradId = useSvgId('scenefade');
   return (
@@ -161,21 +168,23 @@ export function PlayLayout({ percent, exitTo, image, imageAlt, label, children }
       <ChapterHeader percent={percent} exitTo={exitTo} style={{ paddingBottom: 20 }} />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} bounces={false}>
         {/* 場面画像（Figma：402×342） */}
-        <View style={styles.scene}>
-          <Image source={images[image]} accessibilityLabel={imageAlt} style={styles.sceneImg} resizeMode="cover" />
-          {/* 下の 40 は透明 → 黒 20% のグラデーション */}
-          <Svg style={styles.sceneFade} width="100%" height={40} preserveAspectRatio="none" pointerEvents="none">
-            <Defs>
-              <LinearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-                <Stop offset="0" stopColor="#000000" stopOpacity={0} />
-                <Stop offset="1" stopColor="#000000" stopOpacity={0.2} />
-              </LinearGradient>
-            </Defs>
-            <Rect width="100%" height="100%" fill={`url(#${gradId})`} />
-          </Svg>
-        </View>
-        {/* 白いカード：場面画像に 10 かさなる。上の角は内側に丸く欠け、縁に #E6D8BD の帯 */}
-        <View style={[styles.card, { paddingBottom: insets.bottom + 28 }]}>
+        {image && (
+          <View style={styles.scene}>
+            <Image source={images[image]} accessibilityLabel={imageAlt} style={styles.sceneImg} resizeMode="cover" />
+            {/* 下の 40 は透明 → 黒 20% のグラデーション */}
+            <Svg style={styles.sceneFade} width="100%" height={40} preserveAspectRatio="none" pointerEvents="none">
+              <Defs>
+                <LinearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+                  <Stop offset="0" stopColor="#000000" stopOpacity={0} />
+                  <Stop offset="1" stopColor="#000000" stopOpacity={0.2} />
+                </LinearGradient>
+              </Defs>
+              <Rect width="100%" height="100%" fill={`url(#${gradId})`} />
+            </Svg>
+          </View>
+        )}
+        {/* 白いカード：場面画像に 10 かさなる（画像が無いときはヘッダーの下から）。上の角は内側に丸く欠け、縁に #E6D8BD の帯 */}
+        <View style={[styles.card, !image && { marginTop: 0 }, { paddingBottom: insets.bottom + 28 + (footer ? 80 : 0) }]}>
           <View style={styles.cardFill} />
           <SvgXml xml={CARD_TOP_XML} width="100%" height={16} preserveAspectRatio="none" style={styles.cardTop} />
           <Ch1CardLeaf corner="tl" />
@@ -184,11 +193,13 @@ export function PlayLayout({ percent, exitTo, image, imageAlt, label, children }
           {children}
         </View>
       </ScrollView>
+      {footer && <View style={[styles.footer, { paddingBottom: insets.bottom + 32 }]}>{footer}</View>}
     </PatternBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  footer: { position: 'absolute', left: 21, right: 21, bottom: 0 },
   // ヘッダー：左 21、✕の丸 32、進捗バー（0章と同じ）は ✕ の 10 右・幅 276、EN は右端
   header: { flexDirection: 'row', alignItems: 'center', paddingLeft: 21, zIndex: 20 },
   close: {
@@ -220,6 +231,7 @@ const styles = StyleSheet.create({
     // Figma の DROP_SHADOW は非表示（visible: false）なので、影は付けない
   },
   advance: { position: 'absolute', top: 173, right: 21 },
+  advanceInline: { alignSelf: 'flex-end', marginTop: 20, marginRight: -20 },
   advanceHit: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
 });
 

@@ -25,10 +25,10 @@ export default function ScenarioCompleteScreen() {
   };
 
   return (
-    <MilestoneCard title={`[${index + 1}/${role.scenarios.length}] ${fill(tr(c.title), { title: tr(scenario.title) })}`} body={tr(c.body)}>
+    <MilestoneCard title={fill(tr(c.title), { title: tr(scenario.title) })} body={tr(c.body)}>
       <CtaButton testID="scenario-next" label={tr(c.button)} onPress={next} />
-      <PressScale onPress={() => router.dismissTo('/chapter2/roles')}>
-        <Text style={{ fontSize: 16, fontWeight: '700', color: '#666666' }}>{tr(chapter2.roles.back)}</Text>
+      <PressScale onPress={() => router.dismissTo('/chapter2/roles')} style={{ marginBottom: -6 }}>
+        <Text style={{ fontSize: 16, lineHeight: 24, fontWeight: '700', color: '#666666' }}>{tr(chapter2.roles.back)}</Text>
       </PressScale>
     </MilestoneCard>
   );

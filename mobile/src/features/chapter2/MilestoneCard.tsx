@@ -1,50 +1,42 @@
 /**
- * シナリオ完了／診断完了（Figma CH2-S1-08 / CH2-03）。
- * Figma の配置：タイトルは画面上部（セーフエリア上端から 21）、中央に ✔、
- * 本文はセーフエリア上端から 353、ボタンは画面下（下端から 32）。
+ * シナリオ完了／診断完了（Figma CH2-S1-08 / CH2-03）。位置は Figma の画面（402×874、上のステータスバー 59 を含む）から。
+ *   ✕（上から 73・進捗バーなし）→ タイトル（上から 83・Bold 20・2行・中央）→ 区切り線（上から 155・285×15）
+ *   → ✔ の丸（90×90・#00C9C3・上から 295）→ 本文（上から 415・Regular 16）→ 下にボタン（360×48）。
+ * 背景はベージュに柄。
  */
 import type { ReactNode } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Svg, { Circle, Path } from 'react-native-svg';
+import Svg, { Path } from 'react-native-svg';
 import { PatternBackground, patterns } from '@/components/PatternBackground';
-import { colors } from '@/theme/colors';
-import { layout } from '@/theme/layout';
+import { ChapterHeader } from '@/features/chapter1/PlayLayout';
+import { images } from '@/theme/images';
+
+const FIGMA_TOP = 59;
 
 export function MilestoneCard({ title, body, children }: { title: string; body: string; children: ReactNode }) {
   const insets = useSafeAreaInsets();
+  const y = (figmaY: number) => insets.top + figmaY - FIGMA_TOP;
   return (
-    <PatternBackground {...patterns.beige} style={{ paddingTop: insets.top + 21, paddingBottom: insets.bottom + layout.ctaBottom }}>
-      <Text style={styles.title}>{title}</Text>
-      <View style={styles.badgeArea}>
-        <View style={styles.badgeHalo}>
-          <Svg width={120} height={120} viewBox="0 0 64 64">
-            <Circle cx={32} cy={32} r={30} fill={colors.turquoise} />
-            <Path d="M 19,33 L 28,42 L 45,23" stroke={colors.white} strokeWidth={5} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-          </Svg>
-        </View>
+    <PatternBackground {...patterns.beige}>
+      <ChapterHeader percent={100} exitTo="/chapter2/roles" bare />
+      <Text style={[styles.title, { top: y(83) }]}>{title}</Text>
+      <Image source={images.frames} style={[styles.divider, { top: y(155) }]} resizeMode="contain" />
+      <View style={[styles.check, { top: y(295) }]}>
+        <Svg width={46} height={30} viewBox="0 0 46 30">
+          <Path d="M 5 15 L 17 25 L 41 5" stroke="#FFFFFF" strokeWidth={10} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        </Svg>
       </View>
-      <Text style={styles.body}>{body}</Text>
-      <View style={{ flex: 1 }} />
-      <View style={styles.actions}>{children}</View>
+      <Text style={[styles.body, { top: y(415) }]}>{body}</Text>
+      <View style={[styles.actions, { bottom: insets.bottom + 32 }]}>{children}</View>
     </PatternBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 20, lineHeight: 30, fontWeight: '700', color: colors.text, textAlign: 'center', paddingHorizontal: 76 },
-  // タイトル下端（約 81）から本文（353）までの領域
-  badgeArea: { height: 272, alignItems: 'center', justifyContent: 'center' },
-  badgeHalo: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    backgroundColor: colors.white,
-    borderWidth: 2,
-    borderColor: colors.goldBorder,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  body: { fontSize: 16, lineHeight: 24, color: colors.black, textAlign: 'center', paddingHorizontal: 46 },
-  actions: { paddingHorizontal: layout.sideMargin, gap: 30, alignItems: 'center' },
+  title: { position: 'absolute', left: 76, right: 76, fontSize: 20, lineHeight: 30, fontWeight: '700', letterSpacing: 1.5, color: '#333333', textAlign: 'center' },
+  divider: { position: 'absolute', alignSelf: 'center', width: 285, height: 15 },
+  check: { position: 'absolute', alignSelf: 'center', width: 90, height: 90, borderRadius: 45, backgroundColor: '#00C9C3', alignItems: 'center', justifyContent: 'center' },
+  body: { position: 'absolute', left: 46, right: 46, fontSize: 16, lineHeight: 24, color: '#000000', textAlign: 'center' },
+  actions: { position: 'absolute', left: 21, right: 21, gap: 30, alignItems: 'center' },
 });

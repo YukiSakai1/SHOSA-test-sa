@@ -1,26 +1,24 @@
 /**
  * 2章 Question（Figma CH2-S1-03 / 05 / 07）。正解は無く、選んだ行動傾向を記録する。
- * 1つ選ぶと NEXT が押せる（1章と違い、選んだ瞬間には進まない）。
+ * 1章の問題と同じ見た目：場面画像は無く、ヘッダーの下から白いカード（QUESTION）→ 問題文 → 20 あけて選択肢（360×95 のカードを 10 あけて並べる）。
+ * 選んだカードは紫（#715BE1）の枠。1つ選ぶと、画面下の NEXT（360×48・ターコイズ）が押せる（1章と違い、選んだ瞬間には進まない）。
  */
 import { useState } from 'react';
 import { Redirect, router } from 'expo-router';
-import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CtaButton, Flourish, PressScale } from '@/components/ui';
+import { ImageBackground, StyleSheet, Text, View } from 'react-native';
+import { CtaButton, PressScale } from '@/components/ui';
 import { chapter2, type Tendency } from '@/content/chapter2';
-import { ChapterHeader } from '@/features/chapter1/PlayLayout';
+import { PlayLayout, playTextStyles } from '@/features/chapter1/PlayLayout';
 import { answerKey, useChapter2 } from '@/features/chapter2/Chapter2Provider';
 import { playPercent, usePlayParams } from '@/features/chapter2/usePlayParams';
 import { useLang } from '@/i18n/LanguageProvider';
-import { colors, fonts } from '@/theme/colors';
+import { colors } from '@/theme/colors';
 import { images } from '@/theme/images';
-import { layout } from '@/theme/layout';
 
 export default function Chapter2QuestionScreen() {
   const p = usePlayParams();
   const { t, tr } = useLang();
   const { record, answer } = useChapter2();
-  const insets = useSafeAreaInsets();
   const saved = p ? record.answers[p.role.id]?.[answerKey(p.scenario.id, p.stepIndex)] : undefined;
   const [selected, setSelected] = useState<number | null>(null);
   if (!p) return <Redirect href="/chapter2/roles" />;
@@ -40,60 +38,40 @@ export default function Chapter2QuestionScreen() {
   };
 
   return (
-    // Figma CH2-S1-03：シーン画像は無く、ヘッダー直下から白いカード。NEXT は画面下に固定
-    <View style={[styles.screen, { paddingTop: insets.top }]}>
-      <ChapterHeader percent={playPercent(scenario, stepIndex, 2)} exitTo="/chapter2/roles" />
-      <ScrollView contentContainerStyle={styles.card}>
-        <View style={styles.band} />
-        <Flourish corner="tl" />
-        <Flourish corner="tr" />
-        <Text style={styles.label}>{t('questionLabel')}</Text>
-        <Text style={styles.prompt}>{tr(chapter2.questionPrompt)}</Text>
-        <View style={styles.choices}>
-          {step.choices.map((c, i) => (
-            <PressScale key={i} testID={`c2-choice-${i}`} accessibilityRole="radio" accessibilityState={{ checked: current === i }} onPress={() => setSelected(i)}>
-              <ImageBackground
-                source={current === i ? images.cardBorderSelected : images.cardBorderUnselected}
-                resizeMode="stretch"
-                style={styles.choice}
-                imageStyle={{ width: '100%', height: '100%' }}
-              >
-                <Text style={[styles.letter, current === i && styles.letterSelected]}>{String.fromCharCode(65 + i)}</Text>
-                <Text style={[styles.choiceText, current === i && { color: colors.purple }]}>{tr(c.text)}</Text>
-              </ImageBackground>
-            </PressScale>
-          ))}
-        </View>
-      </ScrollView>
-      <View style={[styles.bottom, { paddingBottom: insets.bottom + layout.ctaBottom }]}>
-        <CtaButton testID="c2-next" label={t('next')} disabled={current < 0} onPress={next} />
+    <PlayLayout
+      percent={playPercent(scenario, stepIndex, 2)}
+      exitTo="/chapter2/roles"
+      label={t('questionLabel')}
+      footer={<CtaButton testID="c2-next" label={t('next')} disabled={current < 0} onPress={next} />}
+    >
+      <Text style={playTextStyles.narrative}>{tr(chapter2.questionPrompt)}</Text>
+      <View style={styles.choices}>
+        {step.choices.map((c, i) => (
+          <PressScale key={i} testID={`c2-choice-${i}`} accessibilityRole="radio" accessibilityState={{ checked: current === i }} onPress={() => setSelected(i)}>
+            <ImageBackground
+              source={current === i ? images.cardBorderSelected : images.cardBorderUnselected}
+              resizeMode="stretch"
+              style={styles.choice}
+              imageStyle={styles.choiceBorder}
+            >
+              <View style={[styles.dot, current === i && styles.dotSelected]} />
+              <Text style={styles.choiceText}>{tr(c.text)}</Text>
+            </ImageBackground>
+          </PressScale>
+        ))}
       </View>
-    </View>
+    </PlayLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.playBackground },
-  card: { flexGrow: 1, backgroundColor: colors.white, paddingHorizontal: 21, paddingTop: 30, paddingBottom: 16 },
-  band: { position: 'absolute', top: 0, left: 0, right: 0, height: 8, backgroundColor: colors.goldBorder },
-  label: { fontFamily: fonts.montserrat, fontSize: 14, color: colors.goldLabel, letterSpacing: 2, textAlign: 'center', marginBottom: 20 },
-  prompt: { fontSize: 16, lineHeight: 24, color: colors.black, paddingHorizontal: 20, marginBottom: 20 },
-  choices: { gap: 10 },
-  // 選択肢の文字は x107・幅240（Figma）。左に A〜D の丸を置く
-  choice: { minHeight: 95, flexDirection: 'row', alignItems: 'center', gap: 16, paddingLeft: 30, paddingRight: 34, paddingVertical: 14 },
-  letter: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    textAlign: 'center',
-    lineHeight: 36,
-    fontFamily: fonts.montserrat,
-    fontSize: 16,
-    color: colors.goldDark,
-    backgroundColor: colors.beige,
-    overflow: 'hidden',
-  },
-  letterSelected: { color: colors.white, backgroundColor: colors.purple },
-  choiceText: { flex: 1, fontSize: 15, lineHeight: 22, fontWeight: '700', color: colors.text },
-  bottom: { paddingHorizontal: 21, paddingTop: 8, backgroundColor: colors.white },
+  // 問題文の下端から 20。カードは文字の左右 41 より 20 外へ広げて、幅 360（左右 21）にする
+  choices: { gap: 10, marginTop: 20, marginHorizontal: -20 },
+  choice: { minHeight: 95, flexDirection: 'row', alignItems: 'center', paddingLeft: 34, paddingRight: 28, paddingVertical: 16 },
+  // 枠画像を親の幅に合わせる（指定しないと Web で画像の元サイズのままはみ出す）
+  choiceBorder: { width: '100%', height: '100%' },
+  // 左の丸（30・白）。Figma に中身の指定は無い
+  dot: { width: 30, height: 30, borderRadius: 15, backgroundColor: colors.white, borderWidth: 1, borderColor: '#DDDDDD' },
+  dotSelected: { borderColor: colors.purple, borderWidth: 2 },
+  choiceText: { flex: 1, marginLeft: 22, fontSize: 15, lineHeight: 21, fontWeight: '700', color: '#333333' },
 });

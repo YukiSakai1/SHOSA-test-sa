@@ -17,11 +17,11 @@ import { useLang } from '@/i18n/LanguageProvider';
 import { images } from '@/theme/images';
 
 const FIGMA_TOP = 59;
-const PANEL = '#F6F1E8';
-const LINE = '#E6D8BD';
+export const PANEL = '#F6F1E8';
+export const LINE = '#E6D8BD';
 
 /** パネルの上辺（左右の角が内側に丸く欠けた形、Figma の bg_foucus）。下辺は上下を反転して使う */
-const EDGE_XML = `<svg xmlns="http://www.w3.org/2000/svg" width="355" height="24" viewBox="0 0 355 24"><path d="M355 24 L355 20 C343.95 20 335 11.05 335 0 L20 0 C20 11.05 11.05 20 0 20 L0 24 L355 24 Z" fill="${PANEL}"/></svg>`;
+export const EDGE_XML = `<svg xmlns="http://www.w3.org/2000/svg" width="355" height="24" viewBox="0 0 355 24"><path d="M355 24 L355 20 C343.95 20 335 11.05 335 0 L20 0 C20 11.05 11.05 20 0 20 L0 24 L355 24 Z" fill="${PANEL}"/></svg>`;
 
 /** 金のひし形の区切り線（index.html の SVG と同じ形） */
 export function DiamondDivider({
