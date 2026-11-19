@@ -85,12 +85,13 @@ function DiamondTile({ tile, color }: { tile: number; color: string }) {
 }
 
 export const patterns = {
-  // index.html .figma-ch0-01-screen：pattern_turquoise.svg を 160px で敷く（位置は左上から）
-  turquoise: { color: '#00C9C3', patternColor: 'rgba(255,255,255,0.22)', tile: 160 },
+  // index.html .figma-ch0-01-screen：pattern_turquoise.svg を敷く（位置は左上から）。index.html の 160px より少し細かい 128px
+  turquoise: { color: '#00C9C3', patternColor: 'rgba(255,255,255,0.22)', tile: 128 },
   // index.html .figma-carousel-screen（イントロ）：同じ柄を 90px で、中央上から
   turquoiseSmall: { color: '#00C9C3', patternColor: 'rgba(255,255,255,0.22)', tile: 90, align: 'center' },
   // ベージュの背景（言語選択・ヒアリング・時間・プロフィール・ジャーニー・結果、1章レッスン、2章など）。
   // スタート画面（turquoise）と同じ、やや引きのばした菱形とドットの柄を、ベージュで
-  beige: { color: '#F6F1E8', patternColor: 'rgba(196,162,101,0.22)', tile: 160 },
+  // 160px より少し細かい 128px
+  beige: { color: '#F6F1E8', patternColor: 'rgba(196,162,101,0.22)', tile: 128 },
   sky: { color: '#6DCAF1', patternColor: 'rgba(255,255,255,0.22)' },
 } as const;

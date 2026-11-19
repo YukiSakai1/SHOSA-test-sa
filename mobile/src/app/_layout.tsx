@@ -28,15 +28,18 @@ const STAGE_FRAME = { x: 0, y: 0, width: STAGE_W, height: STAGE_H };
  * スマホ枠の外（PC の背景）。index.html の body:has(...) と同じく、表示中の画面で変える。
  * - タイトル・イントロ・1章ガイド：ターコイズの菱形（90px、中央から）
  * - SHOSA が話す画面：カーペット（carpet_beige.jpg を幅 200 で）
- * - それ以外：#FAF8F2 にベージュの菱形とドットの柄（スタート画面と同じ形。160px、中央から）
+ * - それ以外：#FAF8F2 にベージュの菱形とドットの柄（スタート画面と同じ形。128px、中央から）
+ * スマホ枠は画面に合わせて縮小される（scale）ので、枠の外の柄も同じ縮小率にして、枠の中の柄と同じ見た目の大きさにそろえる。
  */
 const TALK_SCREENS = ['/onboarding/greet', '/onboarding/schedule-intro', '/onboarding/profile-intro', '/onboarding/aptitude-intro'];
-function backdropFor(pathname: string): ComponentProps<typeof PatternBackground> {
-  if (pathname === '/' || pathname.startsWith('/onboarding/intro') || pathname === '/chapter1') return patterns.turquoiseSmall;
-  if (TALK_SCREENS.includes(pathname)) {
-    return { color: '#BFA889', patternColor: 'transparent', variant: 'image', tileImage: images.carpetBeige, tile: 200, tileHeight: (200 * 181) / 522 };
+function backdropFor(pathname: string, scale: number): ComponentProps<typeof PatternBackground> {
+  if (pathname === '/' || pathname.startsWith('/onboarding/intro') || pathname === '/chapter1') {
+    return { ...patterns.turquoiseSmall, tile: patterns.turquoiseSmall.tile * scale };
   }
-  return { ...patterns.beige, color: '#FAF8F2', align: 'center' };
+  if (TALK_SCREENS.includes(pathname)) {
+    return { color: '#BFA889', patternColor: 'transparent', variant: 'image', tileImage: images.carpetBeige, tile: 200 * scale, tileHeight: ((200 * 181) / 522) * scale };
+  }
+  return { ...patterns.beige, tile: patterns.beige.tile * scale, color: '#FAF8F2', align: 'center' };
 }
 
 function PhoneFrame({ children }: { children: ReactNode }) {
@@ -54,7 +57,7 @@ function PhoneFrame({ children }: { children: ReactNode }) {
   // 894 = 874 + 枠 14 + 外側の線 6、420 = 402 + 14 + 4（index.html の --stage-scale と同じ計算）
   const scale = Math.min(1, (h - 32) / 894, (w - 32) / 420);
   return (
-    <PatternBackground {...backdropFor(pathname)} style={styles.webOuter}>
+    <PatternBackground {...backdropFor(pathname, scale)} style={styles.webOuter}>
       <View style={[styles.stageOutline, { transform: [{ scale }] }]}>
         <View style={styles.stage}>
           <SafeAreaFrameContext.Provider value={STAGE_FRAME}>

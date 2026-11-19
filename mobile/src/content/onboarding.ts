@@ -278,7 +278,7 @@ export const aptitudePageCount = Math.ceil(aptitudeQuestions.length / APTITUDE_P
 
 /* ---------- 診断結果（CH0-19 / CH0-20'） ---------- */
 export const diagnosisComplete = {
-  title: { ja: '適性診断完了！', en: 'Aptitude Test Complete!' },
+  title: { ja: '適性診断 完了！', en: 'Aptitude Test Complete!' },
   unlocked: { ja: '1章：Omotenashi Mindset が\n解放されました', en: 'Chapter 1: Omotenashi Mindset\nhas been unlocked' },
   body: {
     ja: 'お疲れ様でした！\nあなたの選択から、\nあなたに合った職種を紹介します。',
@@ -304,9 +304,10 @@ export const roleResults: RoleResult[] = [
     icon: { image: 'iconFrontDesk' },
     traits: ['ServiceMindset', 'MultiTasking', 'StressTolerance'],
     strengths: [
-      { ja: 'Service Mindset が高く、\nお客様への気配りを大切にできます。', en: 'Your Service Mindset is high, so you care about attending to guests.' },
-      { ja: 'Multi-tasking が高く、\n複数のことを整理しながら対応できます。', en: 'Your Multi-tasking is high, so you can organize and handle several things at once.' },
-      { ja: 'Stress Tolerance が高く、\nプレッシャーのかかる場面でも落ち着いて行動できます。', en: 'Your Stress Tolerance is high, so you stay calm even in high-pressure moments.' },
+      // Figma CH0-20' の文言
+      { ja: 'Service Mindset が高く、\nお客様への気配りが得意です。', en: 'Your Service Mindset is high, so you are good at attending to guests.' },
+      { ja: 'Multi-tasking が高く、\n忙しい環境でも落ち着いて対応できます。', en: 'Your Multi-tasking is high, so you can stay calm and handle things even in a busy environment.' },
+      { ja: 'Stress Tolerance が高く、\nプレッシャーのかかる場面でも力を発揮できます。', en: 'Your Stress Tolerance is high, so you can perform well even in high-pressure moments.' },
     ],
   },
   {

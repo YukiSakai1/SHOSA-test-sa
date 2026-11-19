@@ -11,12 +11,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { Animated, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SvgXml } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PatternBackground, patterns } from '@/components/PatternBackground';
 import { CtaButton, usePulse, PressScale } from '@/components/ui';
 import { chapter1, chapter1LessonCount, parseLessonIndex } from '@/content/chapter1';
 import type { ChoiceId } from '@/content/types';
 import { FocusModal } from '@/features/chapter1/FocusModal';
+import { cardEdgeXml } from '@/features/chapter1/cardTopArt';
 import { Ch1Flourish, ChapterHeader, ch1, progressPercent } from '@/features/chapter1/PlayLayout';
 import { useLang } from '@/i18n/LanguageProvider';
 import { images } from '@/theme/images';
@@ -32,7 +34,7 @@ function parseChoice(raw: string | undefined): ChoiceId | null {
 
 export default function ResultScreen() {
   const params = useLocalSearchParams<{ lesson: string; choice: string }>();
-  const { t, tr } = useLang();
+  const { lang, t, tr } = useLang();
   const insets = useSafeAreaInsets();
   const [focusOpen, setFocusOpen] = useState(false);
   const [focusSeen, setFocusSeen] = useState(false);
@@ -54,6 +56,7 @@ export default function ResultScreen() {
   if (index === null || !lesson || !choice) return <Redirect href="/chapter1" />;
 
   const isCorrect = choice === lesson.correct;
+  const bandColor = isCorrect ? '#18A5B1' : '#DC6988';
 
   const goNext = () => {
     if (index + 1 < chapter1LessonCount) {
@@ -68,11 +71,18 @@ export default function ResultScreen() {
       <ChapterHeader percent={progressPercent(index, 4)} style={{ paddingBottom: 20 }} />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} bounces={false}>
         <View style={[styles.panel, { minHeight: PANEL_H + insets.bottom + 24 }]}>
-          {/* 色つきの帯（上 16 は #E6D8BD、角に金の飾り） */}
-          <View style={[styles.band, { backgroundColor: isCorrect ? '#18A5B1' : '#DC6988' }]}>
-            <View style={styles.bandStrip} />
-            <Ch1Flourish corner="tl" edge={2} />
-            <Ch1Flourish corner="tr" edge={2} />
+          {/* 色つきの帯（Figma：下辺は内側に丸く欠けた角と #E6D8BD の縁（高さ 16）、下の角に金の飾り） */}
+          <View style={styles.band}>
+            <View style={[styles.bandBody, { backgroundColor: bandColor }]} />
+            <SvgXml
+              xml={cardEdgeXml(bandColor)}
+              width="100%"
+              height={16}
+              preserveAspectRatio="none"
+              style={[styles.bandEdge, { transform: [{ scaleY: -1 }] }]}
+            />
+            <Ch1Flourish corner="bl" edge={2} />
+            <Ch1Flourish corner="br" edge={2} />
             <View style={styles.statusRow}>
               <View style={[styles.statusIcon, !isCorrect && styles.statusIconWrong]}>
                 <Text style={styles.statusMark}>{isCorrect ? '✓' : '✕'}</Text>
@@ -81,7 +91,7 @@ export default function ResultScreen() {
                 {isCorrect ? t('correct') : t('incorrect')}
               </Text>
             </View>
-            <Text style={styles.explanation}>{tr(lesson.reason)}</Text>
+            <Text style={[styles.explanation, lang === 'en' && styles.explanationEn]}>{tr(lesson.reason)}</Text>
           </View>
           {/* SHOSA（150×136）と足元の影（103×23）。帯の下に 71 はみ出す */}
           <Image source={images.floorShadow} style={styles.shadow} resizeMode="contain" />
@@ -122,7 +132,8 @@ export default function ResultScreen() {
 const styles = StyleSheet.create({
   panel: { flexGrow: 1, backgroundColor: '#D3F2F1' },
   band: { position: 'absolute', top: 0, left: 0, right: 0, height: BAND_H, alignItems: 'center' },
-  bandStrip: { position: 'absolute', top: 0, left: 0, right: 0, height: 16, backgroundColor: ch1.line },
+  bandBody: { position: 'absolute', top: 0, left: 0, right: 0, height: BAND_H - 16 },
+  bandEdge: { position: 'absolute', top: BAND_H - 16, left: 0, right: 0 },
   // 正否：上から 31（Figma y=156）。丸 26 + 10 + 22 Bold
   statusRow: { position: 'absolute', top: 31, flexDirection: 'row', alignItems: 'center', gap: 10 },
   statusIcon: { width: 26, height: 26, borderRadius: 13, backgroundColor: '#00C9C3', alignItems: 'center', justifyContent: 'center' },
@@ -131,6 +142,8 @@ const styles = StyleSheet.create({
   statusTitle: { fontSize: 22, lineHeight: 26, fontWeight: '700', color: '#FFFFFF' },
   // 解説：上から 77（y=202）、左右 21、16 Bold・行の高さ 24
   explanation: { position: 'absolute', top: 77, left: 21, right: 21, fontSize: 16, lineHeight: 24, fontWeight: '700', color: '#FFFFFF', textAlign: 'center' },
+  // 英語は 4行になるため、14 / 20 にして SHOSA（上から 164）に重ならないようにする
+  explanationEn: { fontSize: 14, lineHeight: 20 },
   // SHOSA：上から 164（y=289）。影はその足元（y=406）
   mascot: { position: 'absolute', top: 164, alignSelf: 'center', width: 150, height: 136 },
   shadow: { position: 'absolute', top: 281, alignSelf: 'center', width: 103, height: 23 },

@@ -52,10 +52,11 @@ export const chapter1: Chapter1Data = {
         en: "It's 12:45. Before your afternoon shift begins, you head to the full-length mirror in the back-of-house area.",
       },
       sceneImage: 'sceneL01Mirror',
-      speaker: { ja: 'フロントスタッフ', en: 'Front Desk Staff' },
+      // Figma CH1-L01-02：話者は「先輩」、セリフは括弧なし
+      speaker: { ja: '先輩', en: 'Senior colleague' },
       line1: {
-        ja: '（勤務開始まであと15分。持ち物よし、最後は身だしなみチェック。）',
-        en: '(15 minutes until my shift. Belongings checked. Last step: a final grooming check.)',
+        ja: '勤務開始まであと15分。\n持ち物よし、最後は身だしなみチェック。',
+        en: '15 minutes until my shift. Belongings checked. Last step: a final grooming check.',
       },
       line2: {
         ja: '勤務開始直前の最終点検ですね。\nプロは鏡に映る姿だけでなく、目に見えない部分まで配慮を行き届かせます。',
