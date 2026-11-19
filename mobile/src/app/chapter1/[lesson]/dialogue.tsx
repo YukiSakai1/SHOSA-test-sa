@@ -6,14 +6,26 @@
  */
 import { useState } from 'react';
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Animated, StyleSheet, Text, View } from 'react-native';
 import { Appear } from '@/components/Appear';
+import { useMascotMotion } from '@/components/useMascotMotion';
 import { chapter1, parseLessonIndex } from '@/content/chapter1';
 import { Ch1AdvanceButton, PlayLayout, playTextStyles, progressPercent } from '@/features/chapter1/PlayLayout';
 import { useLang } from '@/i18n/LanguageProvider';
 import { images } from '@/theme/images';
 
 const BUBBLE = '#F6F1E8';
+
+/** 2/2 で出る SHOSA。0章と同じ動き（弾んで登場 → ゆっくり上下）。2/2 を開いた時から動き出す */
+function DialogueMascot() {
+  const motion = useMascotMotion({ delay: 0 });
+  return (
+    <View style={styles.shosaGroup}>
+      <Animated.View style={[styles.shadow, motion.shadow]} />
+      <Animated.Image source={images.mascotFace} style={[styles.shosa, motion.mascot]} resizeMode="contain" />
+    </View>
+  );
+}
 
 export default function DialogueScreen() {
   const { lesson: raw } = useLocalSearchParams<{ lesson: string }>();
@@ -43,10 +55,7 @@ export default function DialogueScreen() {
         <View style={StyleSheet.absoluteFill} pointerEvents="none">
         <Appear from="none" duration={300} style={StyleSheet.absoluteFill}>
           {/* SHOSA の顔（80×72、カードの左 21・上 94）と足元の影（55×13） */}
-          <View style={styles.shosaGroup}>
-            <View style={styles.shadow} />
-            <Image source={images.mascotFace} style={styles.shosa} resizeMode="contain" />
-          </View>
+          <DialogueMascot />
           <View style={styles.tail} />
           <View style={styles.bubble}>
             <Text style={playTextStyles.narrative}>{tr(lesson.line2)}</Text>

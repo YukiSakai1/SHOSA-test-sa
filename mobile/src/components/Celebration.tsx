@@ -8,7 +8,7 @@
  */
 import { Children, useEffect, useRef, type ReactNode } from 'react';
 import { Animated, Easing, Image, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Mask, Path, RadialGradient, Rect, Stop } from 'react-native-svg';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, LinearGradient, Mask, Path, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Appear } from '@/components/Appear';
 import { Confetti } from '@/components/Confetti';
@@ -19,6 +19,10 @@ import { layout } from '@/theme/layout';
 import { images, type ImageKey } from '@/theme/images';
 import { nativeDriver, useReducedMotion } from '@/theme/motion';
 import { useSvgId } from '@/lib/useSvgId';
+
+/** 言語切り替え（高さ 32）は、ステータスバーのすぐ下（+2）に置き、上の飾り線はその下（+36）から始める。重ならないようにする */
+const LANG_TOP = 2;
+const LANG_CLEAR = 36;
 
 const T = { title: 200, badge: 600, shine: 1300, body: 1600, step: 300 } as const;
 
@@ -53,8 +57,8 @@ export function Celebration({ background, title, medal, children, footer, varian
   const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
 
   return (
-    <View style={[styles.screen, { backgroundColor: background, paddingTop: web ? 84 : insets.top + 24, paddingBottom: insets.bottom + layout.ctaBottom }]}>
-      {web && <LangToggle style={[styles.langWeb, { top: insets.top + 14 }]} />}
+    <View style={[styles.screen, { backgroundColor: background, paddingTop: web ? Math.max(84, insets.top + LANG_CLEAR) : insets.top + 24, paddingBottom: insets.bottom + layout.ctaBottom }]}>
+      {web && <LangToggle style={[styles.langWeb, { top: insets.top + LANG_TOP }]} />}
       {!web && <Animated.Image source={images.sunburst} style={[styles.sunburst, { transform: [{ rotate }] }]} resizeMode="cover" />}
       <Appear from="none" delay={T.title} duration={300} style={styles.header}>
         <Image source={images.filigreeTop} style={styles.filigree} resizeMode="contain" />
@@ -70,7 +74,7 @@ export function Celebration({ background, title, medal, children, footer, varian
       <View style={web ? styles.stageWeb : styles.stage}>
         {web ? (
           <>
-            <WebSunburst />
+            <WebSunburst background={background} />
             <WebHalo />
             <WebTrophy medal={medal} />
           </>
@@ -108,10 +112,16 @@ export function Celebration({ background, title, medal, children, footer, varian
  * 0.35秒後に 0.8秒で 0.9倍から現れ（ch19SunburstFadeIn）、24秒で 1回転し続ける（ch19SunburstSpin）。
  */
 const SUN = 270;
-function WebSunburst() {
+/** 放射線が薄くなり始める位置（中心から上下へ 20）と、完全に消える位置（150。上はタイトル、下は本文の区切り線の高さ） */
+const SUN_FADE_START = -20;
+const SUN_FADE_END = -162;
+const SUN_FADE_BOTTOM_END = 138;
+function WebSunburst({ background }: { background: string }) {
   const reduced = useReducedMotion();
   const maskId = useSvgId('sunmask');
   const fadeId = useSvgId('sunfade');
+  const topFadeId = useSvgId('suntopfade');
+  const bottomFadeId = useSvgId('sunbottomfade');
   const enter = useRef(new Animated.Value(reduced ? 1 : 0)).current;
   const spin = useRef(new Animated.Value(0)).current;
   useEffect(() => {
@@ -128,7 +138,8 @@ function WebSunburst() {
   const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
   const scale = enter.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] });
   return (
-    <Animated.View pointerEvents="none" style={[styles.sunburstWeb, { opacity: enter, transform: [{ scale }, { rotate }] }]}>
+    <Animated.View pointerEvents="none" style={[styles.sunburstWeb, { opacity: enter, transform: [{ scale }] }]}>
+      <Animated.View style={{ width: SUN * 2, height: SUN * 2, transform: [{ rotate }] }}>
       <Svg width={SUN * 2} height={SUN * 2} viewBox={`${-SUN} ${-SUN} ${SUN * 2} ${SUN * 2}`}>
         <Defs>
           <RadialGradient id={fadeId} cx={0} cy={0} r={SUN} gradientUnits="userSpaceOnUse">
@@ -155,6 +166,23 @@ function WebSunburst() {
           })}
         </G>
       </Svg>
+      </Animated.View>
+      {/* 放射線は回るので、上の「学習完了！」へ向かって薄くなる効果は、回らない背景色のグラデーションを重ねて作る。
+          トロフィーの中心から上と下へ向かってしだいに背景色になり、タイトルと本文のあたりで完全に消える */}
+      <Svg style={StyleSheet.absoluteFill} width={SUN * 2} height={SUN * 2} viewBox={`${-SUN} ${-SUN} ${SUN * 2} ${SUN * 2}`}>
+        <Defs>
+          <LinearGradient id={topFadeId} gradientUnits="userSpaceOnUse" x1={0} y1={SUN_FADE_START} x2={0} y2={SUN_FADE_END}>
+            <Stop offset="0" stopColor={background} stopOpacity={0} />
+            <Stop offset="1" stopColor={background} stopOpacity={1} />
+          </LinearGradient>
+          <LinearGradient id={bottomFadeId} gradientUnits="userSpaceOnUse" x1={0} y1={-SUN_FADE_START} x2={0} y2={SUN_FADE_BOTTOM_END}>
+            <Stop offset="0" stopColor={background} stopOpacity={0} />
+            <Stop offset="1" stopColor={background} stopOpacity={1} />
+          </LinearGradient>
+        </Defs>
+        <Rect x={-SUN} y={-SUN} width={SUN * 2} height={SUN + SUN_FADE_START} fill={`url(#${topFadeId})`} />
+        <Rect x={-SUN} y={-SUN_FADE_START} width={SUN * 2} height={SUN + SUN_FADE_START} fill={`url(#${bottomFadeId})`} />
+      </Svg>
     </Animated.View>
   );
 }
@@ -162,13 +190,13 @@ function WebSunburst() {
 /**
  * トロフィーの後ろの白い光（index.html .ch19-trophy-halo をもとに、白いもやとして強めたもの）。どの背景色でも白く見えるようにしている。
  * - 内側の後光：直径 270 の白（中心 98% → 外へ消える）を 18px ぼかす。0.55秒後に 0.85倍から現れ、2.4秒で
- *   55% ⇔ 100%・0.92倍 ⇔ 1.2倍 を行き来する（最大のときを強く、脈動をはっきり見せる）
+ *   55% ⇔ 100%・0.92倍 ⇔ 1.2倍 を行き来する（最大のときを強く、脈動をはっきり見せる）。もやは強め（中心 85%）
  * - 外側のもや：直径 330 の白（中心 40%）を 24px ぼかし、後光と逆の位相で 1.15倍 ⇔ 0.95倍・70% ⇔ 30% に脈動する
  */
 const HALO = 135;
 const HALO_PAD = 55; // ぼかしがはみ出す分
-const MIST = 165;
-const MIST_PAD = 70;
+const MIST = 185;
+const MIST_PAD = 80;
 function WebHalo() {
   const reduced = useReducedMotion();
   const haloId = useSvgId('ch19halo');
@@ -192,12 +220,12 @@ function WebHalo() {
       loop.stop();
     };
   }, [reduced, enter, pulse]);
-  const opacity = Animated.multiply(enter, pulse.interpolate({ inputRange: [0, 1], outputRange: [0.55, 1] }));
+  const opacity = Animated.multiply(enter, pulse.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1] }));
   const scale = Animated.multiply(
     enter.interpolate({ inputRange: [0, 1], outputRange: [0.85, 1] }),
     pulse.interpolate({ inputRange: [0, 1], outputRange: [0.92, 1.2] }),
   );
-  const mistOpacity = Animated.multiply(enter, pulse.interpolate({ inputRange: [0, 1], outputRange: [0.8, 0.35] }));
+  const mistOpacity = Animated.multiply(enter, pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 0.6] }));
   const mistScale = pulse.interpolate({ inputRange: [0, 1], outputRange: [1.15, 0.95] });
   const size = (HALO + HALO_PAD) * 2;
   const mistSize = (MIST + MIST_PAD) * 2;
@@ -207,8 +235,8 @@ function WebHalo() {
         <Svg width={mistSize} height={mistSize}>
           <Defs>
             <RadialGradient id={mistId} cx={mistSize / 2} cy={mistSize / 2} r={MIST} gradientUnits="userSpaceOnUse">
-              <Stop offset="0" stopColor="#FFFFFF" stopOpacity={0.55} />
-              <Stop offset="0.55" stopColor="#FFFFFF" stopOpacity={0.32} />
+              <Stop offset="0" stopColor="#FFFFFF" stopOpacity={0.85} />
+              <Stop offset="0.55" stopColor="#FFFFFF" stopOpacity={0.55} />
               <Stop offset="1" stopColor="#FFFFFF" stopOpacity={0} />
             </RadialGradient>
             <Filter id={mistBlurId} x="-30%" y="-30%" width="160%" height="160%">
@@ -325,7 +353,8 @@ export const celebrationText = StyleSheet.create({
 const styles = StyleSheet.create({
   screen: { flex: 1, alignItems: 'center', paddingHorizontal: 21, overflow: 'hidden' },
   sunburst: { position: 'absolute', top: 40, width: 540, height: 540, opacity: 0.9 },
-  header: { alignItems: 'center' },
+  // 放射線（舞台の中）より手前に置いて、背景色のグラデーションでタイトルが隠れないようにする
+  header: { alignItems: 'center', zIndex: 2 },
   filigree: { width: 348, height: 19 },
   title: { fontSize: 22, fontWeight: '700', color: colors.white, marginVertical: 8 },
   stage: { height: 280, width: 280, alignItems: 'center', justifyContent: 'center', marginTop: 8 },
@@ -339,12 +368,12 @@ const styles = StyleSheet.create({
   langWeb: { position: 'absolute', right: 0, zIndex: 10 },
   titleBoxWeb: { height: 69, justifyContent: 'center' },
   titleWeb: { fontSize: 22, lineHeight: 26.4, fontWeight: '700', color: colors.white, textAlign: 'center' },
-  stageWeb: { width: 180, height: 205, marginTop: 17, alignItems: 'center', justifyContent: 'center' },
+  stageWeb: { width: 180, height: 205, marginTop: 29, alignItems: 'center', justifyContent: 'center' },
   sunburstWeb: { position: 'absolute', width: SUN * 2, height: SUN * 2, left: 90 - SUN, top: 102.5 - SUN },
   haloWeb: { position: 'absolute', left: 90 - HALO - HALO_PAD, top: 102.5 - HALO - HALO_PAD },
   mistWeb: { position: 'absolute', left: 90 - MIST - MIST_PAD, top: 102.5 - MIST - MIST_PAD },
   medalWrapWeb: { width: 180, height: 205 },
   medalWeb: { width: 180, height: 205 },
-  bodyWeb: { marginTop: 76 },
+  bodyWeb: { marginTop: 64 },
   footer: { alignSelf: 'stretch', gap: layout.buttonGap },
 });

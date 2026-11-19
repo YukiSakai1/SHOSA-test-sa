@@ -100,6 +100,32 @@ export function Ch1Flourish({ corner, color = ch1.gold, edge = 6 }: { corner: 't
   );
 }
 
+/**
+ * カードの上辺／帯の下辺の角の飾り（Figma の Group 258 / 259：26×26、#E6D8BD の葉 3枚。角から 2・上から 6）。
+ * 右は左右反転、下（結果の帯）は上下反転。Figma のベクターをそのまま SVG にした。
+ */
+const LEAF_PATHS = [
+  'M 10.59 8.07 C 11.27 8.63 12.37 9.23 13.17 9.67 C 14.2 10.24 15.27 10.75 16.39 11.12 C 18.43 11.81 20.85 12.09 22.69 10.74 C 24.2 9.63 24.96 7.64 24.48 5.82 C 21.7 8.35 15.48 9.43 10.6 8.07 Z',
+  'M 8.07 10.59 C 8.63 11.27 9.23 12.37 9.67 13.17 C 10.24 14.2 10.75 15.27 11.12 16.39 C 11.81 18.43 12.09 20.85 10.74 22.69 C 9.63 24.2 7.64 24.96 5.82 24.49 C 8.35 21.7 9.43 15.48 8.07 10.6 Z',
+  'M 22.06 22.06 C 20.69 22.11 15.32 20.06 14.5 19.54 C 13.11 18.23 11.81 12.84 9.33 9.33 C 12.84 11.81 18.23 13.11 19.54 14.5 C 20.06 15.31 22.11 20.68 22.06 22.06 Z',
+];
+export function Ch1CardLeaf({ corner, edge = 2, color = ch1.line }: { corner: 'tl' | 'tr' | 'bl' | 'br'; edge?: number; color?: string }) {
+  const pos: ViewStyle = {
+    position: 'absolute',
+    zIndex: 2,
+    ...(corner[0] === 't' ? { top: 6 } : { bottom: 6 }),
+    ...(corner[1] === 'l' ? { left: edge } : { right: edge }),
+    transform: [{ scaleX: corner[1] === 'r' ? -1 : 1 }, { scaleY: corner[0] === 'b' ? -1 : 1 }],
+  };
+  return (
+    <Svg width={26} height={26} viewBox="0 0 26 26" style={pos} pointerEvents="none">
+      {LEAF_PATHS.map((d, i) => (
+        <Path key={i} d={d} fill={color} />
+      ))}
+    </Svg>
+  );
+}
+
 /** カード右下の「進む」ボタン（Figma：32×32 の白い丸、枠 #E6D8BD、カードの上から 173・右から 21） */
 export function Ch1AdvanceButton({ onPress, label, turn = 1 }: { onPress: () => void; label: string; turn?: 1 | 2 }) {
   return (
@@ -152,8 +178,8 @@ export function PlayLayout({ percent, exitTo, image, imageAlt, label, children }
         <View style={[styles.card, { paddingBottom: insets.bottom + 28 }]}>
           <View style={styles.cardFill} />
           <SvgXml xml={CARD_TOP_XML} width="100%" height={16} preserveAspectRatio="none" style={styles.cardTop} />
-          <Ch1Flourish corner="tl" edge={2} />
-          <Ch1Flourish corner="tr" edge={2} />
+          <Ch1CardLeaf corner="tl" />
+          <Ch1CardLeaf corner="tr" />
           <Text style={styles.cardLabel}>{label}</Text>
           {children}
         </View>
@@ -191,10 +217,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.42,
     color: ch1.label,
     marginBottom: 20,
-    // Figma：DROP_SHADOW（0, 1.5）、ぼかし 0、#897759
-    textShadowColor: '#897759',
-    textShadowOffset: { width: 0, height: 1.5 },
-    textShadowRadius: 0,
+    // Figma の DROP_SHADOW は非表示（visible: false）なので、影は付けない
   },
   advance: { position: 'absolute', top: 173, right: 21 },
   advanceHit: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },

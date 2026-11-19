@@ -35,8 +35,8 @@ export default function Chapter1CompleteScreen() {
       footer={<CtaButton testID="chapter1-finish" variant="primary" pulse label={tr(end.button)} onPress={() => void finish()} />}
     >
       {/* Figma CH1-END：解放の文言（20 Bold）→ 16 → 区切り線（240×13）→ 20 → 本文（16 / 24）→ 6 → 注記（12 / 24）。0章の完了画面と同じ間隔 */}
-      {/* 2章を出さないあいだは「2章が解放されました」の文言だけ出さない。区切り線（frames.png）は Figma どおり本文の上に置く */}
-      {CHAPTER2_ENABLED && <Text style={styles.unlocked}>{tr(end.unlockLabel)}</Text>}
+      {/* 解放の文言は Figma どおり常に出す（2章へ進む導線は CHAPTER2_ENABLED で別に切り替える）。区切り線（frames.png）は本文の上 */}
+      <Text style={styles.unlocked}>{tr(end.unlockLabel)}</Text>
       <CelebrationDivider style={styles.divider} />
       <Text style={styles.body}>{tr(end.body)}</Text>
       <Text style={styles.note}>{tr(end.note)}</Text>

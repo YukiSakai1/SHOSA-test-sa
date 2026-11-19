@@ -15,11 +15,12 @@ import { SvgXml } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PatternBackground, patterns } from '@/components/PatternBackground';
 import { CtaButton, usePulse, PressScale } from '@/components/ui';
+import { useMascotMotion } from '@/components/useMascotMotion';
 import { chapter1, chapter1LessonCount, parseLessonIndex } from '@/content/chapter1';
 import type { ChoiceId } from '@/content/types';
 import { FocusModal } from '@/features/chapter1/FocusModal';
 import { cardEdgeXml } from '@/features/chapter1/cardTopArt';
-import { Ch1Flourish, ChapterHeader, ch1, progressPercent } from '@/features/chapter1/PlayLayout';
+import { Ch1CardLeaf, ChapterHeader, ch1, progressPercent } from '@/features/chapter1/PlayLayout';
 import { useLang } from '@/i18n/LanguageProvider';
 import { images } from '@/theme/images';
 
@@ -41,6 +42,7 @@ export default function ResultScreen() {
   const [bubbleShown, setBubbleShown] = useState(false);
   const bubbleOpacity = useRef(new Animated.Value(0)).current;
   const focusScale = usePulse(bubbleShown && !focusSeen);
+  const mascotMotion = useMascotMotion();
 
   useEffect(() => {
     const id = setTimeout(() => {
@@ -81,8 +83,8 @@ export default function ResultScreen() {
               preserveAspectRatio="none"
               style={[styles.bandEdge, { transform: [{ scaleY: -1 }] }]}
             />
-            <Ch1Flourish corner="bl" edge={2} />
-            <Ch1Flourish corner="br" edge={2} />
+            <Ch1CardLeaf corner="bl" />
+            <Ch1CardLeaf corner="br" />
             <View style={styles.statusRow}>
               <View style={[styles.statusIcon, !isCorrect && styles.statusIconWrong]}>
                 <Text style={styles.statusMark}>{isCorrect ? '✓' : '✕'}</Text>
@@ -94,8 +96,9 @@ export default function ResultScreen() {
             <Text style={[styles.explanation, lang === 'en' && styles.explanationEn]}>{tr(lesson.reason)}</Text>
           </View>
           {/* SHOSA（150×136）と足元の影（103×23）。帯の下に 71 はみ出す */}
-          <Image source={images.floorShadow} style={styles.shadow} resizeMode="contain" />
-          <Image source={images.mascotFace} style={styles.mascot} resizeMode="contain" />
+          {/* 0章と同じ動き：弾んで登場し、そのあと上下にゆっくり揺れる */}
+          <Animated.Image source={images.floorShadow} style={[styles.shadow, mascotMotion.shadow]} resizeMode="contain" />
+          <Animated.Image source={images.mascotFace} style={[styles.mascot, mascotMotion.mascot]} resizeMode="contain" />
           {/* 吹き出し：三角（34×24）と白いカード（左右 31・高さ 162・角 10） */}
           <Animated.View style={[StyleSheet.absoluteFill, { opacity: bubbleOpacity }]} pointerEvents="none">
             <View style={styles.pointer} />

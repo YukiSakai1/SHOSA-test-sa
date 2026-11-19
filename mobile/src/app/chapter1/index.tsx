@@ -5,13 +5,13 @@
  *   → 白い説明カード（上下に 28 の帯、枠は #E6D8BD、角に金の飾り）。下に紫の START（360×48）。
  * 位置は Figma の画面（402×874、上のステータスバー 59 を含む）から。セーフエリアの上端からの距離で置く。
  */
-import { useEffect, useRef } from 'react';
 import { router } from 'expo-router';
-import { Animated, Easing, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Animated, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SvgXml } from 'react-native-svg';
 import { PatternBackground, patterns } from '@/components/PatternBackground';
 import { RichText } from '@/components/RichText';
+import { useMascotMotion } from '@/components/useMascotMotion';
 import { CtaButton, LangToggle } from '@/components/ui';
 import { chapter1 } from '@/content/chapter1';
 import { GUIDE_ART_XML } from '@/features/chapter1/guideArt';
@@ -20,49 +20,16 @@ import { useLang } from '@/i18n/LanguageProvider';
 import { colors, fonts } from '@/theme/colors';
 import { images } from '@/theme/images';
 import { layout } from '@/theme/layout';
-import { nativeDriver, useReducedMotion } from '@/theme/motion';
 
 /** Figma の画面でのステータスバーの高さ（iPhone 17 Pro の上のセーフエリア） */
 const FIGMA_TOP = 59;
 const CARD_LINE = '#E6D8BD';
 
-/**
- * SHOSA の動き（0章「SHOSA が話す画面」と同じ）：
- * - 0.3秒後に 0.6秒で弾んで登場（下 24px・0.92倍 → 上 6px・1.03倍 → 下 2px・0.99倍 → 元の位置）
- * - そのあと 2.2秒周期で 3px 上下し続ける
- * 視差効果を減らす ON のときは動かさない。
- */
-function useMascotMotion() {
-  const reduced = useReducedMotion();
-  const enter = useRef(new Animated.Value(reduced ? 1 : 0)).current;
-  const breathe = useRef(new Animated.Value(0)).current;
-  useEffect(() => {
-    if (reduced) return;
-    const intro = Animated.timing(enter, { toValue: 1, duration: 600, delay: 300, easing: Easing.linear, useNativeDriver: nativeDriver });
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(breathe, { toValue: 1, duration: 1100, easing: Easing.inOut(Easing.sin), useNativeDriver: nativeDriver }),
-        Animated.timing(breathe, { toValue: 0, duration: 1100, easing: Easing.inOut(Easing.sin), useNativeDriver: nativeDriver }),
-      ]),
-    );
-    intro.start(() => loop.start());
-    return () => {
-      intro.stop();
-      loop.stop();
-    };
-  }, [reduced, enter, breathe]);
-  const bounceY = enter.interpolate({ inputRange: [0, 0.65, 0.85, 1], outputRange: [24, -6, 2, 0] });
-  const bounceS = enter.interpolate({ inputRange: [0, 0.65, 0.85, 1], outputRange: [0.92, 1.03, 0.99, 1] });
-  const breatheY = breathe.interpolate({ inputRange: [0, 1], outputRange: [0, -3] });
-  const opacity = enter.interpolate({ inputRange: [0, 0.65, 1], outputRange: [0, 1, 1] });
-  return { opacity, transform: [{ translateY: Animated.add(bounceY, breatheY) }, { scale: bounceS }] };
-}
-
 export default function Chapter1IntroScreen() {
   const { lang, tr } = useLang();
   const insets = useSafeAreaInsets();
   const { guide } = chapter1;
-  const mascotMotion = useMascotMotion();
+  const { mascot: mascotMotion } = useMascotMotion();
   // 英語は文が長いため、本文を少し小さくし、副題を 1行に収めて、スクロールなしで START の上に収める
   const en = lang === 'en';
   // Figma の y（画面の上端から）を、セーフエリアの上端からの距離に直す

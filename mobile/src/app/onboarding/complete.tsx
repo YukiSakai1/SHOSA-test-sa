@@ -62,5 +62,14 @@ const styles = StyleSheet.create({
   },
   icon: { position: 'absolute', left: 34, bottom: 0, width: 40, height: 56 },
   iconSvg: { position: 'absolute', left: -5, top: -3 },
-  buttonText: { fontSize: 18, fontWeight: '800', color: colors.white },
+  // 「結果を見る」は一番押してほしいボタンなので、他のボタンより大きく太く、少し字間をあけて、下に濃い紫の影を付けて強調する
+  buttonText: {
+    fontSize: 20,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+    color: colors.white,
+    textShadowColor: 'rgba(84,66,179,0.9)',
+    textShadowOffset: { width: 0, height: 1.5 },
+    textShadowRadius: 0,
+  },
 });

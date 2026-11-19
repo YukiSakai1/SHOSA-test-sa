@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "SHOSA",
-    "slug": "shosa",
+    "slug": "yukisakai",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -31,6 +31,17 @@
     "scheme": "shosa",
     "experiments": {
       "typedRoutes": true
+    },
+    "owner": "yukisakais-team",
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "8910a46f-7fa5-492c-a541-6185559aa07c"
+      }
     }
   }
 }
