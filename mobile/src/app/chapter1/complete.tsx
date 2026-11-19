@@ -21,6 +21,7 @@ import { haptics } from '@/lib/haptics';
 import { useLang } from '@/i18n/LanguageProvider';
 import { images } from '@/theme/images';
 import { nativeDriver, useReducedMotion } from '@/theme/motion';
+import { useSvgId } from '@/lib/useSvgId';
 
 const RAYS = 24;
 
@@ -30,6 +31,7 @@ export default function Chapter1CompleteScreen() {
   const reduced = useReducedMotion();
   const { end } = chapter1;
   const spin = useRef(new Animated.Value(0)).current;
+  const ids = { sky: useSvgId('sky'), fade: useSvgId('fade'), rays: useSvgId('rays'), halo: useSvgId('halo') };
 
   useEffect(() => {
     haptics.success();
@@ -50,15 +52,15 @@ export default function Chapter1CompleteScreen() {
   return (
     <View style={[styles.screen, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 24 }]}>
       {/* 背景の円形グラデーション */}
-      <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
+      <Svg style={StyleSheet.absoluteFill} width="100%" height="100%" pointerEvents="none">
         <Defs>
-          <RadialGradient id="sky" cx="50%" cy="38%" r="75%">
+          <RadialGradient id={ids.sky} cx="50%" cy="38%" r="75%">
             <Stop offset="0" stopColor="#79D1FA" />
             <Stop offset="0.55" stopColor="#4FBFF1" />
             <Stop offset="1" stopColor="#3CA7F1" />
           </RadialGradient>
         </Defs>
-        <Rect width="100%" height="100%" fill="url(#sky)" />
+        <Rect width="100%" height="100%" fill={`url(#${ids.sky})`} />
       </Svg>
       <LangToggle style={[styles.lang, { top: insets.top + 14 }]} />
 
@@ -74,16 +76,16 @@ export default function Chapter1CompleteScreen() {
           <Animated.View pointerEvents="none" style={[styles.sunburst, { transform: [{ rotate }] }]}>
             <Svg width={880} height={880} viewBox="-440 -440 880 880">
               <Defs>
-                <RadialGradient id="fade" cx="0" cy="0" r="440" gradientUnits="userSpaceOnUse">
+                <RadialGradient id={ids.fade} cx="0" cy="0" r="440" gradientUnits="userSpaceOnUse">
                   <Stop offset="0" stopColor="#FFFFFF" stopOpacity={1} />
                   <Stop offset="0.5" stopColor="#FFFFFF" stopOpacity={0.5} />
                   <Stop offset="1" stopColor="#FFFFFF" stopOpacity={0} />
                 </RadialGradient>
-                <Mask id="rays">
-                  <Rect x={-440} y={-440} width={880} height={880} fill="url(#fade)" />
+                <Mask id={ids.rays}>
+                  <Rect x={-440} y={-440} width={880} height={880} fill={`url(#${ids.fade})`} />
                 </Mask>
               </Defs>
-              <G mask="url(#rays)">
+              <G mask={`url(#${ids.rays})`}>
                 {Array.from({ length: RAYS }, (_, i) => {
                   const a0 = ((i * 15) * Math.PI) / 180;
                   const a1 = ((i * 15 + 7.5) * Math.PI) / 180;
@@ -101,7 +103,7 @@ export default function Chapter1CompleteScreen() {
           {/* 後光（.ch101-trophy-halo：直径 270） */}
           <Svg pointerEvents="none" width={270} height={270} style={styles.halo}>
             <Defs>
-              <RadialGradient id="halo" cx="50%" cy="50%" r="50%">
+              <RadialGradient id={ids.halo} cx="50%" cy="50%" r="50%">
                 <Stop offset="0" stopColor="#FFFFFF" stopOpacity={0.98} />
                 <Stop offset="0.31" stopColor="#DCF8FF" stopOpacity={0.85} />
                 <Stop offset="0.62" stopColor="#8CE1FF" stopOpacity={0.45} />
@@ -109,7 +111,7 @@ export default function Chapter1CompleteScreen() {
                 <Stop offset="1" stopColor="#50C8FF" stopOpacity={0} />
               </RadialGradient>
             </Defs>
-            <Circle cx={135} cy={135} r={135} fill="url(#halo)" />
+            <Circle cx={135} cy={135} r={135} fill={`url(#${ids.halo})`} />
           </Svg>
           <Appear from="drop" delay={600} duration={600} distance={260}>
             <Image source={images.medalChapter1} style={styles.medal} resizeMode="contain" />

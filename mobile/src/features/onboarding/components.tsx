@@ -7,6 +7,7 @@
 import { useEffect, useRef, type ComponentRef, type ReactNode, type RefObject } from 'react';
 import {
   Animated,
+  Easing,
   Image,
   ImageBackground,
   ScrollView,
@@ -27,9 +28,10 @@ import { CtaButton, LangToggle, PressScale, ProgressBar } from '@/components/ui'
 import type { IconRef, Localized } from '@/content/types';
 import { useLang } from '@/i18n/LanguageProvider';
 import { colors } from '@/theme/colors';
-import { layout } from '@/theme/layout';
+import { centered, centeredButton, layout } from '@/theme/layout';
 import { motion, nativeDriver, useReducedMotion } from '@/theme/motion';
 import { images } from '@/theme/images';
+import { useSvgId } from '@/lib/useSvgId';
 
 /**
  * ヘッダー：戻る（金丸の ←）・進捗バー・EN 切り替え。
@@ -47,8 +49,45 @@ export function OnboardingHeader({ percent, showLang = true, showBack = false }:
       ) : (
         <View style={styles.back} />
       )}
-      <View style={styles.headerTrack}>{percent !== undefined && <ProgressBar percent={percent} variant="ch0" />}</View>
+      {/* index.html .figma-hearing-progress-wrap：中央に最大 280 */}
+      <View style={styles.headerTrack}>
+        {percent !== undefined && (
+          <View style={styles.headerTrackInner}>
+            <ProgressBar percent={percent} variant="ch0" />
+          </View>
+        )}
+      </View>
       {showLang ? <LangToggle /> : <View style={{ width: 48 }} />}
+    </View>
+  );
+}
+
+/**
+ * 小さい SHOSA（110×100）と足元の影（index.html .langselect-mascot / .langselect-shadow）。
+ * - 影は SHOSA の手前に重ねる（足元が少し暗くなる）。75×17、黒 10%、SHOSA の上端から 86
+ * - mascotBreathe / mascotShadowBreatheOrigin：2.2秒周期で SHOSA が 3px 上下し、影が 0.95倍に縮む
+ * 視差効果を減らす ON のときは動かさない。言語選択・ヒアリング・学習時間で使う。
+ */
+export function SmallMascot({ style }: { style?: StyleProp<ViewStyle> }) {
+  const reduced = useReducedMotion();
+  const b = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (reduced) return;
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(b, { toValue: 1, duration: 1100, easing: Easing.inOut(Easing.ease), useNativeDriver: nativeDriver }),
+        Animated.timing(b, { toValue: 0, duration: 1100, easing: Easing.inOut(Easing.ease), useNativeDriver: nativeDriver }),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [reduced, b]);
+  const translateY = b.interpolate({ inputRange: [0, 1], outputRange: [0, -3] });
+  const scale = b.interpolate({ inputRange: [0, 1], outputRange: [1, 0.95] });
+  return (
+    <View style={[styles.mascotSmall, style]}>
+      <Animated.Image source={images.mascotFace} style={[styles.mascotSmall, { transform: [{ translateY }] }]} resizeMode="contain" />
+      <Animated.View pointerEvents="none" style={[styles.mascotSmallShadow, { transform: [{ scale }] }]} />
     </View>
   );
 }
@@ -58,10 +97,7 @@ export function MascotBubble({ text, variant = 'hearing' }: { text: Localized; v
   const { tr } = useLang();
   return (
     <View style={[styles.mascotRow, variant === 'schedule' && styles.mascotRowSchedule]}>
-      <View style={styles.mascotSmall}>
-        <View style={styles.mascotSmallShadow} />
-        <Image source={images.mascotFace} style={styles.mascotSmall} resizeMode="contain" />
-      </View>
+      <SmallMascot />
       <View style={[styles.bubble, variant === 'schedule' && { paddingTop: 19 }]}>
         <View style={styles.bubbleTail} />
         <Text style={styles.bubbleText}>{tr(text)}</Text>
@@ -163,13 +199,22 @@ export function QuestionLayout({
 }) {
   const insets = useSafeAreaInsets();
   const { t } = useLang();
+  const fadeId = useSvgId('fade');
   return (
-    <PatternBackground {...patterns.beigeLines} {...(background ? { color: background } : null)} style={{ paddingTop: insets.top }}>
+    <PatternBackground
+      {...patterns.beigeLines}
+      {...(background ? { color: background } : null)}
+      align={heroVariant === 'schedule' ? 'center' : 'left'}
+      style={{ paddingTop: insets.top }}
+    >
       <OnboardingHeader percent={percent} showLang={showLang} />
       <ScrollView
         ref={scrollRef}
-        contentContainerStyle={[styles.scroll, fadeBottom && { paddingBottom: 200 }]}
+        // fadeBottom：NEXT が下に重なるので、その高さ（ボタン 48＋上下の余白）だけ下を空ける。
+        // 3問は1画面に収まるのでスクロールしない（画面が低い端末だけスクロールできる）
+        contentContainerStyle={[styles.scroll, fadeBottom && { paddingBottom: insets.bottom + layout.ctaBottom + 48 + 8 }]}
         keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
         {/* 要点 CH0-09〜11：吹き出し → 選択肢の順に時間差で出る */}
         {question && (
@@ -183,19 +228,20 @@ export function QuestionLayout({
       </ScrollView>
       <View style={[styles.bottom, { paddingBottom: insets.bottom + layout.ctaBottom }, fadeBottom && styles.bottomFade]}>
         {fadeBottom && (
-          <Svg style={StyleSheet.absoluteFill} pointerEvents="none" preserveAspectRatio="none">
+          <Svg style={StyleSheet.absoluteFill} width="100%" height="100%" pointerEvents="none" preserveAspectRatio="none">
             <Defs>
-              <LinearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+              <LinearGradient id={fadeId} x1="0" y1="0" x2="0" y2="1">
                 <Stop offset="0" stopColor="#F6F1E8" stopOpacity={0} />
                 <Stop offset="0.8" stopColor="#F6F1E8" stopOpacity={1} />
               </LinearGradient>
             </Defs>
-            <Rect width="100%" height="100%" fill="url(#fade)" />
+            <Rect width="100%" height="100%" fill={`url(#${fadeId})`} />
           </Svg>
         )}
         {footer}
         <CtaButton
           testID="onboarding-next"
+          style={centeredButton}
           label={nextLabel ?? t('next')}
           fontSize={18}
           disabledTone="grey"
@@ -220,23 +266,28 @@ export function TalkLayout({
   lines,
   onNext,
   highlight = 'purple',
+  bubbleHeight,
   style,
 }: {
   lines: Localized[];
   onNext: () => void;
+  /** 吹き出しの高さ。index.html は画面ごとに固定で、文は縦の中央にそろえる（英語で行数が増えても吹き出しは伸びない） */
+  bubbleHeight?: number;
   /** <hl>…</hl> の見せ方。purple: 紫の太字 / bold: 黒の太字 */
   highlight?: 'purple' | 'bold';
   style?: StyleProp<ViewStyle>;
 }) {
   const insets = useSafeAreaInsets();
   const { t, tr } = useLang();
-  const top = insets.top;
+  const carpetId = useSvgId('carpet');
+  // index.html と同じく、部屋（壁・床・ドア・SHOSA・吹き出し）はセーフエリアに関係なく画面上端から置く。EN と NEXT だけセーフエリアを空ける
+  const top = 0;
   return (
     <View style={[styles.room, style]}>
-      <PatternBackground {...patterns.beigeLines} color="#FAF8F2" style={[styles.wall, { height: top + 380 }]} />
+      <PatternBackground {...patterns.beigeLines} color="#FAF8F2" align="center" style={[styles.wall, { height: top + 380 }]} />
       <Svg style={[styles.floor, { top: top + 334 }]} width="100%" viewBox="0 0 402 540" preserveAspectRatio="none" pointerEvents="none">
         <Defs>
-          <Pattern id="carpet" patternUnits="userSpaceOnUse" width={160} height={55.5}>
+          <Pattern id={carpetId} patternUnits="userSpaceOnUse" width={160} height={55.5}>
             <SvgImage href={images.carpetBeige} width={160} height={55.5} preserveAspectRatio="none" />
           </Pattern>
         </Defs>
@@ -245,7 +296,7 @@ export function TalkLayout({
         <Line x1={85} y1={0} x2={85} y2={10} stroke="#C8B797" strokeWidth={1} />
         <Line x1={317} y1={0} x2={317} y2={10} stroke="#C8B797" strokeWidth={1} />
         <Polygon points="0,42 85,10 317,10 402,42 402,540 0,540" fill="#BFA889" />
-        <Polygon points="0,42 85,10 317,10 402,42 402,540 0,540" fill="url(#carpet)" opacity={0.9} />
+        <Polygon points="0,42 85,10 317,10 402,42 402,540 0,540" fill={`url(#${carpetId})`} opacity={0.9} />
       </Svg>
 
       <View style={[styles.doorWrap, { top: top + 107 }]}>
@@ -254,14 +305,16 @@ export function TalkLayout({
         <Lamp style={{ left: 0 }} />
         <Lamp style={{ left: 286 }} />
       </View>
-      <Appear from="none" delay={300} duration={600} style={[styles.talkShadowWrap, { top: top + 368 }]}>
-        <Image source={images.floorShadow} style={styles.talkShadow} resizeMode="contain" />
-      </Appear>
-      <Appear from="pop" delay={300} duration={500} style={[styles.mascotWrapLarge, { top: top + 235 }]}>
-        <Image source={images.mascotFace} style={styles.mascotLarge} resizeMode="contain" />
-      </Appear>
+      <TalkMascot top={top} />
 
-      <Appear from="none" delay={800} duration={400} style={[styles.talkBubble, { top: top + 431 }]}>
+      {/* ch07BubbleFade：0.7秒後に 12px 下から 0.4秒でフェードイン */}
+      <Appear
+        from="up"
+        distance={12}
+        delay={700}
+        duration={400}
+        style={[styles.talkBubble, { top: top + 431 }, bubbleHeight !== undefined && { height: bubbleHeight, justifyContent: 'center', paddingVertical: 0 }]}
+      >
         <Svg style={styles.talkBubbleTail} width={34} height={25} viewBox="0 0 44 26" preserveAspectRatio="none">
           <Path d="M18.8 3.8C20.2 1.4 23.8 1.4 25.2 3.8L44 26H0Z" fill={colors.white} />
         </Svg>
@@ -279,6 +332,7 @@ export function TalkLayout({
       <View style={[styles.bottomTalk, { bottom: insets.bottom + layout.ctaBottom }]}>
         <CtaButton
           testID="onboarding-next"
+          style={centeredButton}
           variant="primary"
           fontSize={18}
           ledge={{ color: '#4D3CA8', depth: 3 }}
@@ -286,8 +340,61 @@ export function TalkLayout({
           onPress={onNext}
         />
       </View>
-      <LangToggle style={[styles.talkLang, { top: top + 14 }]} />
+      <LangToggle style={[styles.talkLang, { top: insets.top + 14 }]} />
     </View>
+  );
+}
+
+/**
+ * SHOSA と足元の影（index.html .ch07-mascot-img / .ch07-mascot-shadow）。
+ * - ch07MascotBounce：0.3秒後に 0.6秒で弾んで登場（下 24px・0.92倍 → 上 6px・1.03倍 → 下 2px・0.99倍 → 元の位置）
+ * - ch07ShadowGrow：同時に影が 0.7倍から広がりながら現れる
+ * - mascotBreathe / mascotShadowBreathe：その後 2.2秒周期で SHOSA が 3px 上下し、影が 0.95倍に縮む
+ * 視差効果を減らす ON のときは動かさない。
+ */
+function TalkMascot({ top }: { top: number }) {
+  const reduced = useReducedMotion();
+  const enter = useRef(new Animated.Value(reduced ? 1 : 0)).current;
+  const breathe = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (reduced) return;
+    const intro = Animated.timing(enter, { toValue: 1, duration: 600, delay: 300, easing: Easing.linear, useNativeDriver: nativeDriver });
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(breathe, { toValue: 1, duration: 1100, easing: Easing.inOut(Easing.sin), useNativeDriver: nativeDriver }),
+        Animated.timing(breathe, { toValue: 0, duration: 1100, easing: Easing.inOut(Easing.sin), useNativeDriver: nativeDriver }),
+      ]),
+    );
+    intro.start(() => loop.start());
+    return () => {
+      intro.stop();
+      loop.stop();
+    };
+  }, [reduced, enter, breathe]);
+  // キーフレーム（0% / 65% / 85% / 100%）をそのまま補間する
+  const bounceY = enter.interpolate({ inputRange: [0, 0.65, 0.85, 1], outputRange: [24, -6, 2, 0] });
+  const bounceS = enter.interpolate({ inputRange: [0, 0.65, 0.85, 1], outputRange: [0.92, 1.03, 0.99, 1] });
+  const fadeIn = enter.interpolate({ inputRange: [0, 0.65, 1], outputRange: [0, 1, 1] });
+  const breatheY = breathe.interpolate({ inputRange: [0, 1], outputRange: [0, -3] });
+  const shadowS = Animated.multiply(
+    enter.interpolate({ inputRange: [0, 1], outputRange: [0.7, 1] }),
+    breathe.interpolate({ inputRange: [0, 1], outputRange: [1, 0.95] }),
+  );
+  return (
+    <>
+      <Animated.View pointerEvents="none" style={[styles.talkShadowWrap, { top: top + 368, opacity: enter, transform: [{ scale: shadowS }] }]}>
+        <Image source={images.floorShadow} style={styles.talkShadow} resizeMode="contain" />
+      </Animated.View>
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          styles.mascotWrapLarge,
+          { top: top + 235, opacity: fadeIn, transform: [{ translateY: Animated.add(bounceY, breatheY) }, { scale: bounceS }] },
+        ]}
+      >
+        <Image source={images.mascotFace} style={styles.mascotLarge} resizeMode="contain" />
+      </Animated.View>
+    </>
   );
 }
 
@@ -298,6 +405,7 @@ export function TalkLayout({
  */
 function Lamp({ style }: { style: StyleProp<ViewStyle> }) {
   const reduced = useReducedMotion();
+  const haloId = useSvgId('halo');
   const o = useRef(new Animated.Value(reduced ? 1 : 0)).current;
   const s = useRef(new Animated.Value(1)).current;
   useEffect(() => {
@@ -325,13 +433,13 @@ function Lamp({ style }: { style: StyleProp<ViewStyle> }) {
       <Animated.View style={[styles.lampHalo, { opacity: o, transform: [{ scale: s }] }]}>
         <Svg width={100} height={100}>
           <Defs>
-            <RadialGradient id="halo" cx="50%" cy="50%" r="50%">
+            <RadialGradient id={haloId} cx="50%" cy="50%" r="50%">
               <Stop offset="0" stopColor="rgb(255,235,150)" stopOpacity={0.9} />
               <Stop offset="0.594" stopColor="rgb(255,220,110)" stopOpacity={0.5} />
               <Stop offset="0.99" stopColor="rgb(255,210,80)" stopOpacity={0} />
             </RadialGradient>
           </Defs>
-          <Circle cx={50} cy={50} r={50} fill="url(#halo)" />
+          <Circle cx={50} cy={50} r={50} fill={`url(#${haloId})`} />
         </Svg>
       </Animated.View>
       <Image source={images.lamp} style={styles.lampBody} />
@@ -343,14 +451,17 @@ const styles = StyleSheet.create({
   // index.html .figma-hearing-header-bar：上 14、高さ 32。進捗バーは x63〜339、EN は右端にぴったり
   header: { flexDirection: 'row', alignItems: 'center', height: 32, marginTop: 14, paddingLeft: 21 },
   back: { width: 32, height: 32 },
-  headerTrack: { flex: 1, marginLeft: 10, marginRight: 15 },
-  scroll: { paddingHorizontal: 21, paddingBottom: 16 },
+  headerTrack: { flex: 1, marginLeft: 10, marginRight: 15, alignItems: 'center' },
+  // index.html：幅 276（402 の画面でも広い画面でも同じ）
+  headerTrackInner: { width: '100%', maxWidth: 276 },
+  scroll: { ...centered, paddingHorizontal: 21, paddingBottom: 16 },
   // SHOSA（110×100）は (28,66)、吹き出しはその右 22。選択肢は SHOSA の下 28 から
-  mascotRow: { flexDirection: 'row', alignItems: 'flex-start', marginTop: 20, marginBottom: 28, marginLeft: 7, marginRight: 7 },
+  // 高さは SHOSA（100）に固定。吹き出しが長くなっても下の選択肢は動かない（index.html と同じ）
+  mascotRow: { flexDirection: 'row', alignItems: 'flex-start', height: 100, marginTop: 20, marginBottom: 28, marginLeft: 7, marginRight: 7 },
   // 時間選択（index.html）は SHOSA が (28,73)。選択肢は同じ y194 から
   mascotRowSchedule: { marginTop: 27, marginBottom: 21 },
   mascotSmall: { width: 110, height: 100 },
-  mascotSmallShadow: { position: 'absolute', left: 17, top: 86, width: 75, height: 17, borderRadius: 40, backgroundColor: 'rgba(0,0,0,0.10)' },
+  mascotSmallShadow: { position: 'absolute', left: 17, top: 86, width: 75, height: 17, borderRadius: 999, backgroundColor: 'rgba(0,0,0,0.10)' },
   bubble: { flex: 1, marginLeft: 22, minHeight: 72, backgroundColor: colors.white, borderRadius: 6, paddingHorizontal: 18, paddingVertical: 14 },
   bubbleTail: {
     position: 'absolute',
@@ -373,7 +484,7 @@ const styles = StyleSheet.create({
   optionRow: { flexDirection: 'row', alignItems: 'center', gap: 22 },
   optionText: { flex: 1, fontSize: 16, lineHeight: 19.2, fontWeight: '700', color: colors.text, letterSpacing: 0.3 },
   // footer（お知らせ時間の帯など）と NEXT の間隔は Figma CH0-22 で 40
-  bottom: { paddingHorizontal: 21, paddingTop: 8, gap: 40 },
+  bottom: { ...centered, paddingHorizontal: 21, paddingTop: 8, gap: 40 },
   // --- TalkLayout（index.html .figma-ch07-screen）---
   room: { flex: 1, backgroundColor: '#BFA889', overflow: 'hidden' },
   wall: { position: 'absolute', top: 0, left: 0, right: 0, flex: 0 },
@@ -400,8 +511,8 @@ const styles = StyleSheet.create({
   talkBubbleTail: { position: 'absolute', top: -24, alignSelf: 'center' },
   talkText: { fontSize: 16, lineHeight: 24, color: colors.black, textAlign: 'center' },
   // NEXT の領域を画面下に重ねる（高さ 200）
-  bottomFade: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 200, justifyContent: 'flex-end', paddingTop: 0 },
-  bottomTalk: { position: 'absolute', left: layout.sideMargin, right: layout.sideMargin },
+  bottomFade: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 200, width: '100%', maxWidth: '100%', alignSelf: 'stretch', justifyContent: 'flex-end', paddingTop: 0 },
+  bottomTalk: { position: 'absolute', left: layout.sideMargin, right: layout.sideMargin, alignItems: 'center' },
   talkLang: { position: 'absolute', right: 0, zIndex: 10 },
 });
 

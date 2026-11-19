@@ -93,7 +93,7 @@ export default function ScheduleScreen() {
         visible={editing}
         tone="turquoise"
         title={tr(schedule.editTitle)}
-        confirmLabel={t('done')}
+        confirmLabel={tr(schedule.submit)}
         onClose={() => setEditing(false)}
         onConfirm={() => {
           update((r) => ({ ...r, schedule: { ...r.schedule, notifyTime: `${pad2(draft.h)}:${pad2(draft.m)}` } }));

@@ -3,7 +3,7 @@
  * 行動傾向ごとの割合を横棒で表示し、1位の傾向の要約とおすすめを出す。下に4スキルの解説カード。
  */
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PatternBackground, patterns } from '@/components/PatternBackground';
 import { CtaButton } from '@/components/ui';
@@ -12,6 +12,7 @@ import { useChapter2 } from '@/features/chapter2/Chapter2Provider';
 import { scoreRole } from '@/features/chapter2/scoring';
 import { useLang } from '@/i18n/LanguageProvider';
 import { colors } from '@/theme/colors';
+import { images } from '@/theme/images';
 import { layout } from '@/theme/layout';
 
 export default function Chapter2ProfileScreen() {
@@ -35,9 +36,10 @@ export default function Chapter2ProfileScreen() {
             const s = scores.find((x) => x.tendency === t)!;
             return (
               <View key={t} style={styles.barRow}>
-                <Text style={styles.barLabel}>
-                  {tendencyInfo[t].emoji} {t}
-                </Text>
+                <View style={styles.barLabelRow}>
+                  <Image source={images[tendencyInfo[t].icon]} style={styles.barIcon} resizeMode="contain" />
+                  <Text style={styles.barLabel}>{t}</Text>
+                </View>
                 <View style={styles.barTrack}>
                   <View style={[styles.barFill, { width: `${s.percent}%`, backgroundColor: t === top ? colors.teal : colors.goldLabel }]} />
                 </View>
@@ -58,11 +60,14 @@ export default function Chapter2ProfileScreen() {
         <Text style={styles.skillsTitle}>{tr(p.skillsTitle)}</Text>
         {TENDENCIES.map((t) => (
           <View key={t} style={styles.skill}>
-            <Text style={styles.skillHead}>
-              {tendencyInfo[t].emoji} {t}
-              {'\n'}
-              <Text style={styles.skillSub}>{tr(tendencyInfo[t].label)}</Text>
-            </Text>
+            <View style={styles.skillHeadRow}>
+              <Image source={images[tendencyInfo[t].icon]} style={styles.skillIcon} resizeMode="contain" />
+              <Text style={styles.skillHead}>
+                {t}
+                {'\n'}
+                <Text style={styles.skillSub}>{tr(tendencyInfo[t].label)}</Text>
+              </Text>
+            </View>
             <Text style={styles.skillDesc}>{tr(tendencyInfo[t].desc)}</Text>
             <Text style={styles.skillExample}>{tr(tendencyInfo[t].example)}</Text>
           </View>
@@ -87,7 +92,9 @@ const styles = StyleSheet.create({
   card: { backgroundColor: colors.white, borderRadius: 16, padding: 18, gap: 10, borderWidth: 1, borderColor: colors.goldBorder },
   title: { fontSize: 18, fontWeight: '700', color: colors.text, textAlign: 'center', marginBottom: 4 },
   barRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  barLabel: { width: 130, fontSize: 13, fontWeight: '700', color: colors.text },
+  barLabelRow: { width: 130, flexDirection: 'row', alignItems: 'center', gap: 6 },
+  barIcon: { width: 22, height: 22 },
+  barLabel: { fontSize: 13, fontWeight: '700', color: colors.text },
   barTrack: { flex: 1, height: 10, borderRadius: 5, backgroundColor: colors.beige, overflow: 'hidden' },
   barFill: { height: '100%', borderRadius: 5 },
   barValue: { width: 40, textAlign: 'right', fontSize: 13, fontWeight: '700', color: colors.goldScore },
@@ -95,6 +102,8 @@ const styles = StyleSheet.create({
   text: { fontSize: 14, lineHeight: 22, color: colors.black },
   skillsTitle: { fontSize: 20, lineHeight: 28, fontWeight: '700', color: colors.text, textAlign: 'center', marginTop: 8 },
   skill: { backgroundColor: colors.white, borderRadius: 12, padding: 14, gap: 6, borderWidth: 1, borderColor: colors.goldBorder },
+  skillHeadRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  skillIcon: { width: 36, height: 36 },
   skillHead: { fontSize: 18, fontWeight: '700', color: colors.text },
   skillSub: { fontSize: 14, fontWeight: '700', color: colors.goldDark },
   skillDesc: { fontSize: 12, lineHeight: 18, color: colors.black },

@@ -6,7 +6,7 @@
  *   下：白いカード（上端に 1.5px の線、角に金の飾り 24px、内側の余白 20）
  */
 import { useState, type ReactNode } from 'react';
-import { Image, ScrollView, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, useWindowDimensions, View, type ImageSourcePropType, type StyleProp, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { router, type Href } from 'expo-router';
@@ -115,12 +115,20 @@ interface Props {
 
 export function PlayLayout({ percent, exitTo, image, imageAlt, label, children }: Props) {
   const insets = useSafeAreaInsets();
+  const { width: windowW } = useWindowDimensions();
+  const [sceneW, setSceneW] = useState(Math.min(windowW, 402));
   return (
     <View style={styles.screen}>
       <ChapterHeader percent={percent} exitTo={exitTo} />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} bounces={false}>
-        <View style={styles.scene}>
-          <Image source={images[image]} accessibilityLabel={imageAlt} style={styles.sceneImg} resizeMode="cover" />
+        <View style={styles.scene} onLayout={(e) => setSceneW(e.nativeEvent.layout.width)}>
+          {/* index.html .ch101-illustration-wrap img：object-fit: cover; object-position: 50% 0%（上端をそろえて切り取る） */}
+          <Image
+            source={images[image]}
+            accessibilityLabel={imageAlt}
+            style={[styles.sceneImg, { height: Math.max(SCENE_H, sceneW / aspectOf(images[image])) }]}
+            resizeMode="cover"
+          />
         </View>
         <View style={[styles.card, { paddingBottom: insets.bottom + 28 }]}>
           <Ch1Flourish corner="tl" />
@@ -131,6 +139,14 @@ export function PlayLayout({ percent, exitTo, image, imageAlt, label, children }
       </ScrollView>
     </View>
   );
+}
+
+const SCENE_H = 275;
+
+/** 画像の縦横比（幅 ÷ 高さ）。取れないときは 1章の場面画像（402×342）の比率 */
+function aspectOf(source: ImageSourcePropType): number {
+  const meta = Image.resolveAssetSource?.(source);
+  return meta?.width && meta?.height ? meta.width / meta.height : 402 / 342;
 }
 
 const styles = StyleSheet.create({
@@ -154,7 +170,8 @@ const styles = StyleSheet.create({
   closeText: { color: ch1.closeIcon, fontSize: 17, fontWeight: '700', lineHeight: 17 },
   trackWrap: { flex: 1, maxWidth: 250, marginHorizontal: 12 },
   scene: { width: '100%', height: 275, backgroundColor: ch1.sceneBg, overflow: 'hidden' },
-  sceneImg: { width: '100%', height: '100%' },
+  // 幅いっぱいに置き、はみ出した下側を切る（画面が細くて高さが足りないときは 275 に合わせて左右を切る）
+  sceneImg: { width: '100%' },
   card: {
     flexGrow: 1,
     backgroundColor: '#FFFFFF',

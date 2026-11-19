@@ -7,7 +7,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { router } from 'expo-router';
 import { Animated, FlatList, Image, ImageBackground, Pressable, StyleSheet, Text, TextInput, View, type StyleProp, type ViewStyle } from 'react-native';
-import { Appear } from '@/components/Appear';
 import { BottomSheet } from '@/components/BottomSheet';
 import { pad2, range, WheelPicker } from '@/components/WheelPicker';
 import { profileForm } from '@/content/onboarding';
@@ -33,6 +32,13 @@ export default function ProfileScreen() {
   const [sheet, setSheet] = useState<'country' | 'birthday' | null>(null);
   const [draftBirth, setDraftBirth] = useState({ y: 2000, m: 1, d: 1 });
 
+  // index.html と同じく、最初から性別は「男性」、誕生日は 2000/01/01 を選んだ状態にする（名前と出身国は未入力）
+  useEffect(() => {
+    if (!p.gender || !p.birthday) setProfile({ gender: p.gender ?? 'male', birthday: p.birthday ?? '2000-01-01' });
+    // 開いたときに 1回だけ
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const errors = useMemo(() => validateProfile(p), [p]);
   const valid = Object.keys(errors).length === 0;
   const touch = (f: ProfileField) => setTouched((s) => ({ ...s, [f]: true }));
@@ -57,7 +63,7 @@ export default function ProfileScreen() {
       <Image source={images.goldDivider} style={styles.divider} resizeMode="contain" />
 
       {/* 性別 */}
-      <FieldLabel text={tr(profileForm.gender.label)} done={!!p.gender} />
+      <FieldLabel text={tr(profileForm.gender.label)} />
       <Shake trigger={!!errorFor('gender')} style={styles.genderRow}>
         {profileForm.gender.options.map((g) => {
           const sel = p.gender === g.id;
@@ -89,7 +95,7 @@ export default function ProfileScreen() {
       <FieldError text={errorFor('gender')} />
 
       {/* 名前 */}
-      <FieldLabel text={tr(profileForm.name.label)} done={!errors.name} />
+      <FieldLabel text={tr(profileForm.name.label)} />
       <Shake trigger={!!errorFor('name')} style={[styles.field, errorFor('name') && styles.fieldError]}>
         <TextInput
           testID="name-input"
@@ -102,15 +108,12 @@ export default function ProfileScreen() {
           autoCorrect={false}
           returnKeyType="done"
         />
-        <Text style={[styles.counter, countChars(p.name.trim()) > NAME_MAX_LENGTH && { color: colors.incorrect }]}>
-          {countChars(p.name.trim())}/{NAME_MAX_LENGTH}
-        </Text>
       </Shake>
       <Text style={styles.help}>{tr(profileForm.name.help)}</Text>
       <FieldError text={errorFor('name') ?? (countChars(p.name.trim()) > NAME_MAX_LENGTH && errors.name ? tr(errors.name) : null)} />
 
       {/* 出身国 */}
-      <FieldLabel text={tr(profileForm.country.label)} done={!!p.countryId} />
+      <FieldLabel text={tr(profileForm.country.label)} />
       <SelectField
         testID="country-select"
         value={country ? tr(country.label) : null}
@@ -121,7 +124,7 @@ export default function ProfileScreen() {
       <FieldError text={errorFor('countryId')} />
 
       {/* 誕生日 */}
-      <FieldLabel text={tr(profileForm.birthday.label)} done={!!p.birthday} />
+      <FieldLabel text={tr(profileForm.birthday.label)} />
       <SelectField
         testID="birthday-select"
         value={p.birthday ? p.birthday.replace(/-/g, '/') : null}
@@ -147,6 +150,7 @@ export default function ProfileScreen() {
       >
         <FlatList
           style={{ maxHeight: 320, alignSelf: 'stretch' }}
+          showsVerticalScrollIndicator={false}
           data={profileForm.country.options}
           keyExtractor={(c) => c.id}
           renderItem={({ item }) => (
@@ -209,19 +213,15 @@ function SelectField({ value, placeholder, error, onPress, testID }: { value: st
   );
 }
 
-/** 項目名。入力済みなら右に ✓ を出す（要点 CH0-15/16'：入力済みのチェック） */
-function FieldLabel({ text, done }: { text: string; done: boolean }) {
+/** 項目名。index.html と同じく、入力済みでもチェックマークは出さない */
+function FieldLabel({ text }: { text: string }) {
   return (
     <View style={styles.labelRow}>
       <Text style={styles.labelText}>{text}</Text>
-      {done && (
-        <Appear from="pop" duration={300}>
-          <Text style={styles.check}>✓</Text>
-        </Appear>
-      )}
     </View>
   );
 }
+
 
 /** エラーが出た瞬間に横に揺れる（要点 CH0-15/16'：エラー時の横揺れ。視差効果を減らす ON のときは揺らさない） */
 function Shake({ trigger, style, children }: { trigger: boolean; style?: StyleProp<ViewStyle>; children: ReactNode }) {
@@ -254,7 +254,6 @@ const styles = StyleSheet.create({
   divider: { alignSelf: 'center', width: 240, height: 13, marginTop: 10 },
   labelRow: { flexDirection: 'row', alignItems: 'center', gap: 6, height: 16, marginTop: 20, marginBottom: 10 },
   labelText: { fontSize: 16, lineHeight: 16, fontWeight: '700', color: colors.text },
-  check: { fontSize: 16, lineHeight: 16, fontWeight: '900', color: colors.turquoise },
   genderRow: { flexDirection: 'row', gap: 6 },
   genderChip: { height: 68, alignItems: 'center', justifyContent: 'center' },
   fill: { width: '100%', height: '100%' },
@@ -273,7 +272,6 @@ const styles = StyleSheet.create({
   },
   fieldError: { borderColor: colors.incorrect },
   input: { flex: 1, fontSize: 16, fontWeight: '700', color: colors.text },
-  counter: { fontSize: 12, color: colors.placeholder },
   chevron: { fontSize: 14, fontWeight: '800', color: '#9CA3AF' },
   help: { fontSize: 12, lineHeight: 16, color: colors.black, marginTop: 6 },
   error: { fontSize: 12, color: colors.incorrect, marginTop: 4, fontWeight: '700' },

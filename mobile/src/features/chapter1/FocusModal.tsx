@@ -3,13 +3,14 @@
  * 背面を 55% の黒で暗くし、中央にクリーム色のカード（最大幅 340、角丸 20）を出す。
  * 右上に飛び出した ✕、左上に虫めがね、タイトル、金のひし形の区切り線、本文 2段落、チェックリストカード。
  */
-import { Image, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Svg, { Line, Polygon } from 'react-native-svg';
 import { RichText } from '@/components/RichText';
 import { PressScale } from '@/components/ui';
 import type { Chapter1Lesson } from '@/content/types';
 import { useLang } from '@/i18n/LanguageProvider';
 import { images } from '@/theme/images';
+import { AppModal } from '@/components/AppModal';
 
 /** 金のひし形の区切り線（index.html の SVG と同じ） */
 export function DiamondDivider({
@@ -56,7 +57,7 @@ function twoParagraphs(text: string, lang: 'ja' | 'en'): string[] {
 export function FocusModal({ lesson, visible, onClose }: { lesson: Chapter1Lesson; visible: boolean; onClose: () => void }) {
   const { lang, t, tr } = useLang();
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+    <AppModal visible={visible} animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose}>
         <Pressable style={styles.card} onPress={() => {}} testID="focus-modal">
           <View style={styles.close}>
@@ -78,7 +79,8 @@ export function FocusModal({ lesson, visible, onClose }: { lesson: Chapter1Lesso
           </ScrollView>
           {/* .ch101-focus-checklist-card：Frame 342.png を背景にしたカード（最大幅 280） */}
           <View style={styles.checklist}>
-            <Image source={images.focusChecklistCard} style={StyleSheet.absoluteFill} resizeMode="stretch" />
+            {/* Web では画像の元の大きさ（289×278）で描かれてしまうため、幅・高さを 100% と明示してカードいっぱいに伸ばす */}
+            <Image source={images.focusChecklistCard} style={styles.checklistBg} resizeMode="stretch" />
             {lesson.focusImage && <Image source={images[lesson.focusImage]} style={styles.checklistImg} resizeMode="contain" />}
             <RichText style={styles.caption} highlightStyle={styles.captionHl}>
               {tr(lesson.focusCaption)}
@@ -86,7 +88,7 @@ export function FocusModal({ lesson, visible, onClose }: { lesson: Chapter1Lesso
           </View>
         </Pressable>
       </Pressable>
-    </Modal>
+    </AppModal>
   );
 }
 
@@ -98,7 +100,7 @@ const styles = StyleSheet.create({
     maxHeight: '90%',
     backgroundColor: '#FAF7F2',
     borderRadius: 20,
-    paddingTop: 24,
+    paddingTop: 28,
     paddingHorizontal: 18,
     paddingBottom: 18,
     alignItems: 'center',
@@ -130,8 +132,9 @@ const styles = StyleSheet.create({
   title: { fontSize: 18, fontWeight: '800', color: '#2D3748', letterSpacing: 0.8 },
   divider: { marginTop: 10, marginBottom: 14 },
   para: { fontSize: 12.5, lineHeight: 20.6, color: '#2D3748', fontWeight: '600', marginBottom: 10, textAlign: 'center' },
-  checklist: { width: '100%', maxWidth: 280, paddingTop: 16, paddingHorizontal: 12, paddingBottom: 14, alignItems: 'center' },
+  checklist: { width: '100%', maxWidth: 280, marginTop: 2, paddingTop: 16, paddingHorizontal: 12, paddingBottom: 14, alignItems: 'center' },
+  checklistBg: { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' },
   checklistImg: { width: 78, height: 97, marginBottom: 8 },
-  caption: { fontSize: 11.5, lineHeight: 17.25, color: '#4A5568', fontWeight: '700', textAlign: 'center' },
+  caption: { fontSize: 11.5, lineHeight: 18, color: '#4A5568', fontWeight: '700', textAlign: 'center' },
   captionHl: { color: '#715BE1', fontWeight: '800' },
 });

@@ -5,7 +5,7 @@
  *
  * index.html と同じく、紙のレポート画像（Group 384.png：370×626、見出し・「2位以降を閲覧するには…」の鍵の帯まで描かれている）を
  * (24,33) に置き、その上に 1位の内容（リボン・職種名・割合・アイコン・強み3つ）を重ねる。
- * 背景は「適性診断 完了！」のオレンジ（#FF805C）を 74% の黒で暗くしたもの。
+ * 背景は「適性診断 完了！」のオレンジ（#FF805C）にベージュの線の柄を重ね、74% の黒で暗くしたもの。
  *
  * M-14：レポートの紙が下からせり上がる（0.6秒）→ M-15：第1位の割合を 0 からカウントアップ（1秒）
  * → M-16：強み3つを上から 0.3秒おきに1つずつ表示 → M-17：2位以降は画像の鍵の帯で隠す
@@ -16,6 +16,7 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Polygon } from 'react-native-svg';
 import { Appear } from '@/components/Appear';
+import { PatternBackground, patterns } from '@/components/PatternBackground';
 import { Icon } from '@/components/Icon';
 import { CtaButton } from '@/components/ui';
 import { diagnosisResult } from '@/content/onboarding';
@@ -50,7 +51,7 @@ export default function DiagnosisResultScreen() {
   };
 
   return (
-    <View style={styles.screen}>
+    <PatternBackground {...patterns.beigeLines} color="#FF805C">
       <View style={styles.dim} />
       <Appear from="rise" duration={PAPER_MS} distance={120} style={[styles.paper, { top: insets.top + 33 }]}>
         <Image source={images.resultPaper} style={styles.paperImg} resizeMode="stretch" />
@@ -99,7 +100,7 @@ export default function DiagnosisResultScreen() {
       <View style={[styles.bottom, { top: insets.top + 701 }]}>
         <CtaButton testID="result-next" variant="primary" fontSize={18} ledge={{ color: '#4D3CA8', depth: 3 }} label={tr(r.button)} onPress={finish} />
       </View>
-    </View>
+    </PatternBackground>
   );
 }
 
@@ -131,7 +132,6 @@ function CountUp({ to, delay, duration }: { to: number; delay: number; duration:
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#FF805C' },
   dim: { ...StyleSheet.absoluteFill, backgroundColor: 'rgba(0,0,0,0.74)' },
   paper: {
     position: 'absolute',
@@ -162,5 +162,6 @@ const styles = StyleSheet.create({
   star: { fontSize: 18, lineHeight: 18, color: '#F8B600' },
   strengthText: { flex: 1, fontSize: 12, lineHeight: 18, color: colors.black },
   under: { position: 'absolute', left: 0, top: LOCK_TOP, width: PAPER_W, height: PAPER_H - LOCK_TOP, overflow: 'hidden' },
-  bottom: { position: 'absolute', left: layout.sideMargin, right: layout.sideMargin },
+  // index.html：NEXT は左 21・幅 360（画面が広くても中央に寄せない）
+  bottom: { position: 'absolute', left: layout.sideMargin, width: 360, maxWidth: '89.5%' },
 });

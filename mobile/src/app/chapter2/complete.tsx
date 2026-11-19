@@ -21,7 +21,7 @@ export default function Chapter2CompleteScreen() {
     <Celebration
       background="#10C56E"
       title={fill(tr(e.title), { role: role.name })}
-      medal="medalChapter1"
+      medal="medalChapter2"
       footer={
         <>
           {/* Figma CH2-06：上が紫、下が白 */}

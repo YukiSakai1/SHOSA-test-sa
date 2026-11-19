@@ -25,7 +25,7 @@ const ja = {
   situationLabel: 'SITUATION',
   questionLabel: 'QUESTION',
   correct: '正解！',
-  incorrect: '不正解！',
+  incorrect: '不正解',
   sceneTurn1: '状況 1 / 2',
   sceneTurn2: 'SHOSAの視点 2 / 2',
   focusButton: 'SHOSA Focus',
@@ -50,7 +50,7 @@ const en: Record<UiStringKey, string> = {
   titleTagline: 'Toward the future of working in Japan',
   loginGoogle: 'Continue with Google',
   loginApple: 'Continue with Apple',
-  loginPhone: 'Continue with phone number',
+  loginPhone: 'Continue with Phone Number',
   langPrompt: 'Please select\nyour language setting.',
   otherPlaceholder: 'Please enter',
   timeHour: 'h',
@@ -66,7 +66,7 @@ const en: Record<UiStringKey, string> = {
   situationLabel: 'SITUATION',
   questionLabel: 'QUESTION',
   correct: 'Correct!',
-  incorrect: 'Incorrect!',
+  incorrect: 'Incorrect',
   sceneTurn1: 'SCENE 1 / 2',
   sceneTurn2: 'SHOSA TIP 2 / 2',
   focusButton: 'SHOSA Focus',
@@ -81,7 +81,8 @@ const en: Record<UiStringKey, string> = {
   homeStartChapter1: 'Start Chapter 1',
   homeChapter1Done: 'Chapter 1 cleared',
   homeOnboardingTodo: '*Chapter 0 (sign-up & assessment) is being ported',
-  langToggle: 'JA',
+  // index.html と同じく、英語表示のときは「JP」
+  langToggle: 'JP',
 };
 
 export const uiStrings: Record<Lang, Record<UiStringKey, string>> = { ja, en };

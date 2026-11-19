@@ -5,13 +5,15 @@
  * - from="pop":  下から小さく弾んで出る（M-21 マスコット）
  * - from="rise": 画面の下からせり上がる（M-14 レポートの紙）
  * - from="none": フェードだけ（M-19 タグライン）
+ * - from="right": 少し右から左へ動きながら出る（ジャーニーのカード）
+ * - from="scale": 小さい大きさ（scaleFrom）から少し大きくなって元に戻る（ジャーニーの点・扉、イントロの吹き出し）
  * M-04：視差効果を減らす ON のときは、どれもフェード（0.15秒）だけになる。
  */
 import { useEffect, useRef, type ReactNode } from 'react';
 import { Animated, Easing, type StyleProp, type ViewStyle } from 'react-native';
 import { motion, nativeDriver, useReducedMotion } from '@/theme/motion';
 
-type From = 'up' | 'drop' | 'pop' | 'rise' | 'none';
+type From = 'up' | 'drop' | 'pop' | 'rise' | 'none' | 'right' | 'scale';
 
 interface Props {
   delay?: number;
@@ -19,17 +21,23 @@ interface Props {
   from?: From;
   /** 動く距離（px） */
   distance?: number;
+  /** from="scale" の最初の大きさ（既定 0.6） */
+  scaleFrom?: number;
   onDone?: () => void;
   style?: StyleProp<ViewStyle>;
   children: ReactNode;
 }
 
-export function Appear({ delay = 0, duration = 300, from = 'up', distance, onDone, style, children }: Props) {
+export function Appear({ delay = 0, duration = 300, from = 'up', distance, scaleFrom = 0.6, onDone, style, children }: Props) {
   const reduced = useReducedMotion();
   const p = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     const easing =
-      from === 'drop' ? Easing.bounce : from === 'pop' ? Easing.out(Easing.back(2)) : Easing.out(Easing.cubic);
+      from === 'drop'
+        ? Easing.bounce
+        : from === 'pop' || from === 'scale'
+          ? Easing.out(Easing.back(2))
+          : Easing.out(Easing.cubic);
     const anim = Animated.timing(p, {
       toValue: 1,
       delay: reduced ? 0 : delay,
@@ -44,11 +52,17 @@ export function Appear({ delay = 0, duration = 300, from = 'up', distance, onDon
   }, []);
 
   const d = distance ?? (from === 'drop' ? 220 : from === 'rise' ? 500 : from === 'pop' ? 40 : 16);
+  const moves = !reduced && from !== 'none' && from !== 'scale';
   const translateY =
-    reduced || from === 'none'
-      ? 0
-      : p.interpolate({ inputRange: [0, 1], outputRange: [from === 'drop' ? -d : d, 0] });
+    !moves || from === 'right' ? 0 : p.interpolate({ inputRange: [0, 1], outputRange: [from === 'drop' ? -d : d, 0] });
+  const translateX = moves && from === 'right' ? p.interpolate({ inputRange: [0, 1], outputRange: [d, 0] }) : 0;
+  const scale = !reduced && from === 'scale' ? p.interpolate({ inputRange: [0, 1], outputRange: [scaleFrom, 1] }) : 1;
   // 落下・せり上がりは最初から見えている（位置だけが動く）。それ以外はフェードも付ける
-  const opacity = !reduced && (from === 'drop' || from === 'rise') ? p.interpolate({ inputRange: [0, 0.05, 1], outputRange: [0, 1, 1] }) : p;
-  return <Animated.View style={[style, { opacity, transform: [{ translateY }] }]}>{children}</Animated.View>;
+  const opacity =
+    !reduced && (from === 'drop' || from === 'rise')
+      ? p.interpolate({ inputRange: [0, 0.05, 1], outputRange: [0, 1, 1] })
+      : !reduced && from === 'scale'
+        ? p.interpolate({ inputRange: [0, 0.4, 1], outputRange: [0, 1, 1], extrapolate: 'clamp' })
+        : p;
+  return <Animated.View style={[style, { opacity, transform: [{ translateY }, { translateX }, { scale }] }]}>{children}</Animated.View>;
 }

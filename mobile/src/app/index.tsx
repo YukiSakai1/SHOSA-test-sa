@@ -14,7 +14,7 @@ import { PressScale } from '@/components/ui';
 import { useChapter1Completed } from '@/features/chapter1/progress';
 import { useOnboarding } from '@/features/onboarding/OnboardingProvider';
 import { useLang } from '@/i18n/LanguageProvider';
-import { colors } from '@/theme/colors';
+import { colors, fonts } from '@/theme/colors';
 import { layout } from '@/theme/layout';
 import { nativeDriver, useReducedMotion } from '@/theme/motion';
 import { images } from '@/theme/images';
@@ -28,7 +28,7 @@ const TITLE_INK = '#404040';
 export default function TitleScreen() {
   const { t } = useLang();
   const insets = useSafeAreaInsets();
-  const { record } = useOnboarding();
+  const { record, reset } = useOnboarding();
   const chapter1Done = useChapter1Completed();
   const [authing, setAuthing] = useState<'google' | 'apple' | null>(null);
   const [mascotIn, setMascotIn] = useState(false);
@@ -37,7 +37,8 @@ export default function TitleScreen() {
   const [screenW, setScreenW] = useState(windowW);
   const shieldW = screenW + 42;
   const shieldH = (shieldW * 617) / 444;
-  const shieldTop = insets.top - 41;
+  // index.html では盾と中身はセーフエリアに関係なく画面上端から置く（ボタンだけ下のセーフエリアを空ける）
+  const shieldTop = -41;
   const contentTop = shieldTop + shieldW * 0.37; // padding-top: 37%（402 幅で上端 123）
   const logoW = Math.min(shieldW * 0.637, 283);
   const logoH = (logoW * 82) / 283;
@@ -56,8 +57,16 @@ export default function TitleScreen() {
     setAuthing(provider);
     setTimeout(() => {
       setAuthing(null);
-      start();
+      if (provider === 'google') restartChapter0();
+      else start();
     }, FAKE_AUTH_MS);
+  };
+
+  // 「Googleで続ける」は毎回 0章の最初（言語選択）から。0章の回答（ヒアリング・プロフィール・適性診断など）も消してやり直す
+  // （1章・2章の進み具合はそのまま）
+  const restartChapter0 = () => {
+    reset();
+    router.push('/onboarding/language');
   };
 
   return (
@@ -171,7 +180,8 @@ const styles = StyleSheet.create({
   shield: { position: 'absolute', left: -21 },
   // タグライン（15px）→ 21 → ロゴ（283×82）
   shieldContent: { position: 'absolute', left: 0, right: 0, alignItems: 'center' },
-  tagline: { fontSize: 15, lineHeight: 22, fontWeight: '700', color: TITLE_INK, marginBottom: 21 },
+  // index.html のタグラインは Roboto（Web は Google Fonts を読み込む）
+  tagline: { fontSize: 15, lineHeight: 22, fontWeight: '700', color: TITLE_INK, marginBottom: 21, fontFamily: fonts.roboto },
   mascotWrap: { position: 'absolute', left: 0, right: 0, alignItems: 'center' },
   // .ch01-mascot-shadow：132×30、マスコットの上端から 158
   shadow: { position: 'absolute', top: 158, width: 132, height: 30 },

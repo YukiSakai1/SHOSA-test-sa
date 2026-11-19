@@ -4,5 +4,5 @@ import { talks } from '@/content/onboarding';
 import { TalkLayout } from '@/features/onboarding/components';
 
 export default function Screen() {
-  return <TalkLayout lines={talks.profileIntro.lines} highlight={talks.profileIntro.highlight} onNext={() => router.push('/onboarding/profile')} />;
+  return <TalkLayout bubbleHeight={114} lines={talks.profileIntro.lines} highlight={talks.profileIntro.highlight} onNext={() => router.push('/onboarding/profile')} />;
 }

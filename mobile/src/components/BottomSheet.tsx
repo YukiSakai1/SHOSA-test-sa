@@ -5,9 +5,10 @@
  * ×・背景で閉じたときは、選んだ値を反映しない（呼び出し側で onClose では何も保存しない）。
  */
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Modal, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
+import { AppModal } from '@/components/AppModal';
 import { CtaButton } from '@/components/ui';
 import { colors } from '@/theme/colors';
 import { motion, useReducedMotion } from '@/theme/motion';
@@ -31,9 +32,9 @@ export function BottomSheet(props: Props) {
   }, [props.visible]);
   if (!mounted) return null;
   return (
-    <Modal visible transparent animationType="none" onRequestClose={props.onClose}>
+    <AppModal visible onRequestClose={props.onClose}>
       <SheetContent {...props} closing={!props.visible} onClosed={() => setMounted(false)} />
-    </Modal>
+    </AppModal>
   );
 }
 

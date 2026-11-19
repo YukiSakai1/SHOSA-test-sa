@@ -2,9 +2,10 @@
  * はい／いいえの確認ダイアログ。
  * Alert.alert は Web で動かないため、iOS / Android / Web 共通で Modal を使う。
  */
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '@/theme/colors';
 import { PressScale } from '@/components/ui';
+import { AppModal } from '@/components/AppModal';
 
 interface Props {
   visible: boolean;
@@ -18,7 +19,7 @@ interface Props {
 
 export function ConfirmDialog({ visible, title, body, confirmLabel, cancelLabel, onConfirm, onCancel }: Props) {
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
+    <AppModal visible={visible} animationType="fade" onRequestClose={onCancel}>
       <Pressable style={styles.backdrop} onPress={onCancel}>
         <Pressable style={styles.card} onPress={() => {}}>
           <Text style={styles.title}>{title}</Text>
@@ -33,7 +34,7 @@ export function ConfirmDialog({ visible, title, body, confirmLabel, cancelLabel,
           </View>
         </Pressable>
       </Pressable>
-    </Modal>
+    </AppModal>
   );
 }
 

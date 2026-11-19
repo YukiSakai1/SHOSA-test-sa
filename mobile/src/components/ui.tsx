@@ -3,17 +3,19 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import {
   Animated,
   Easing,
+  Image,
   Pressable,
   StyleSheet,
   Text,
   View,
+  type ImageSourcePropType,
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
 import Svg, { Circle, Path, Polyline } from 'react-native-svg';
 import { useLang } from '@/i18n/LanguageProvider';
 import { haptics } from '@/lib/haptics';
-import { colors } from '@/theme/colors';
+import { colors, fonts } from '@/theme/colors';
 import { motion, nativeDriver, useReducedMotion } from '@/theme/motion';
 
 /** 角の金色の飾り（Figma: Group 258〜261） */
@@ -113,6 +115,7 @@ export function CtaButton({
   fontSize,
   disabledTone = 'figma',
   ledge,
+  icon,
   style,
   testID,
 }: {
@@ -123,6 +126,8 @@ export function CtaButton({
   disabledTone?: 'figma' | 'beige' | 'grey';
   /** index.html 0章の立体ボタン：下に 3〜4px の濃い色の縁（box-shadow 0 Npx 0）。disabledColor を渡すと押せないときも出す */
   ledge?: { color: string; depth: number; disabledColor?: string };
+  /** ボタンの左端に置く画像（例：診断完了の「結果を見る」のアイコン）。左から 24、縦は中央 */
+  icon?: { source: ImageSourcePropType; width: number; height: number };
   disabled?: boolean;
   /** タップを促す脈動アニメーション（M-13：1.5秒周期） */
   pulse?: boolean;
@@ -186,6 +191,7 @@ export function CtaButton({
         >
           {label}
         </Text>
+        {icon && <Image source={icon.source} style={{ position: 'absolute', left: 24, width: icon.width, height: icon.height }} resizeMode="contain" />}
       </PressScale>
     </Animated.View>
   );
@@ -217,13 +223,32 @@ export function usePulse(enabled: boolean): Animated.Value {
  * 画面の右端にくっつき、左側だけが丸い 48×32。枠 #E6D8BD、下に 1px の影。文字は 14px・#333。
  */
 export function LangToggle({ style }: { style?: StyleProp<ViewStyle> }) {
-  const { t, toggleLang } = useLang();
+  const { lang, t, toggleLang } = useLang();
+  const reduced = useReducedMotion();
+  // index.html .btn-en-toggle.spinning：押した瞬間に矢印が 0.35秒で 1回転する
+  const spin = useRef(new Animated.Value(0)).current;
+  const onPress = () => {
+    if (!reduced) {
+      spin.setValue(0);
+      Animated.timing(spin, { toValue: 1, duration: 350, easing: Easing.bezier(0.4, 0, 0.2, 1), useNativeDriver: nativeDriver }).start();
+    }
+    toggleLang();
+  };
+  const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
   return (
-    <PressScale accessibilityLabel="Translate / 言語切り替え" onPress={toggleLang} hitSlop={8} containerStyle={style} style={styles.langChip}>
-      <Svg width={14} height={12} viewBox="0 0 24 24" fill="none" stroke={colors.text} strokeWidth={2.6}>
-        <Path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" strokeLinecap="round" strokeLinejoin="round" />
-        <Polyline points="21 3 21 8 16 8" strokeLinecap="round" strokeLinejoin="round" />
-      </Svg>
+    <PressScale
+      accessibilityLabel={lang === 'en' ? 'Switch to Japanese / 日本語に切り替え' : 'Switch to English / 英語に切り替え'}
+      onPress={onPress}
+      hitSlop={8}
+      containerStyle={style}
+      style={styles.langChip}
+    >
+      <Animated.View style={{ transform: [{ rotate }] }}>
+        <Svg width={14} height={12} viewBox="0 0 24 24" fill="none" stroke="#1A2530" strokeWidth={2.6}>
+          <Path d="M21 12a9 9 0 1 1-2.6-6.3L21 8" strokeLinecap="round" strokeLinejoin="round" />
+          <Polyline points="21 3 21 8 16 8" strokeLinecap="round" strokeLinejoin="round" />
+        </Svg>
+      </Animated.View>
       <Text style={styles.langText}>{t('langToggle')}</Text>
     </PressScale>
   );
@@ -285,7 +310,9 @@ export function ProgressBar({ percent, variant = 'figma' }: { percent: number; v
   if (variant === 'ch0') {
     return (
       <View style={styles.trackCh0}>
-        <Animated.View style={[styles.fillCh0, { width }]} />
+        <Animated.View style={[styles.fillCh0, { width }]}>
+          <View style={styles.highlightCh0} />
+        </Animated.View>
       </View>
     );
   }
@@ -327,7 +354,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 0,
   },
-  langText: { color: colors.text, fontWeight: '700', fontSize: 14, lineHeight: 15 },
+  // index.html .lang-text：Roboto 700・14px（Web は Google Fonts の Roboto、Android は標準の Roboto、iOS は標準フォント）
+  langText: { color: colors.text, fontWeight: '700', fontSize: 14, lineHeight: 15, fontFamily: fonts.roboto },
   advance: { position: 'absolute', right: 21, bottom: 21 },
   track: {
     flex: 1,
@@ -340,9 +368,11 @@ const styles = StyleSheet.create({
   },
   fill: { height: '100%', backgroundColor: colors.purple, borderRadius: 10, paddingHorizontal: 3, paddingTop: 1 },
   highlight: { height: 3, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.4)' },
-  // index.html 0章（.figma-hearing-progress-bar：#DDDDDD、1px の #C2B7A2 の輪、中に高さ 10 の紫）
-  trackCh0: { height: 12, backgroundColor: '#DDDDDD', borderWidth: 1, borderColor: '#C2B7A2', borderRadius: 999, overflow: 'hidden' },
+  // index.html 0章（.figma-hearing-progress-bar：#DDDDDD に 1px の枠＋1px の輪＝合わせて 2px の #C2B7A2、中に高さ 10 の紫）
+  trackCh0: { height: 14, margin: -1, backgroundColor: '#DDDDDD', borderWidth: 2, borderColor: '#C2B7A2', borderRadius: 999, overflow: 'hidden' },
   fillCh0: { height: '100%', backgroundColor: colors.purple, borderRadius: 999 },
+  // .figma-hearing-progress-fill::after：上 2・左右 4 に高さ 3 の白 40% の光
+  highlightCh0: { position: 'absolute', top: 2, left: 4, right: 4, height: 3, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.4)' },
   trackCh1: { height: 9, backgroundColor: '#DFDEDE', borderRadius: 999, overflow: 'hidden' },
   fillCh1: { height: '100%', backgroundColor: colors.purple, borderRadius: 999 },
 });

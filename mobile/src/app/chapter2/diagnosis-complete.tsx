@@ -4,6 +4,7 @@ import { CtaButton } from '@/components/ui';
 import { chapter2, findRole } from '@/content/chapter2';
 import { MilestoneCard } from '@/features/chapter2/MilestoneCard';
 import { useLang } from '@/i18n/LanguageProvider';
+import { images } from '@/theme/images';
 
 export default function DiagnosisCompleteScreen() {
   const params = useLocalSearchParams<{ role: string }>();
@@ -16,6 +17,7 @@ export default function DiagnosisCompleteScreen() {
       <CtaButton
         testID="view-results"
         pulse
+        icon={{ source: images.resultButtonIcon, width: 34, height: 50 }}
         label={tr(c.button)}
         onPress={() => router.push({ pathname: '/chapter2/result', params: { role: role.id } })}
       />

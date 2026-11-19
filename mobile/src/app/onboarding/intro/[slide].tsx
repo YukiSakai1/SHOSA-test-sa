@@ -5,6 +5,7 @@
  * - 図：パネル上端から 44（手順カードと検定表は 66〜67）
  * - 本文：パネル上端から 371 で始まる（WELCOME だけは画像の下 33）
  * - ボタン：下から 32。START（1枚目）は紫、それ以外はターコイズの立体ボタン
+ * index.html と同じく、見出し・パネルはセーフエリアに関係なく画面上端から置く（EN と下のボタンだけセーフエリアを空ける）。
  * index.html では戻るボタンがあるが、M-31 に合わせて出していない。
  */
 import { useEffect, useRef } from 'react';
@@ -32,7 +33,8 @@ const BODY_TOP = 371;
 export default function IntroSlideScreen() {
   const { slide: raw } = useLocalSearchParams<{ slide: string }>();
   const insets = useSafeAreaInsets();
-  const { tr } = useLang();
+  const { lang, tr } = useLang();
+  const en = lang === 'en';
   const index = Number(raw);
   if (!Number.isInteger(index) || index < 0 || index >= introSlideCount) return <Redirect href="/onboarding/language" />;
 
@@ -46,16 +48,16 @@ export default function IntroSlideScreen() {
   const isWelcome = kind === 'welcome';
 
   return (
-    <PatternBackground {...patterns.turquoise}>
+    <PatternBackground {...patterns.turquoiseSmall}>
       <LangToggle style={[styles.lang, { top: insets.top + 14 }]} />
       {isWelcome ? (
-        <View style={[styles.welcomeHead, { top: insets.top + 81 }]}>
+        <View style={[styles.welcomeHead, { top: 81 }]}>
           <Text style={styles.badge}>{tr(intro.welcome.badge)}</Text>
           <Image source={images.logoWhite} style={styles.logo} resizeMode="contain" />
         </View>
       ) : (
-        <View style={[styles.head, { top: insets.top + 89 }]}>
-          <Text style={styles.title}>{tr(data.title)}</Text>
+        <View style={[styles.head, { top: 89 }]}>
+          <Text style={[styles.title, en && styles.titleEn]}>{tr(data.title)}</Text>
           <View style={styles.divider}>
             <DiamondDivider color="#FFFFFF" width={240} height={12} />
           </View>
@@ -63,7 +65,7 @@ export default function IntroSlideScreen() {
       )}
 
       {/* 要点 CH0-03〜06：アーチのパネルが下からせり上がる */}
-      <Appear from="rise" duration={500} distance={120} style={[styles.panel, { top: insets.top + PANEL_TOP }]}>
+      <Appear from="rise" duration={500} distance={120} style={[styles.panel, { top: PANEL_TOP }]}>
         <Svg style={styles.arch} width="100%" height={108} viewBox="0 0 402 108" preserveAspectRatio="none" pointerEvents="none">
           <Path d="M0,107.5 A201,107.5 0 0 1 402,107.5 L402,108 L0,108 Z" fill={colors.beige} />
         </Svg>
@@ -89,18 +91,22 @@ export default function IntroSlideScreen() {
 }
 
 function WelcomeBody() {
-  const { tr } = useLang();
+  const { lang, tr } = useLang();
+  const en = lang === 'en';
   return (
     <View style={styles.welcomeBody}>
       <Image source={images.intro1Hero} style={styles.phoneHero} resizeMode="contain" />
-      <Text style={styles.welcomeTitle}>{tr(intro.welcome.title)}</Text>
+      <View style={styles.welcomeTextArea}>
+        <Text style={[styles.welcomeTitle, en && styles.welcomeTitleEn]}>{tr(intro.welcome.title)}</Text>
+      </View>
     </View>
   );
 }
 
 /** CH0-04：スマホ（160×297）の左右に 4機能の吹き出し（107×93） */
 function FeaturesBody() {
-  const { tr } = useLang();
+  const { lang, tr } = useLang();
+  const en = lang === 'en';
   const bubbles = [images.introBubbleTl, images.introBubbleTr, images.introBubbleBl, images.introBubbleBr];
   return (
     <>
@@ -110,23 +116,24 @@ function FeaturesBody() {
       {bubbles.map((src, i) => {
         const left = i % 2 === 0;
         return (
-          // 要点 CH0-04：4機能のアイコンが順にポンと出る
+          // index.html lineExtend：左上 → 右上 → 左下 → 右下の順に、0.15秒から 0.2秒ずつずらして 0.6倍から弾んで出る
           <Appear
             key={i}
-            from="pop"
-            delay={500 + i * 150}
-            duration={400}
+            from="scale"
+            scaleFrom={0.6}
+            delay={150 + i * 200}
+            duration={600}
             style={[styles.bubble, left ? { left: 31 } : { right: 31 }, { top: i < 2 ? 104 : 224 }]}
           >
             <Image source={src} style={styles.bubbleImg} resizeMode="contain" />
             {/* 吹き出しのしっぽ側をよけて、左は 7・右は 24 から幅 76 */}
-            <Text style={[styles.bubbleLabel, { left: left ? 7 : 24 }]}>{tr(intro.features.labels[i]!)}</Text>
+            <Text style={[styles.bubbleLabel, en && styles.bubbleLabelEn, { left: left ? 7 : 24 }]}>{tr(intro.features.labels[i]!)}</Text>
           </Appear>
         );
       })}
       <View style={styles.body}>
-        <Text style={styles.bodyText}>{tr(intro.features.lead)}</Text>
-        <Text style={[styles.bodyText, { marginTop: 17 }]}>{tr(intro.features.sub)}</Text>
+        <Text style={[styles.bodyText, en && styles.bodyTextEn]}>{tr(intro.features.lead)}</Text>
+        <Text style={[styles.bodyText, en && styles.bodyTextEn, { marginTop: 17 }]}>{tr(intro.features.sub)}</Text>
       </View>
     </>
   );
@@ -135,26 +142,27 @@ function FeaturesBody() {
 /** CH0-05：Frame 342 を敷いた白いカード（326×284）に、縦線でつないだ 4項目 */
 function StepsBody() {
   const { lang, tr } = useLang();
+  const en = lang === 'en';
   return (
     <>
       <ImageBackground source={images.focusChecklistCard} resizeMode="stretch" style={styles.stepsCard} imageStyle={styles.stepsCardImg}>
         <Image source={images.introStepsLine} style={styles.stepsLine} resizeMode="stretch" />
         {intro.steps.items.map((s, i) => (
-          // 要点 CH0-05：4項目が上から順に出る（アイコンは軽くポップ）
-          <Appear key={i} from="up" delay={500 + i * 150} duration={300} style={styles.stepRow}>
-            <Appear from="pop" delay={500 + i * 150} duration={400}>
+          // index.html ch05RowAppear / ch05IconPop：上の項目から 0.2秒ずつずらして出る（アイコンは 0.3倍から弾む）
+          <Appear key={i} from="up" distance={8} delay={200 + i * 200} duration={500} style={styles.stepRow}>
+            <Appear from="scale" scaleFrom={0.3} delay={200 + i * 200} duration={550}>
               <Image source={images[s.icon]} style={styles.stepIcon} resizeMode="contain" />
             </Appear>
-            <Text style={styles.stepHead}>
+            <Text style={[styles.stepHead, en && styles.stepHeadEn]}>
               {tr(s.head)}
               {lang === 'en' ? ':' : ''}
             </Text>
-            <Text style={styles.stepBody}>{tr(s.body)}</Text>
+            <Text style={[styles.stepBody, en && styles.stepBodyEn]}>{tr(s.body)}</Text>
           </Appear>
         ))}
       </ImageBackground>
       <View style={[styles.body, styles.bodyWide]}>
-        <Text style={styles.bodyText}>{tr(intro.steps.desc)}</Text>
+        <Text style={[styles.bodyText, en && styles.bodyTextEn]}>{tr(intro.steps.desc)}</Text>
       </View>
     </>
   );
@@ -162,28 +170,29 @@ function StepsBody() {
 
 /** CH0-06：検定表（Frame 170）に、評価が領域ごとに書き込まれていく */
 function CertificationBody() {
-  const { tr } = useLang();
+  const { lang, tr } = useLang();
+  const en = lang === 'en';
   const c = intro.certification;
   return (
     <>
       <ReportReveal />
       <View style={[styles.body, { paddingHorizontal: 0 }]}>
         <View style={{ paddingHorizontal: 34 }}>
-          <Text style={styles.bodyText}>{tr(c.reportLead)}</Text>
+          <Text style={[styles.bodyText, en && styles.bodyTextEn]}>{tr(c.reportLead)}</Text>
           <View style={styles.badgeRow}>
             {c.badges.map((b, i) => (
-              <View key={i} style={styles.badgePill}>
+              <View key={i} style={[styles.badgePill, en && styles.badgePillEn]}>
                 <Svg width={16} height={16} viewBox="0 0 16 16">
                   <Path d="M2.5 8.5l3.5 3.5 7.5-7.5" fill="none" stroke={colors.teal} strokeWidth={2.8} strokeLinecap="round" strokeLinejoin="round" />
                 </Svg>
-                <Text style={styles.badgeText}>{tr(b)}</Text>
+                <Text style={[styles.badgeText, en && styles.badgeTextEn]}>{tr(b)}</Text>
               </View>
             ))}
           </View>
-          {tr(c.reportTail) !== '' && <Text style={[styles.bodyText, { marginTop: 7 }]}>{tr(c.reportTail)}</Text>}
+          {tr(c.reportTail) !== '' && <Text style={[styles.bodyText, en && styles.bodyTextEn, { marginTop: 7 }]}>{tr(c.reportTail)}</Text>}
         </View>
         <View style={[styles.bodyWide, { marginTop: 17 }]}>
-          <Text style={styles.bodyText}>{tr(c.desc)}</Text>
+          <Text style={[styles.bodyText, en && styles.bodyTextEn]}>{tr(c.desc)}</Text>
         </View>
       </View>
     </>
@@ -273,6 +282,8 @@ const styles = StyleSheet.create({
   logo: { width: 200, height: 58 },
   head: { position: 'absolute', left: 21, right: 21, alignItems: 'center' },
   title: { fontSize: 18, fontWeight: '700', color: colors.white, textAlign: 'center', lineHeight: 27 },
+  // index.html の英語（.is-en）：見出し 17px・行の高さ 25、本文 15px・行の高さ 22・幅 360、ラベル 11px、手順の項目 14.5px・説明 12px
+  titleEn: { fontSize: 17, lineHeight: 25 },
   divider: { marginTop: 10 },
   panel: { position: 'absolute', left: 0, right: 0, bottom: 0 },
   arch: { position: 'absolute', top: 0, left: 0 },
@@ -281,14 +292,18 @@ const styles = StyleSheet.create({
   // WELCOME：スマホ画像（209×342）はパネル上端から 44、文はその下 33
   welcomeBody: { alignItems: 'center', paddingTop: 44 },
   phoneHero: { width: 209, height: 342 },
-  welcomeTitle: { marginTop: 33, paddingHorizontal: 32, fontSize: 18, fontWeight: '700', color: colors.text, textAlign: 'center', lineHeight: 30 },
+  welcomeTextArea: { height: 156, justifyContent: 'center', paddingHorizontal: 32 },
+  welcomeTitle: { fontSize: 18, fontWeight: '700', color: colors.text, textAlign: 'center', lineHeight: 30 },
+  welcomeTitleEn: { fontSize: 17, lineHeight: 26 },
   phone: { position: 'absolute', top: 44, left: 0, right: 0, alignItems: 'center' },
   bubble: { position: 'absolute', width: 107, height: 93 },
   bubbleImg: { position: 'absolute', width: 107, height: 93 },
+  bubbleLabelEn: { fontSize: 11, lineHeight: 13, letterSpacing: -0.2 },
   bubbleLabel: { position: 'absolute', top: 48, width: 76, fontSize: 12, lineHeight: 14, fontWeight: '700', color: colors.text, textAlign: 'center' },
   body: { position: 'absolute', top: BODY_TOP, left: 0, right: 0, paddingHorizontal: 32 },
   bodyWide: { paddingHorizontal: layout.sideMargin },
   bodyText: { fontSize: 16, lineHeight: 24, color: colors.black, textAlign: 'center' },
+  bodyTextEn: { fontSize: 15, lineHeight: 22 },
   // .ch05-steps-card：326×284、白・角丸 16、背景に Frame 342
   stepsCard: {
     position: 'absolute',
@@ -306,6 +321,8 @@ const styles = StyleSheet.create({
   stepsLine: { position: 'absolute', left: 38, top: 40, width: 4, height: 204 },
   stepRow: { flexDirection: 'row', alignItems: 'center', height: 36 },
   stepIcon: { width: 36, height: 36, marginRight: 14 },
+  stepHeadEn: { fontSize: 14.5 },
+  stepBodyEn: { fontSize: 12 },
   stepHead: { fontSize: 16, lineHeight: 20.8, fontWeight: '700', color: '#1A202C', marginRight: 8 },
   stepBody: { fontSize: 13, lineHeight: 16.9, color: colors.text },
   report: { position: 'absolute', top: 66, alignSelf: 'center', width: REPORT_W, height: REPORT_H },
@@ -314,5 +331,7 @@ const styles = StyleSheet.create({
   reportImg: { position: 'absolute', width: REPORT_W, height: REPORT_H },
   badgeRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 6, marginTop: 7 },
   badgePill: { flexDirection: 'row', alignItems: 'center', gap: 6, height: 29, paddingHorizontal: 8, borderRadius: 6, backgroundColor: colors.white },
+  badgePillEn: { paddingHorizontal: 6 },
+  badgeTextEn: { fontSize: 14 },
   badgeText: { fontSize: 16, fontWeight: '700', color: colors.teal },
 });

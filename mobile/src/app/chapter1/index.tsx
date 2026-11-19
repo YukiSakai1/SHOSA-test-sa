@@ -21,7 +21,7 @@ export default function Chapter1IntroScreen() {
 
   return (
     <View style={[styles.screen, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 24 }]}>
-      <LangToggle style={styles.lang} />
+      <LangToggle style={[styles.lang, { top: insets.top + 14 }]} />
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={styles.archCard}>
           {/* .ch101-arch-header：カードの上に 38px はみ出すアーチ（index.html の SVG と同じパス） */}
@@ -68,8 +68,8 @@ export default function Chapter1IntroScreen() {
 const styles = StyleSheet.create({
   // .ch101-intro-screen：背景はページの #FAF8F2、余白 16
   screen: { flex: 1, backgroundColor: '#FAF8F2' },
-  // EN は画面上端から 14（絶対配置は親の余白 16 の内側が基準になるため -2）
-  lang: { position: 'absolute', right: 0, top: -2, zIndex: 10 },
+  // EN はセーフエリアの下 14（index.html の --safe-top + 14）
+  lang: { position: 'absolute', right: 0, zIndex: 10 },
   scroll: { paddingHorizontal: 16 },
   // .ch101-arch-card
   archCard: {

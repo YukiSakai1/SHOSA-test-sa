@@ -8,7 +8,7 @@ import type { Chapter1Data } from './types';
 export const chapter1: Chapter1Data = {
   guide: {
     badgeNumber: '101',
-    title: { ja: 'Omotenashi Mindset', en: 'Omotenashi Mindset' },
+    title: { ja: '1章：Omotenashi Mindset', en: 'Chapter 1: Omotenashi Mindset' },
     subtitle: {
       ja: 'ホテルの一日に寄り添う「プロの思考と選択」',
       en: "Follow a hotel day through a pro's thinking and choices",
@@ -27,11 +27,10 @@ export const chapter1: Chapter1Data = {
   },
   end: {
     title: { ja: '1章 学習完了！', en: 'Chapter 1 Complete!' },
-    // Figma CH1-END の文言（Web版は「2章：JOB診断」だった）
-    unlockLabel: { ja: '2章：Omotenashi Style診断 が\n解放されました', en: 'Chapter 2: Omotenashi Style Assessment\nhas been unlocked' },
+    // index.html の文言（Figma は「2章：Omotenashi Style診断」）
+    unlockLabel: { ja: '2章：JOB診断 が解放されました', en: 'Chapter 2: JOB Assessment has been unlocked' },
     body: {
-      // index.html と同じ位置で改行
-      ja: 'プロの仕事を観察し、\n日本の宿泊業の現場で求められる\nOmotenashi Mindsetを\n体験することができました！',
+      ja: 'プロの仕事を観察し、日本の宿泊業の現場で求められるOmotenashi Mindsetを体験することができました！',
       en: "You observed the work of pros and experienced the Omotenashi Mindset required in Japan's hospitality industry!",
     },
     note: {

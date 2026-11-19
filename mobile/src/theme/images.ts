@@ -16,6 +16,18 @@ export const images = {
   cardBorderUnselected: require('../../assets/images/card_border_unselected.png'),
   medal: require('../../assets/images/medal.png'),
   medalChapter1: require('../../assets/images/medal-2.png'),
+  // 2章の完了画面（緑の背景に合わせた緑のメダル）
+  medalChapter2: require('../../assets/images/medal_chapter2.png'),
+  // 4つの行動傾向のアイコン（50×50）
+  tendencyAccuracy: require('../../assets/images/tendency_accuracy.png'),
+  tendencyEfficiency: require('../../assets/images/tendency_efficiency.png'),
+  tendencyCommunication: require('../../assets/images/tendency_communication.png'),
+  tendencyHospitality: require('../../assets/images/tendency_hospitality.png'),
+  // 診断完了の「結果を見る」ボタンのアイコン
+  resultButtonIcon: require('../../assets/images/result_button_icon.png'),
+  // ROLE Line Up：職種カードの上半分（260×154）とポップアップの上半分（309×300）の場面
+  roleSceneCard: require('../../assets/images/role_scene_card.png'),
+  roleScenePopup: require('../../assets/images/role_scene_popup.png'),
   filigreeTop: require('../../assets/images/decor_filigree_top.png'),
   filigreeBottom: require('../../assets/images/decor_filigree_bottom.png'),
   focusChecklistCard: require('../../assets/images/focus_checklist_card.png'),

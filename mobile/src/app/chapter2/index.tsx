@@ -31,7 +31,7 @@ export default function Chapter2GuideScreen() {
             <View style={styles.grid}>
               {TENDENCIES.map((t) => (
                 <View key={t} style={styles.chip}>
-                  <Text style={styles.chipEmoji}>{tendencyInfo[t].emoji}</Text>
+                  <Image source={images[tendencyInfo[t].icon]} style={styles.chipIcon} resizeMode="contain" />
                   <Text style={styles.chipText}>{t}</Text>
                 </View>
               ))}
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   resultsLead: { fontSize: 12, color: colors.black, textAlign: 'center' },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' },
   chip: { width: '47%', flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: colors.beige, borderRadius: 8, padding: 8 },
-  chipEmoji: { fontSize: 16 },
+  chipIcon: { width: 24, height: 24 },
   chipText: { fontSize: 14, fontWeight: '700', color: colors.black },
   // アーチの枠線 3px の内側で、ボタン幅が Figma と同じ 360 になる余白
   bottom: { paddingHorizontal: 18, paddingTop: 8 },

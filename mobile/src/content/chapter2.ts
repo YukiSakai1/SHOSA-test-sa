@@ -16,9 +16,9 @@ export type Tendency = 'Accuracy' | 'Efficiency' | 'Communication' | 'Hospitalit
 export const TENDENCIES: Tendency[] = ['Accuracy', 'Efficiency', 'Communication', 'Hospitality'];
 
 /** 4つの行動傾向（Figma CH2-05「日本のホテルで求められるスキル」） */
-export const tendencyInfo: Record<Tendency, { emoji: string; label: Localized; desc: Localized; example: Localized }> = {
+export const tendencyInfo: Record<Tendency, { icon: ImageKey; label: Localized; desc: Localized; example: Localized }> = {
   Accuracy: {
-    emoji: '🎯',
+    icon: 'tendencyAccuracy',
     label: { ja: '正確に扱う', en: 'Handle accurately' },
     desc: {
       ja: '間違いや漏れを防ぐために、確認・照合する力\n「間違えないために、どう行動する？」',
@@ -27,7 +27,7 @@ export const tendencyInfo: Record<Tendency, { emoji: string; label: Localized; d
     example: { ja: '例：名前・人数・予約内容を確認する', en: 'e.g. Confirm the name, number of guests and booking details' },
   },
   Efficiency: {
-    emoji: '⏰',
+    icon: 'tendencyEfficiency',
     label: { ja: '効率的に進める', en: 'Work efficiently' },
     desc: {
       ja: '仕事を滞らせないために優先順位を考える力\n「仕事を止めないために、どう進める？」',
@@ -36,7 +36,7 @@ export const tendencyInfo: Record<Tendency, { emoji: string; label: Localized; d
     example: { ja: '例：混雑時に優先順位をつけて対応する', en: 'e.g. Prioritize tasks when it gets busy' },
   },
   Communication: {
-    emoji: '👥',
+    icon: 'tendencyCommunication',
     label: { ja: '認識を合わせる', en: 'Align understanding' },
     desc: {
       ja: '相手と正しく情報を共有するために、\n聞く・伝える・確認する力\n「認識を合わせるために、どう関わる？」',
@@ -45,7 +45,7 @@ export const tendencyInfo: Record<Tendency, { emoji: string; label: Localized; d
     example: { ja: '例：お客様の希望を確認してから手配する', en: "e.g. Confirm the guest's wishes before arranging" },
   },
   Hospitality: {
-    emoji: '❤️',
+    icon: 'tendencyHospitality',
     label: { ja: '安心・快適をつくる', en: 'Create comfort' },
     desc: {
       ja: '相手が安心して心地よく過ごせるように、\n相手の状態を考えて行動する力\n「相手にとってよりよい状態にするために、どう動く？」',

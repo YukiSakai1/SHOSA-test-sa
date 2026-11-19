@@ -11,3 +11,11 @@ export const layout = {
   /** 2つ並ぶボタンの間隔（例：SHOSA Focus と NEXT） */
   buttonGap: 27,
 } as const;
+
+/**
+ * index.html と同じく、画面が 402 より広くても中身は幅 360（左右 21 を含めて 402）までにして中央に置く。
+ * 例：ヒアリングの選択肢・NEXT・プロフィールの入力欄・ジャーニーの一覧
+ */
+export const centered = { width: '100%', maxWidth: 402, alignSelf: 'center' } as const;
+/** ボタン単体を幅 360 までにして中央に置く */
+export const centeredButton = { width: '100%', maxWidth: 360, alignSelf: 'center' } as const;

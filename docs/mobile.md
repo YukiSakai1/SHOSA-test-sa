@@ -68,6 +68,10 @@ mobile/
 6. **画面間で受け渡す値は URL パラメータにする**（例：`lesson` や `choice`）。こうしておくと、「戻る」やアプリの再起動の後も同じ状態から再現できます。
 7. **確認ダイアログは `ConfirmDialog` を使う**（`Alert.alert` は Web で動かないため）。
 8. `ios/` と `android/` は Expo が自動で生成するので、直接編集しません。ネイティブの設定は `app.json` で行います。
+9. **SVG の id（グラデーション・柄・マスク）は `lib/useSvgId.ts` の `useSvgId()` で作る**。`id="halo"` のような固定の名前は使いません。Web では前の画面も非表示のまま残るため、同じ id があると前の画面の定義が使われ、柄や光が描かれなくなります。
+10. **Web の `<Svg>` には `width` と `height` を属性で渡す**（style だけだと 300×150 のままになります）。
+    背景に敷く `<Image>`（`StyleSheet.absoluteFill`）と `ImageBackground` の `imageStyle` にも `width: '100%'`・`height: '100%'` を書く（書かないと Web では画像の元の大きさで描かれ、枠からはみ出します）。
+11. **ポップアップは `components/AppModal.tsx` の `AppModal` を使う**（React Native の `Modal` は直接使わない）。Web の `Modal` はブラウザ全体に広がり、PC ではスマホ枠の外にはみ出すためです。`AppModal` は Web ではスマホ枠の中に描き、iOS / Android では `Modal` を使います。
 
 ## Web 版から移植するときの対応表
 | Web版 | mobile/ |

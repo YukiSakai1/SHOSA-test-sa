@@ -4,5 +4,5 @@ import { talks } from '@/content/onboarding';
 import { TalkLayout } from '@/features/onboarding/components';
 
 export default function Screen() {
-  return <TalkLayout lines={talks.aptitudeIntro.lines} onNext={() => router.push({ pathname: '/onboarding/aptitude/[page]', params: { page: '0' } })} />;
+  return <TalkLayout bubbleHeight={203} lines={talks.aptitudeIntro.lines} onNext={() => router.push({ pathname: '/onboarding/aptitude/[page]', params: { page: '0' } })} />;
 }

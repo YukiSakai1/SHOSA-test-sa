@@ -7,17 +7,18 @@
  */
 import { useState } from 'react';
 import { router } from 'expo-router';
-import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
+import { ImageBackground, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Appear } from '@/components/Appear';
 import { Icon } from '@/components/Icon';
 import { PatternBackground, patterns } from '@/components/PatternBackground';
 import { CtaButton, PressScale } from '@/components/ui';
 import { languageOptions } from '@/content/onboarding';
+import { SmallMascot } from '@/features/onboarding/components';
 import type { Lang } from '@/content/types';
 import { useLang } from '@/i18n/LanguageProvider';
 import { colors } from '@/theme/colors';
-import { layout } from '@/theme/layout';
+import { centered, layout } from '@/theme/layout';
 import { images } from '@/theme/images';
 
 export default function LanguageScreen() {
@@ -27,12 +28,9 @@ export default function LanguageScreen() {
   const [selected, setSelected] = useState<Lang>(lang);
 
   return (
-    <PatternBackground {...patterns.beigeLines} style={{ paddingTop: insets.top }}>
+    <PatternBackground {...patterns.beigeLines} align="center" style={{ paddingTop: insets.top }}>
       <Appear from="none" duration={300} style={styles.hero}>
-        <View style={styles.mascotWrap}>
-          <View style={styles.mascotShadow} />
-          <Image source={images.mascotFace} style={styles.mascot} resizeMode="contain" />
-        </View>
+        <SmallMascot />
         <ImageBackground source={images.speechBubbleTail} resizeMode="contain" style={styles.bubble} imageStyle={styles.fill}>
           <Text style={styles.bubbleText}>{'Please select\nyour language setting.'}</Text>
         </ImageBackground>
@@ -81,19 +79,15 @@ export default function LanguageScreen() {
 }
 
 const styles = StyleSheet.create({
-  // SHOSA は (28,64)、吹き出しは (146,81)
-  hero: { flexDirection: 'row', alignItems: 'flex-start', marginTop: 64, paddingLeft: 28 },
-  mascotWrap: { width: 110, height: 100 },
-  mascot: { width: 110, height: 100 },
-  // 足元の影：72×16 の楕円（rgba(0,0,0,.10)）、SHOSA の左端から 19・上端から 90
-  mascotShadow: { position: 'absolute', left: 19, top: 90, width: 72, height: 16, borderRadius: 36, backgroundColor: 'rgba(0,0,0,0.10)' },
-  bubble: { width: 228, height: 76, marginLeft: 8, marginTop: 17, paddingLeft: 32, justifyContent: 'center' },
+  // SHOSA は (28,67)、吹き出しは (146,81)
+  hero: { ...centered, flexDirection: 'row', alignItems: 'flex-start', marginTop: 67, paddingLeft: 28 },
+  bubble: { width: 228, height: 76, marginLeft: 8, marginTop: 14, paddingLeft: 32, justifyContent: 'center' },
   bubbleText: { fontSize: 16, lineHeight: 22, color: colors.black },
   fill: { width: '100%', height: '100%' },
   // カードは y197 から（間隔 10）。左右 21
-  cards: { marginTop: 33, paddingHorizontal: layout.sideMargin, gap: 10 },
+  cards: { ...centered, marginTop: 33, paddingHorizontal: layout.sideMargin, gap: 10 },
   card: { height: 90, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 34, gap: 22 },
-  cardLabel: { fontSize: 15, fontWeight: '700', color: colors.text },
+  cardLabel: { fontSize: 15, fontWeight: '700', color: colors.text, letterSpacing: 0.5 },
   cardLabelOn: { color: colors.purple, fontWeight: '800' },
-  bottom: { paddingHorizontal: layout.sideMargin },
+  bottom: { ...centered, paddingHorizontal: layout.sideMargin },
 });

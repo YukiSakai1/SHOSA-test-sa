@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   statusIconWrong: { backgroundColor: '#E55353' },
-  statusMark: { color: '#FFFFFF', fontSize: 12, fontWeight: '800', lineHeight: 14 },
+  statusMark: { color: '#FFFFFF', fontSize: 14, fontWeight: '800', lineHeight: 16 },
   statusTitle: { fontSize: 20, fontWeight: '800', color: '#FFFFFF', letterSpacing: 1 },
   explanation: { marginTop: 16, marginBottom: 10, fontSize: 14, lineHeight: 22.4, color: '#FFFFFF', fontWeight: '700', textAlign: 'center', maxWidth: 330 },
   mascotRow: { alignItems: 'center', marginTop: 6, marginBottom: -20, zIndex: 3 },

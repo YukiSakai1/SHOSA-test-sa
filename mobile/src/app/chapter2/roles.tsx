@@ -1,11 +1,16 @@
 /**
  * ROLE Line Up（Figma CH2-02）。職種カードを選ぶと、シナリオの導入カードがポップアップする。
  * Figma に職種カードがあるのは Front Desk だけ。roles に足せばカードが増える。
+ *
+ * 場面の画像（ロビー）は上半分だけを画像にしている：
+ * - 職種カード 260×422：上 154 が場面（role_scene_card.png）、その上に職種名の白い札、下は白い面に職種の一覧と START
+ * - ポップアップ 309×501：上 300 が場面（role_scene_popup.png）、下は白い面にタイトル・説明・START・戻る
  */
 import { useState } from 'react';
 import { router } from 'expo-router';
-import { ImageBackground, Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AppModal } from '@/components/AppModal';
 import { CloseButton, CtaButton, PressScale } from '@/components/ui';
 import { chapter2, roles, type Role } from '@/content/chapter2';
 import { useChapter2 } from '@/features/chapter2/Chapter2Provider';
@@ -35,32 +40,33 @@ export default function RolesScreen() {
         {roles.map((role) => {
           const done = record.completedRoles.includes(role.id);
           return (
-            <View key={role.id}>
-              <ImageBackground source={images[role.card]} style={styles.card} imageStyle={styles.cardImg}>
-                <View style={styles.cardTop}>
-                  <Text style={styles.cardTitle}>{`${role.name}\n${tr(role.tagline)}`}</Text>
-                </View>
-                <View style={styles.cardBottom}>
-                  <Text style={styles.jobsLabel}>{tr(r.jobsLabel)}</Text>
-                  {role.scenarios.map((s) => (
-                    <View key={s.id} style={styles.sceneRow}>
-                      <Text style={styles.sceneText}>{tr(s.title)}</Text>
-                      {done && <Text style={styles.resultTag}>{r.resultTag}</Text>}
-                    </View>
-                  ))}
-                  {/* カード全体をボタンにすると Web でボタンの入れ子になるため、START だけをボタンにする */}
-                  <CtaButton testID={`role-${role.id}`} variant="primary" size="small" label={tr(r.start)} onPress={() => setPicked(role)} style={{ marginTop: 10, alignSelf: 'center', width: 230 }} />
-                </View>
-              </ImageBackground>
+            <View key={role.id} style={styles.card}>
+              {/* Web では幅・高さを明示しないと画像が元の大きさで描かれるため、両方指定する */}
+              <Image source={images.roleSceneCard} style={styles.cardScene} resizeMode="cover" />
+              <View style={styles.cardTop}>
+                <Text style={styles.cardTitle}>{`${role.name}\n${tr(role.tagline)}`}</Text>
+              </View>
+              <View style={styles.cardBottom}>
+                <Text style={styles.jobsLabel}>{tr(r.jobsLabel)}</Text>
+                {role.scenarios.map((s) => (
+                  <View key={s.id} style={styles.sceneRow}>
+                    <Text style={styles.sceneText}>{tr(s.title)}</Text>
+                    {done && <Text style={styles.resultTag}>{r.resultTag}</Text>}
+                  </View>
+                ))}
+                {/* カード全体をボタンにすると Web でボタンの入れ子になるため、START だけをボタンにする */}
+                <CtaButton testID={`role-${role.id}`} variant="primary" size="small" label={tr(r.start)} onPress={() => setPicked(role)} style={{ marginTop: 'auto', alignSelf: 'center', width: 230 }} />
+              </View>
             </View>
           );
         })}
       </ScrollView>
 
-      <Modal visible={!!picked} transparent animationType="fade" onRequestClose={() => setPicked(null)}>
+      <AppModal visible={!!picked} animationType="fade" onRequestClose={() => setPicked(null)}>
         <View style={styles.backdrop}>
           {picked && scenario && (
-            <ImageBackground source={images[scenario.scene]} style={styles.popup} imageStyle={{ borderRadius: 16 }}>
+            <View style={styles.popup}>
+              <Image source={images.roleScenePopup} style={styles.popupScene} resizeMode="cover" />
               <View style={styles.popupBody}>
                 <Text style={styles.popupTitle}>{tr(scenario.title)}</Text>
                 <Text style={styles.popupText}>{tr(scenario.intro)}</Text>
@@ -76,14 +82,14 @@ export default function RolesScreen() {
                     });
                   }}
                 />
+                <PressScale onPress={() => setPicked(null)} style={styles.backLink}>
+                  <Text style={styles.backLinkText}>{tr(r.back)}</Text>
+                </PressScale>
               </View>
-              <PressScale onPress={() => setPicked(null)} style={styles.backLink}>
-                <Text style={styles.backLinkText}>{tr(r.back)}</Text>
-              </PressScale>
-            </ImageBackground>
+            </View>
           )}
         </View>
-      </Modal>
+      </AppModal>
     </View>
   );
 }
@@ -95,20 +101,22 @@ const styles = StyleSheet.create({
   lead: { marginTop: 14, marginHorizontal: 11, backgroundColor: colors.teal, borderRadius: 12, padding: 14 },
   leadText: { fontSize: 16, lineHeight: 24, fontWeight: '700', color: colors.white, textAlign: 'center' },
   cards: { paddingHorizontal: 71, paddingVertical: 20, gap: 16 },
-  card: { width: 260, height: 422, justifyContent: 'space-between' },
-  cardImg: { borderRadius: 16 },
+  card: { width: 260, height: 422, backgroundColor: colors.white, borderRadius: 16, overflow: 'hidden' },
+  cardScene: { position: 'absolute', top: 0, left: 0, width: 260, height: 154 },
   cardTop: { margin: 12, backgroundColor: 'rgba(255,255,255,0.92)', borderRadius: 10, padding: 10 },
   cardTitle: { fontSize: 18, lineHeight: 26, fontWeight: '700', color: colors.goldCaption, textAlign: 'center' },
-  cardBottom: { margin: 12, backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: 12, padding: 12 },
-  jobsLabel: { fontSize: 14, fontWeight: '700', color: colors.white, marginBottom: 6 },
+  // 場面（上 154）の下から、白い面に職種の一覧
+  cardBottom: { position: 'absolute', top: 154, left: 0, right: 0, bottom: 0, padding: 14 },
+  jobsLabel: { fontSize: 14, fontWeight: '700', color: colors.text, marginBottom: 6 },
   sceneRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  sceneText: { fontSize: 18, fontWeight: '700', color: colors.white },
+  sceneText: { fontSize: 18, fontWeight: '700', color: colors.black },
   resultTag: { fontSize: 11, fontWeight: '900', color: colors.white, backgroundColor: colors.purple, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, overflow: 'hidden' },
   backdrop: { flex: 1, backgroundColor: colors.dialogOverlay, alignItems: 'center', justifyContent: 'center' },
-  popup: { width: 309, height: 501, justifyContent: 'flex-end', padding: 14 },
-  popupBody: { backgroundColor: 'rgba(255,255,255,0.95)', borderRadius: 14, padding: 18, gap: 12 },
+  popup: { width: 309, minHeight: 501, backgroundColor: colors.white, borderRadius: 16, overflow: 'hidden' },
+  popupScene: { width: 309, height: 300 },
+  popupBody: { padding: 14, gap: 10, alignItems: 'stretch' },
   popupTitle: { fontSize: 20, fontWeight: '700', color: colors.text, textAlign: 'center' },
   popupText: { fontSize: 16, lineHeight: 24, color: colors.black, textAlign: 'center' },
-  backLink: { alignSelf: 'center', marginTop: 12 },
-  backLinkText: { fontSize: 16, fontWeight: '700', color: colors.white },
+  backLink: { alignSelf: 'center' },
+  backLinkText: { fontSize: 16, fontWeight: '700', color: colors.text },
 });

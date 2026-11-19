@@ -4,7 +4,7 @@
  * 1位の傾向から「あなたの強み」、職種の1位の力から「これから意識したいこと」を出す。
  */
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CtaButton } from '@/components/ui';
 import { chapter2, fill, findRole, tendencyInfo, type Tendency } from '@/content/chapter2';
@@ -12,6 +12,7 @@ import { useChapter2 } from '@/features/chapter2/Chapter2Provider';
 import { scoreRole } from '@/features/chapter2/scoring';
 import { useLang } from '@/i18n/LanguageProvider';
 import { colors } from '@/theme/colors';
+import { images } from '@/theme/images';
 import { layout } from '@/theme/layout';
 
 const DARK_TEAL = '#0095A2';
@@ -64,7 +65,7 @@ function RankColumn({ label, items, highlight, testID }: { label: string; items:
       {items.map((t, i) => (
         <View key={t} style={[styles.rankRow, t === highlight && styles.rankRowHi]}>
           <Text style={styles.rankNum}>{i + 1}</Text>
-          <Text style={styles.rankEmoji}>{tendencyInfo[t].emoji}</Text>
+          <Image source={images[tendencyInfo[t].icon]} style={styles.rankIcon} resizeMode="contain" />
           <Text style={styles.rankName}>{t}</Text>
         </View>
       ))}
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
   rankRow: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: colors.beige, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 8 },
   rankRowHi: { backgroundColor: '#E1F4F5', borderWidth: 1.5, borderColor: colors.teal },
   rankNum: { fontSize: 14, fontWeight: '700', color: colors.teal, width: 12 },
-  rankEmoji: { fontSize: 13 },
+  rankIcon: { width: 22, height: 22 },
   rankName: { flex: 1, fontSize: 14, fontWeight: '700', color: colors.text },
   section: { gap: 8 },
   sectionLabel: { alignSelf: 'flex-start', backgroundColor: colors.teal, color: colors.white, fontSize: 14, fontWeight: '700', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 6, overflow: 'hidden' },

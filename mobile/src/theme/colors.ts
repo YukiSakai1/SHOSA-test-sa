@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 /**
  * デザイントークン。値はすべて Figma（sakaiローカル.fig）から抽出したもの。
  * 新しい色を足すときも、Figma のレイヤーにある値をそのまま使う。
@@ -46,4 +47,9 @@ export const colors = {
 export const fonts = {
   /** 英字の見出し・数字（Figma: Montserrat Bold） */
   montserrat: 'Montserrat_700Bold',
+  /**
+   * EN / JP ボタンの文字（index.html と同じ Roboto）。
+   * Web は Google Fonts から読み込む（app/_layout.tsx）。Android は標準で Roboto。iOS は標準フォントにする
+   */
+  roboto: Platform.select({ web: 'Roboto, Inter, sans-serif', android: 'Roboto', default: undefined }),
 } as const;

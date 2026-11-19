@@ -8,15 +8,17 @@
  */
 import { Children, useEffect, useRef, type ReactNode } from 'react';
 import { Animated, Easing, Image, StyleSheet, Text, View } from 'react-native';
-import Svg, { Circle, Defs, G, Path, RadialGradient, Stop } from 'react-native-svg';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, Mask, Path, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Appear } from '@/components/Appear';
 import { Confetti } from '@/components/Confetti';
+import { LangToggle } from '@/components/ui';
 import { haptics } from '@/lib/haptics';
 import { colors } from '@/theme/colors';
 import { layout } from '@/theme/layout';
 import { images, type ImageKey } from '@/theme/images';
 import { nativeDriver, useReducedMotion } from '@/theme/motion';
+import { useSvgId } from '@/lib/useSvgId';
 
 const T = { title: 200, badge: 600, shine: 1300, body: 1600, step: 300 } as const;
 
@@ -51,7 +53,8 @@ export function Celebration({ background, title, medal, children, footer, varian
   const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
 
   return (
-    <View style={[styles.screen, { backgroundColor: background, paddingTop: insets.top + (web ? 84 : 24), paddingBottom: insets.bottom + layout.ctaBottom }]}>
+    <View style={[styles.screen, { backgroundColor: background, paddingTop: web ? 84 : insets.top + 24, paddingBottom: insets.bottom + layout.ctaBottom }]}>
+      {web && <LangToggle style={[styles.langWeb, { top: insets.top + 14 }]} />}
       {!web && <Animated.Image source={images.sunburst} style={[styles.sunburst, { transform: [{ rotate }] }]} resizeMode="cover" />}
       <Appear from="none" delay={T.title} duration={300} style={styles.header}>
         <Image source={images.filigreeTop} style={styles.filigree} resizeMode="contain" />
@@ -67,20 +70,21 @@ export function Celebration({ background, title, medal, children, footer, varian
       <View style={web ? styles.stageWeb : styles.stage}>
         {web ? (
           <>
-            <Animated.View pointerEvents="none" style={[styles.sunburstWeb, { transform: [{ rotate }] }]}>
-              <Sunburst />
-            </Animated.View>
-            <Halo />
+            <WebSunburst />
+            <WebHalo />
+            <WebTrophy medal={medal} />
           </>
         ) : (
-          <View style={styles.halo} />
+          <>
+            <View style={styles.halo} />
+            <Appear from="drop" delay={T.badge} duration={600} distance={260}>
+              <View style={styles.medalWrap}>
+                <Image source={images[medal]} style={styles.medal} resizeMode="contain" />
+                <Shine delay={T.shine} />
+              </View>
+            </Appear>
+          </>
         )}
-        <Appear from="drop" delay={T.badge} duration={600} distance={260}>
-          <View style={web ? styles.medalWrapWeb : styles.medalWrap}>
-            <Image source={images[medal]} style={web ? styles.medalWeb : styles.medal} resizeMode="contain" />
-            <Shine delay={T.shine} />
-          </View>
-        </Appear>
       </View>
       <View style={[styles.body, web && styles.bodyWeb]}>
         {items.map((child, i) => (
@@ -98,43 +102,154 @@ export function Celebration({ background, title, medal, children, footer, varian
   );
 }
 
-/** index.html .ch19-programmatic-sunburst：白 22% の光線を 7.5° おきに 24本（直径 540 の円） */
+/**
+ * index.html .ch19-programmatic-sunburst（プログラム描画）：
+ * 白 22% の光線を 7.5° おきに 24本（直径 540）。中心から外へ消えていくマスク（中心 100% → 35% で 85% → 70% で 0）。
+ * 0.35秒後に 0.8秒で 0.9倍から現れ（ch19SunburstFadeIn）、24秒で 1回転し続ける（ch19SunburstSpin）。
+ */
 const SUN = 270;
-function Sunburst() {
+function WebSunburst() {
+  const reduced = useReducedMotion();
+  const maskId = useSvgId('sunmask');
+  const fadeId = useSvgId('sunfade');
+  const enter = useRef(new Animated.Value(reduced ? 1 : 0)).current;
+  const spin = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (reduced) return;
+    const intro = Animated.timing(enter, { toValue: 1, duration: 800, delay: 350, easing: Easing.out(Easing.quad), useNativeDriver: nativeDriver });
+    const loop = Animated.loop(Animated.timing(spin, { toValue: 1, duration: 24000, easing: Easing.linear, useNativeDriver: nativeDriver }));
+    intro.start();
+    loop.start();
+    return () => {
+      intro.stop();
+      loop.stop();
+    };
+  }, [reduced, enter, spin]);
+  const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
+  const scale = enter.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] });
   return (
-    <Svg width={SUN * 2} height={SUN * 2} viewBox={`${-SUN} ${-SUN} ${SUN * 2} ${SUN * 2}`}>
-      <G>
-        {Array.from({ length: 24 }, (_, i) => {
-          const a0 = (i * 15 * Math.PI) / 180;
-          const a1 = ((i * 15 + 7.5) * Math.PI) / 180;
-          return (
-            <Path
-              key={i}
-              d={`M0,0 L${SUN * Math.sin(a0)},${-SUN * Math.cos(a0)} A${SUN},${SUN} 0 0 1 ${SUN * Math.sin(a1)},${-SUN * Math.cos(a1)} Z`}
-              fill="rgba(255,255,255,0.22)"
-            />
-          );
-        })}
-      </G>
-    </Svg>
+    <Animated.View pointerEvents="none" style={[styles.sunburstWeb, { opacity: enter, transform: [{ scale }, { rotate }] }]}>
+      <Svg width={SUN * 2} height={SUN * 2} viewBox={`${-SUN} ${-SUN} ${SUN * 2} ${SUN * 2}`}>
+        <Defs>
+          {/* CSS の radial-gradient(circle) は角までの距離（270×√2）が 100%。35% → 半径の 0.495、70% → 0.99 */}
+          <RadialGradient id={fadeId} cx={0} cy={0} r={SUN} gradientUnits="userSpaceOnUse">
+            <Stop offset="0" stopColor="#FFFFFF" stopOpacity={1} />
+            <Stop offset="0.495" stopColor="#FFFFFF" stopOpacity={0.85} />
+            <Stop offset="0.99" stopColor="#FFFFFF" stopOpacity={0} />
+          </RadialGradient>
+          <Mask id={maskId} x={-SUN} y={-SUN} width={SUN * 2} height={SUN * 2} maskUnits="userSpaceOnUse">
+            <Rect x={-SUN} y={-SUN} width={SUN * 2} height={SUN * 2} fill={`url(#${fadeId})`} />
+          </Mask>
+        </Defs>
+        <G mask={`url(#${maskId})`}>
+          {Array.from({ length: 24 }, (_, i) => {
+            const a0 = (i * 15 * Math.PI) / 180;
+            const a1 = ((i * 15 + 7.5) * Math.PI) / 180;
+            return (
+              <Path
+                key={i}
+                d={`M0,0 L${SUN * Math.sin(a0)},${-SUN * Math.cos(a0)} A${SUN},${SUN} 0 0 1 ${SUN * Math.sin(a1)},${-SUN * Math.cos(a1)} Z`}
+                fill="rgba(255,255,255,0.22)"
+              />
+            );
+          })}
+        </G>
+      </Svg>
+    </Animated.View>
   );
 }
 
-/** index.html .ch19-trophy-halo：白 → 薄い金色の後光（直径 260） */
-function Halo() {
+/**
+ * index.html .ch19-trophy-halo（プログラム描画）：直径 270 の後光（白 → 薄い金色）を 14px ぼかす。
+ * 0.55秒後に 0.85倍から現れ（ch19HaloFadeIn）、2.8秒で 0.95倍・85% ⇔ 1.08倍・100% を行き来する（ch19HaloPulse）。
+ */
+const HALO = 135;
+const HALO_PAD = 45; // ぼかしがはみ出す分
+function WebHalo() {
+  const reduced = useReducedMotion();
+  const haloId = useSvgId('ch19halo');
+  const blurId = useSvgId('ch19blur');
+  const enter = useRef(new Animated.Value(reduced ? 1 : 0)).current;
+  const pulse = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (reduced) return;
+    const intro = Animated.timing(enter, { toValue: 1, duration: 600, delay: 550, easing: Easing.out(Easing.quad), useNativeDriver: nativeDriver });
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, { toValue: 1, duration: 2800, easing: Easing.inOut(Easing.ease), useNativeDriver: nativeDriver }),
+        Animated.timing(pulse, { toValue: 0, duration: 2800, easing: Easing.inOut(Easing.ease), useNativeDriver: nativeDriver }),
+      ]),
+    );
+    intro.start(() => loop.start());
+    return () => {
+      intro.stop();
+      loop.stop();
+    };
+  }, [reduced, enter, pulse]);
+  const opacity = Animated.multiply(enter, pulse.interpolate({ inputRange: [0, 1], outputRange: [0.85, 1] }));
+  const scale = Animated.multiply(
+    enter.interpolate({ inputRange: [0, 1], outputRange: [0.85, 1] }),
+    pulse.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1.08] }),
+  );
+  const size = (HALO + HALO_PAD) * 2;
   return (
-    <Svg pointerEvents="none" width={260} height={260} style={styles.haloWeb}>
-      <Defs>
-        <RadialGradient id="ch19halo" cx="50%" cy="50%" r="50%">
-          <Stop offset="0" stopColor="#FFFFFF" stopOpacity={0.98} />
-          <Stop offset="0.354" stopColor="rgb(255,245,200)" stopOpacity={0.8} />
-          <Stop offset="0.707" stopColor="rgb(255,215,140)" stopOpacity={0.42} />
-          <Stop offset="0.96" stopColor="rgb(255,185,110)" stopOpacity={0.15} />
-          <Stop offset="1" stopColor="rgb(255,185,110)" stopOpacity={0} />
-        </RadialGradient>
-      </Defs>
-      <Circle cx={130} cy={130} r={130} fill="url(#ch19halo)" />
-    </Svg>
+    <Animated.View pointerEvents="none" style={[styles.haloWeb, { opacity, transform: [{ scale }] }]}>
+      <Svg width={size} height={size}>
+        <Defs>
+          {/* CSS の radial-gradient(circle) は角までの距離（135×√2）が 100%。25/50/68/80% を半径に直した位置 */}
+          <RadialGradient id={haloId} cx={size / 2} cy={size / 2} r={HALO * Math.SQRT2} gradientUnits="userSpaceOnUse">
+            <Stop offset="0" stopColor="#FFFFFF" stopOpacity={0.98} />
+            <Stop offset="0.25" stopColor="rgb(255,245,200)" stopOpacity={0.8} />
+            <Stop offset="0.5" stopColor="rgb(255,215,140)" stopOpacity={0.42} />
+            <Stop offset="0.68" stopColor="rgb(255,185,110)" stopOpacity={0.15} />
+            <Stop offset="0.8" stopColor="rgb(255,185,110)" stopOpacity={0} />
+          </RadialGradient>
+          <Filter id={blurId} x="-30%" y="-30%" width="160%" height="160%">
+            <FeGaussianBlur stdDeviation={14} />
+          </Filter>
+        </Defs>
+        <Circle cx={size / 2} cy={size / 2} r={HALO} fill={`url(#${haloId})`} filter={`url(#${blurId})`} />
+      </Svg>
+    </Animated.View>
+  );
+}
+
+/**
+ * トロフィー（index.html .ch19-trophy-wrap / .ch19-trophy-img）。
+ * - ch19BadgeDrop：0.6秒後に 0.6秒で、上 70px・0.85倍 → 下 6px・1.05倍 → 上 2px・0.98倍 → 元の位置
+ * - trophy-float：そのあと 3秒で 5px 上下し続ける
+ * - M-11：1.3秒後に光が 1回横切る
+ */
+function WebTrophy({ medal }: { medal: ImageKey }) {
+  const reduced = useReducedMotion();
+  const drop = useRef(new Animated.Value(reduced ? 1 : 0)).current;
+  const float = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (reduced) return;
+    const intro = Animated.timing(drop, { toValue: 1, duration: 600, delay: 600, easing: Easing.linear, useNativeDriver: nativeDriver });
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(float, { toValue: 1, duration: 3000, easing: Easing.inOut(Easing.ease), useNativeDriver: nativeDriver }),
+        Animated.timing(float, { toValue: 0, duration: 3000, easing: Easing.inOut(Easing.ease), useNativeDriver: nativeDriver }),
+      ]),
+    );
+    intro.start(() => loop.start());
+    return () => {
+      intro.stop();
+      loop.stop();
+    };
+  }, [reduced, drop, float]);
+  const translateY = Animated.add(
+    drop.interpolate({ inputRange: [0, 0.65, 0.85, 1], outputRange: [-70, 6, -2, 0] }),
+    float.interpolate({ inputRange: [0, 1], outputRange: [0, -5] }),
+  );
+  const scale = drop.interpolate({ inputRange: [0, 0.65, 0.85, 1], outputRange: [0.85, 1.05, 0.98, 1] });
+  const opacity = drop.interpolate({ inputRange: [0, 0.65, 1], outputRange: [0, 1, 1] });
+  return (
+    <Animated.View style={[styles.medalWrapWeb, { opacity, transform: [{ translateY }, { scale }] }]}>
+      <Image source={images[medal]} style={styles.medalWeb} resizeMode="contain" />
+      <Shine delay={T.shine} />
+    </Animated.View>
   );
 }
 
@@ -189,11 +304,12 @@ const styles = StyleSheet.create({
   shineBar: { position: 'absolute', top: -40, width: 46, height: 300, backgroundColor: 'rgba(255,255,255,0.55)' },
   body: { alignSelf: 'stretch', marginTop: 8 },
   // --- variant="web"（index.html #screen-ob-passport）---
+  langWeb: { position: 'absolute', right: 0, zIndex: 10 },
   titleBoxWeb: { height: 69, justifyContent: 'center' },
   titleWeb: { fontSize: 22, lineHeight: 26.4, fontWeight: '700', color: colors.white },
   stageWeb: { width: 180, height: 205, marginTop: 17, alignItems: 'center', justifyContent: 'center' },
   sunburstWeb: { position: 'absolute', width: SUN * 2, height: SUN * 2, left: 90 - SUN, top: 102.5 - SUN },
-  haloWeb: { position: 'absolute', left: 90 - 130, top: 102.5 - 130 },
+  haloWeb: { position: 'absolute', left: 90 - HALO - HALO_PAD, top: 102.5 - HALO - HALO_PAD },
   medalWrapWeb: { width: 180, height: 205 },
   medalWeb: { width: 180, height: 205 },
   bodyWeb: { marginTop: 76 },
