@@ -284,7 +284,7 @@ export const diagnosisComplete = {
     ja: 'お疲れ様でした！\nあなたの選択から、\nあなたに合った職種を紹介します。',
     en: "Well done!\nBased on your answers,\nwe'll introduce the roles that suit you.",
   },
-  hint: { ja: '「結果を見る」から確認してみよう！', en: 'Tap “See Results” to check them out!' },
+  hint: { ja: '「<hl>結果を見る</hl>」から確認してみよう！', en: 'Tap “<hl>See Results</hl>” to check them out!' },
   button: { ja: '結果を見る', en: 'See Results' },
 } as const;
 

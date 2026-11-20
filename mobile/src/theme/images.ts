@@ -5,12 +5,16 @@
  * 画像を追加したら assets/images/ に置き、ここに1行足す。
  */
 export const images = {
-  sceneL01Mirror: require('../../assets/images/scene_l01_mirror.png'),
+  // 1章 L01 の場面（Figma「1116」の更衣室のイラスト、1254×1067。表示は 402×342 で同じ比率）
+  sceneL01Locker: require('../../assets/images/scene_l01_locker.jpg'),
+  // Figma「1116」のフロントのイラスト（1254×1067）。まだどの画面でも使っていない
+  sceneFrontDesk: require('../../assets/images/scene_frontdesk.jpg'),
   mascotFace: require('../../assets/images/mascot_shosa_face.png'),
   mascotIntro: require('../../assets/images/mascot_shosa_intro.png'),
   floorShadow: require('../../assets/images/floor_shadow.png'),
   iconFocus: require('../../assets/images/icon_focus.png'),
-  focusChecklistL01: require('../../assets/images/focus_checklist_l01.png'),
+  // 1章 L01 の SHOSA Focus のチェックシートの絵（Figma「1116」の Frame 1：白い下地・薄紫の円・香水瓶を持つ手、181×168 を 3倍で）
+  focusChecklistL01: require('../../assets/images/focus_checklist_l01_perfume.png'),
   speechBubbleTail: require('../../assets/images/speech_bubble_tail.png'),
   cardBorderSelected: require('../../assets/images/card_border_selected.png'),
   cardBorderUnselected: require('../../assets/images/card_border_unselected.png'),
@@ -52,6 +56,8 @@ export const images = {
   sceneDoor101: require('../../assets/images/scene_door101.png'),
   lamp: require('../../assets/images/lamp.png'),
   carpetBeige: require('../../assets/images/carpet_beige.jpg'),
+  // Figma の pattern（55:17610）：bg2 に #D1C1AE のソフトライト（100%・50%）と #E8CFB2 の彩度を重ねて焼き込んだ 140pt のタイル（420px）
+  carpetFigma: require('../../assets/images/carpet_figma.jpg'),
   iconServicePartTime: require('../../assets/images/icon_service_part_time.png'),
   iconRestaurant: require('../../assets/images/icon_restaurant.png'),
   iconHotel: require('../../assets/images/icon_hotel.png'),
@@ -90,6 +96,8 @@ export const images = {
   medalBadge: require('../../assets/images/medal_badge.png'),
   sunburst: require('../../assets/images/sunburst.png'),
   resultPaper: require('../../assets/images/result_paper.png'),
+  // result_paper.png から下の鍵の帯（2位以降のぼかしと「2位以降を閲覧するには…」）を消したもの。帯は最後にフェードインで重ねる
+  resultPaperNoLock: require('../../assets/images/result_paper_nolock.png'),
   btnBack: require('../../assets/images/btn_back.png'),
   // --- 2章（JOB Simulation） ---
   roleFrontDesk: require('../../assets/images/role_front_desk.png'),

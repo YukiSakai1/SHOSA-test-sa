@@ -1,3 +1,6 @@
+# 旧 Web 版（Capacitor）を TestFlight に配信していた workflow。
+# reference/ に移したため、今は動きません（GitHub Actions が読むのはリポジトリ直下の .github/workflows/ だけ）。
+# 中のパス（ios/App など）は reference/ からの相対パスです。
 name: Deploy to TestFlight
 
 on:

@@ -8,12 +8,12 @@
 import { useState, type ReactNode } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Svg, { Circle, Defs, LinearGradient, Path, Rect, Stop, SvgXml } from 'react-native-svg';
+import Svg, { Defs, LinearGradient, Path, Rect, Stop, SvgXml } from 'react-native-svg';
 import { router, type Href } from 'expo-router';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
-import { PatternBackground, patterns } from '@/components/PatternBackground';
 import { CARD_TOP_XML } from '@/features/chapter1/cardTopArt';
 import { fonts } from '@/theme/colors';
+import { OrnamentArrowIcon } from '@/components/OrnamentArrowButton';
 import { useSvgId } from '@/lib/useSvgId';
 import { LangToggle, PressScale, ProgressBar } from '@/components/ui';
 import { useLang } from '@/i18n/LanguageProvider';
@@ -113,11 +113,22 @@ const LEAF_PATHS = [
   'M 8.07 10.59 C 8.63 11.27 9.23 12.37 9.67 13.17 C 10.24 14.2 10.75 15.27 11.12 16.39 C 11.81 18.43 12.09 20.85 10.74 22.69 C 9.63 24.2 7.64 24.96 5.82 24.49 C 8.35 21.7 9.43 15.48 8.07 10.6 Z',
   'M 22.06 22.06 C 20.69 22.11 15.32 20.06 14.5 19.54 C 13.11 18.23 11.81 12.84 9.33 9.33 C 12.84 11.81 18.23 13.11 19.54 14.5 C 20.06 15.31 22.11 20.68 22.06 22.06 Z',
 ];
-export function Ch1CardLeaf({ corner, edge = 2, color = ch1.line }: { corner: 'tl' | 'tr' | 'bl' | 'br'; edge?: number; color?: string }) {
+export function Ch1CardLeaf({
+  corner,
+  edge = 2,
+  inset = 6,
+  color = ch1.line,
+}: {
+  corner: 'tl' | 'tr' | 'bl' | 'br';
+  edge?: number;
+  /** 上（下の角は下）からの距離 */
+  inset?: number;
+  color?: string;
+}) {
   const pos: ViewStyle = {
     position: 'absolute',
     zIndex: 2,
-    ...(corner[0] === 't' ? { top: 6 } : { bottom: 6 }),
+    ...(corner[0] === 't' ? { top: inset } : { bottom: inset }),
     ...(corner[1] === 'l' ? { left: edge } : { right: edge }),
     transform: [{ scaleX: corner[1] === 'r' ? -1 : 1 }, { scaleY: corner[0] === 'b' ? -1 : 1 }],
   };
@@ -136,11 +147,8 @@ export function Ch1AdvanceButton({ onPress, label, turn = 1, inline = false }: {
     // 会話の 2/2 では吹き出しの下（カードの上から 332）に移る。inline は文の下 20 に右そろえで置く（2章：段落の数で文の長さが変わるため）
     <View style={inline ? styles.advanceInline : [styles.advance, turn === 2 && { top: 332 }]}>
       <PressScale accessibilityLabel={label} onPress={onPress} hitSlop={10} style={styles.advanceHit}>
-        <Svg width={32} height={32} viewBox="0 0 32 32">
-          <Circle cx={16} cy={16} r={15.5} fill="#FFFFFF" stroke={ch1.line} strokeWidth={1} />
-          <Path d="M 12,16 L 20,16 M 16,11 L 20.5,16 L 16,21" fill="none" stroke={ch1.gold} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
-          <Path d="M 12,13.5 C 13,15 13,17 12,18.5" fill="none" stroke={ch1.gold} strokeWidth={1.5} strokeLinecap="round" />
-        </Svg>
+        {/* Figma の Frame 113：戻るボタンと同じ飾りを左右反転して右向きに */}
+        <OrnamentArrowIcon direction="right" />
       </PressScale>
     </View>
   );
@@ -162,8 +170,8 @@ export function PlayLayout({ percent, exitTo, image, imageAlt, label, children, 
   const insets = useSafeAreaInsets();
   const gradId = useSvgId('scenefade');
   return (
-    // 背景は Figma の #E8DECB にベージュの菱形とドットの柄
-    <PatternBackground color={ch1.screenBg} patternColor={patterns.beige.patternColor} tile={patterns.beige.tile}>
+    // 背景は Figma の #E8DECB の単色（柄は無し：CH1-L01-01〜04）
+    <View style={[styles.screen, { backgroundColor: ch1.screenBg }]}>
       {/* ヘッダー（高さ 32）の下から場面画像まで 20 */}
       <ChapterHeader percent={percent} exitTo={exitTo} style={{ paddingBottom: 20 }} />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} bounces={false}>
@@ -194,11 +202,12 @@ export function PlayLayout({ percent, exitTo, image, imageAlt, label, children, 
         </View>
       </ScrollView>
       {footer && <View style={[styles.footer, { paddingBottom: insets.bottom + 32 }]}>{footer}</View>}
-    </PatternBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: { flex: 1 },
   footer: { position: 'absolute', left: 21, right: 21, bottom: 0 },
   // ヘッダー：左 21、✕の丸 32、進捗バー（0章と同じ）は ✕ の 10 右・幅 276、EN は右端
   header: { flexDirection: 'row', alignItems: 'center', paddingLeft: 21, zIndex: 20 },

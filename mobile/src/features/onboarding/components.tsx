@@ -19,8 +19,9 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import Svg, { Circle, Defs, Image as SvgImage, Line, LinearGradient, Path, Pattern, Polygon, Polyline, RadialGradient, Rect, Stop } from 'react-native-svg';
+import Svg, { Circle, Defs, Image as SvgImage, LinearGradient, Path, Pattern, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { Icon } from '@/components/Icon';
+import { OrnamentArrowIcon } from '@/components/OrnamentArrowButton';
 import { RichText } from '@/components/RichText';
 import { PatternBackground, patterns } from '@/components/PatternBackground';
 import { Appear } from '@/components/Appear';
@@ -34,17 +35,23 @@ import { images } from '@/theme/images';
 import { useSvgId } from '@/lib/useSvgId';
 
 /**
- * ヘッダー：戻る（金丸の ←）・進捗バー・EN 切り替え。
- * M-31：戻るボタンは「どの画面で表示するか未定」のため、決まるまで表示しない。
- * 表示する画面が決まったら showBack を渡す（押すと M-01 の縮み＋M-03 の逆向きスライドで戻る）。
+ * ヘッダー：戻る・進捗バー・EN 切り替え。
+ * 戻るボタンは Figma で出ている画面（ヒアリング CH0-08〜11・学習時間 CH0-22・プロフィール CH0-16'・適性診断 CH0-14）だけ。
+ * これらは QuestionLayout を使うので、QuestionLayout から showBack を渡す（押すと M-01 の縮みのあと前の画面へ戻る）。
  */
 export function OnboardingHeader({ percent, showLang = true, showBack = false }: { percent?: number; showLang?: boolean; showBack?: boolean }) {
   const { t } = useLang();
   return (
     <View style={styles.header}>
       {showBack ? (
-        <PressScale accessibilityLabel={t('back')} hitSlop={10} onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}>
-          <Image source={images.btnBack} style={styles.back} />
+        <PressScale
+          testID="onboarding-back"
+          accessibilityRole="button"
+          accessibilityLabel={t('back')}
+          hitSlop={10}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+        >
+          <OrnamentArrowIcon direction="left" />
         </PressScale>
       ) : (
         <View style={styles.back} />
@@ -210,7 +217,7 @@ export function QuestionLayout({
       align={heroVariant === 'schedule' ? 'center' : 'left'}
       style={{ paddingTop: insets.top }}
     >
-      <OnboardingHeader percent={percent} showLang={showLang} />
+      <OnboardingHeader percent={percent} showLang={showLang} showBack />
       <ScrollView
         ref={scrollRef}
         // fadeBottom：NEXT が下に重なるので、その高さ（ボタン 48＋上下の余白）だけ下を空ける。
@@ -291,16 +298,15 @@ export function TalkLayout({
       <PatternBackground {...patterns.beige} tile={104} color="#FAF8F2" align="center" style={[styles.wall, { height: top + 380 }]} />
       <Svg style={[styles.floor, { top: top + 334 }]} width="100%" viewBox="0 0 402 540" preserveAspectRatio="none" pointerEvents="none">
         <Defs>
-          <Pattern id={carpetId} patternUnits="userSpaceOnUse" width={160} height={55.5}>
-            <SvgImage href={images.carpetBeige} width={160} height={55.5} preserveAspectRatio="none" />
+          {/* Figma CH0-20：140×140 のカーペットのタイル。柄の原点は床の図形の左上（x=-111、巾木の上端から 10） */}
+          <Pattern id={carpetId} patternUnits="userSpaceOnUse" x={-111} y={10} width={140} height={140}>
+            <SvgImage href={images.carpetFigma} width={140} height={140} preserveAspectRatio="none" />
           </Pattern>
         </Defs>
-        <Polygon points="0,31 85,0 317,0 402,31 402,42 317,10 85,10 0,42" fill="#E6D8BD" />
-        <Polyline points="0,31 85,0 317,0 402,31" stroke="#D1C1A3" strokeWidth={1.5} fill="none" />
-        <Line x1={85} y1={0} x2={85} y2={10} stroke="#C8B797" strokeWidth={1} />
-        <Line x1={317} y1={0} x2={317} y2={10} stroke="#C8B797" strokeWidth={1} />
-        <Polygon points="0,42 85,10 317,10 402,42 402,540 0,540" fill="#BFA889" />
-        <Polygon points="0,42 85,10 317,10 402,42 402,540 0,540" fill={`url(#${carpetId})`} opacity={0.9} />
+        {/* Figma の巾木（#E6D8BD、線なし）。画面の外（x=-111〜513）まで伸びた形をそのまま置く */}
+        <Path d="M85,19L317,19L513,94L513,71L317,0L85,0L-111,71L-111,94Z" fill="#E6D8BD" />
+        {/* カーペット（巾木の上端から 10 下がった台形＋その下の四角） */}
+        <Path d="M85,10L317,10L513,85L513,540L-111,540L-111,85Z" fill={`url(#${carpetId})`} />
       </Svg>
 
       <View style={[styles.doorWrap, { top: top + 107 }]}>
@@ -337,9 +343,10 @@ export function TalkLayout({
         <CtaButton
           testID="onboarding-next"
           style={centeredButton}
-          variant="primary"
+          // Figma CH0-07/13/15/20：他の画面の NEXT と同じターコイズ（#00C9C3）
+          variant="next"
           fontSize={18}
-          ledge={{ color: '#4D3CA8', depth: 3 }}
+          ledge={{ color: colors.teal, depth: 3 }}
           label={t('next')}
           onPress={onNext}
         />

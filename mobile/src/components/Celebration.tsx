@@ -333,13 +333,13 @@ function Shine({ delay }: { delay: number }) {
 }
 
 /**
- * 解放の文言と本文の間の区切り線（Figma の frames：幅 240×13）。assets の frames.png（#E6D8BD）を白く着色して使う。
+ * 解放の文言と本文の間の区切り線（Figma の frames：幅 240×13）。assets の frames.png を Figma と同じ #E6D8BD（beige2）で使う。
  * 星形のきらめき 7つ（中央ほど大きい）と、先の細くなる左右の線。
  */
 export function CelebrationDivider({ style }: { style?: StyleProp<ViewStyle> }) {
   return (
     <View style={[{ alignSelf: 'center', marginTop: 8 }, style]}>
-      <Image source={images.frames} style={{ width: 240, height: 13 }} resizeMode="contain" tintColor={colors.white} />
+      <Image source={images.frames} style={{ width: 240, height: 13 }} resizeMode="contain" tintColor="#E6D8BD" />
     </View>
   );
 }

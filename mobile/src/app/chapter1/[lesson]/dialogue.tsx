@@ -3,15 +3,18 @@
  * 1/2：話者名（Bold 16・#B09D79）→ 17 あけてセリフ（line1）
  * 2/2：話者名とセリフは右へ寄り（左 125・幅 236）、左に SHOSA の顔（80×72）と影。その下に吹き出し（#F6F1E8・360×118）に SHOSA の視点（line2）
  * 3回目のタップで問題へ。
+ * 確認用：開発中は ?turn=2 で 2/2 から開く（lib/devParams.ts）。
  */
 import { useState } from 'react';
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { Animated, StyleSheet, Text, View } from 'react-native';
+import Svg, { Ellipse } from 'react-native-svg';
 import { Appear } from '@/components/Appear';
 import { useMascotMotion } from '@/components/useMascotMotion';
 import { chapter1, parseLessonIndex } from '@/content/chapter1';
 import { Ch1AdvanceButton, PlayLayout, playTextStyles, progressPercent } from '@/features/chapter1/PlayLayout';
 import { useLang } from '@/i18n/LanguageProvider';
+import { devParam } from '@/lib/devParams';
 import { images } from '@/theme/images';
 
 const BUBBLE = '#F6F1E8';
@@ -21,16 +24,21 @@ function DialogueMascot() {
   const motion = useMascotMotion({ delay: 0 });
   return (
     <View style={styles.shosaGroup}>
-      <Animated.View style={[styles.shadow, motion.shadow]} />
+      {/* Figma の Ellipse 45：54.9×12.5 の楕円、黒 10%。SHOSA の後ろ（左 12.5・上 62.6） */}
+      <Animated.View style={[styles.shadow, motion.shadow]}>
+        <Svg width={55} height={12.5} viewBox="0 0 55 12.5">
+          <Ellipse cx={27.5} cy={6.25} rx={27.45} ry={6.25} fill="#000000" fillOpacity={0.1} />
+        </Svg>
+      </Animated.View>
       <Animated.Image source={images.mascotFace} style={[styles.shosa, motion.mascot]} resizeMode="contain" />
     </View>
   );
 }
 
 export default function DialogueScreen() {
-  const { lesson: raw } = useLocalSearchParams<{ lesson: string }>();
+  const { lesson: raw, turn: turnParam } = useLocalSearchParams<{ lesson: string; turn?: string }>();
   const { lang, t, tr } = useLang();
-  const [turn, setTurn] = useState<1 | 2>(1);
+  const [turn, setTurn] = useState<1 | 2>(devParam(turnParam) === '2' ? 2 : 1);
   const index = parseLessonIndex(raw);
   const lesson = index === null ? undefined : chapter1.lessons[index];
   if (index === null || !lesson) return <Redirect href="/chapter1" />;
@@ -72,7 +80,7 @@ export default function DialogueScreen() {
 const styles = StyleSheet.create({
   shifted: { marginLeft: 84 },
   shosaGroup: { position: 'absolute', left: 21, top: 94, width: 80, height: 75 },
-  shadow: { position: 'absolute', left: 13, top: 63, width: 55, height: 13, borderRadius: 7, backgroundColor: 'rgba(0,0,0,0.10)' },
+  shadow: { position: 'absolute', left: 12.5, top: 62.6, width: 55, height: 12.5 },
   shosa: { width: 80, height: 72 },
   // 吹き出しの三角（23×16、左 50・上 178）
   tail: {

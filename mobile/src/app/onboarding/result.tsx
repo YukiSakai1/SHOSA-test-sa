@@ -8,7 +8,8 @@
  * 背景は「適性診断 完了！」のオレンジ（#FF805C）にベージュの線の柄を重ね、74% の黒で暗くしたもの。
  *
  * M-14：レポートの紙が下からせり上がる（0.6秒）→ M-15：第1位の割合を 0 からカウントアップ（1秒）
- * → M-16：強み3つを上から 0.3秒おきに1つずつ表示 → M-17：2位以降は画像の鍵の帯で隠す
+ * → M-16：強み3つを上から 0.3秒おきに1つずつ表示 → M-17：最後に 2位以降の鍵の帯（「2位以降を閲覧するには1章を進めよう！」）がフェードインする
+ * 紙は鍵の帯を消した画像（resultPaperNoLock）を敷き、帯の部分だけを元の画像から切り出して最後に重ねる
  */
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -31,6 +32,9 @@ import { useReducedMotion } from '@/theme/motion';
 const PAPER_MS = 600;
 const COUNT_MS = 1000;
 const STRENGTH_STEP_MS = 300;
+/** 強みが出そろってから鍵の帯を出すまでの間 */
+const LOCK_PAUSE_MS = 400;
+const LOCK_FADE_MS = 500;
 const GOLD = '#B09D79';
 /** 紙の画像の中で、下の鍵の帯が始まる位置（69.968%）。強みが長くてもこの帯の下に隠れる */
 const PAPER_W = 370;
@@ -54,7 +58,7 @@ export default function DiagnosisResultScreen() {
     <PatternBackground {...patterns.beige} color="#FF805C" patternColor="rgba(255,255,255,0.18)">
       <View style={styles.dim} />
       <Appear from="rise" duration={PAPER_MS} distance={120} style={[styles.paper, { top: insets.top + 33 }]}>
-        <Image source={images.resultPaper} style={styles.paperImg} resizeMode="stretch" />
+        <Image source={images.resultPaperNoLock} style={styles.paperImg} resizeMode="stretch" />
         {first && (
           <View style={styles.content} testID="rank-1">
             <View style={styles.mainRow}>
@@ -92,13 +96,21 @@ export default function DiagnosisResultScreen() {
             </View>
           </View>
         )}
-        {/* .ch20-figma-under：同じ画像の下 30% を一番上に重ね、鍵の帯で強みのはみ出しを隠す */}
-        <View style={styles.under} pointerEvents="none">
-          <Image source={images.resultPaper} style={[styles.paperImg, { top: -LOCK_TOP }]} resizeMode="stretch" />
-        </View>
+        {/* .ch20-figma-under：元の画像の下 30%（鍵の帯）を一番上に重ねる。1位の内容が出そろったあと、最後にフェードインする */}
+        <Appear
+          from="none"
+          delay={PAPER_MS + COUNT_MS + (first ? first.role.strengths.length : 0) * STRENGTH_STEP_MS + LOCK_PAUSE_MS}
+          duration={LOCK_FADE_MS}
+          style={styles.under}
+        >
+          <View style={styles.underClip} pointerEvents="none" testID="rank-lock">
+            <Image source={images.resultPaper} style={[styles.paperImg, { top: -LOCK_TOP }]} resizeMode="stretch" />
+          </View>
+        </Appear>
       </Appear>
       <View style={[styles.bottom, { top: insets.top + 701 }]}>
-        <CtaButton testID="result-next" variant="primary" fontSize={18} ledge={{ color: '#4D3CA8', depth: 3 }} label={tr(r.button)} onPress={finish} />
+        {/* Figma CH0-20'：他の画面の NEXT と同じターコイズ（#00C9C3） */}
+        <CtaButton testID="result-next" variant="next" fontSize={18} ledge={{ color: colors.teal, depth: 3 }} label={tr(r.button)} onPress={finish} />
       </View>
     </PatternBackground>
   );
@@ -161,7 +173,8 @@ const styles = StyleSheet.create({
   strengthRow: { flexDirection: 'row', gap: 6 },
   star: { fontSize: 18, lineHeight: 18, color: '#F8B600' },
   strengthText: { flex: 1, fontSize: 12, lineHeight: 18, color: colors.black },
-  under: { position: 'absolute', left: 0, top: LOCK_TOP, width: PAPER_W, height: PAPER_H - LOCK_TOP, overflow: 'hidden' },
+  under: { position: 'absolute', left: 0, top: LOCK_TOP, width: PAPER_W, height: PAPER_H - LOCK_TOP },
+  underClip: { width: PAPER_W, height: PAPER_H - LOCK_TOP, overflow: 'hidden' },
   // index.html：NEXT は左 21・幅 360（画面が広くても中央に寄せない）
   bottom: { position: 'absolute', left: layout.sideMargin, width: 360, maxWidth: '89.5%' },
 });

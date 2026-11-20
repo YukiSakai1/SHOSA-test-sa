@@ -23,7 +23,9 @@
         "http.server",
         "8090",
         "--bind",
-        "127.0.0.1"
+        "127.0.0.1",
+        "--directory",
+        "reference"
       ],
       "port": 8090
     }

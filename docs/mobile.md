@@ -1,6 +1,6 @@
 # モバイル版（Expo / React Native）
 
-`mobile/` は SHOSA の本番アプリ（iOS・Android）です。リポジトリ直下の Web 版（Capacitor）は**仕様の見本**として残しており、そこから画面を順に `mobile/` へ移植していきます。
+`mobile/` は SHOSA の本番アプリ（iOS・Android）です。`reference/` の旧 Web 版（Capacitor）は**仕様の見本**として残しており、そこから画面を順に `mobile/` へ移植していきます。
 
 ## 技術構成
 | 項目 | 採用 |
@@ -74,6 +74,8 @@ mobile/
 11. **ポップアップは `components/AppModal.tsx` の `AppModal` を使う**（React Native の `Modal` は直接使わない）。Web の `Modal` はブラウザ全体に広がり、PC ではスマホ枠の外にはみ出すためです。`AppModal` は Web ではスマホ枠の中に描き、iOS / Android では `Modal` を使います。
 
 ## Web 版から移植するときの対応表
+左の列は旧 Web 版（`reference/` の下）のファイルです。
+
 | Web版 | mobile/ |
 |---|---|
 | `index.html` の `<section id="screen-xxx">` | `src/app/…/xxx.tsx`（1画面 = 1ファイル） |

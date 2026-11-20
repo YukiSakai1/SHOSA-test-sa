@@ -12,12 +12,11 @@ import { useEffect, useRef } from 'react';
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { Animated, Easing, Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Svg, { Path, SvgXml } from 'react-native-svg';
+import Svg, { G, Path, SvgXml } from 'react-native-svg';
 import { Appear } from '@/components/Appear';
 import { PatternBackground, patterns } from '@/components/PatternBackground';
 import { CtaButton, LangToggle } from '@/components/ui';
 import { intro, introSlideCount } from '@/content/onboarding';
-import { DiamondDivider } from '@/features/chapter1/FocusModal';
 import { useLang } from '@/i18n/LanguageProvider';
 import { colors, fonts } from '@/theme/colors';
 import { layout } from '@/theme/layout';
@@ -58,9 +57,8 @@ export default function IntroSlideScreen() {
       ) : (
         <View style={[styles.head, { top: 89 }]}>
           <Text style={[styles.title, en && styles.titleEn]}>{tr(data.title)}</Text>
-          <View style={styles.divider}>
-            <DiamondDivider color="#FFFFFF" width={240} height={12} />
-          </View>
+          {/* Figma の frames（240×12.5、#E6D8BD）：きらめき 7つと先の細い左右の線 */}
+          <Image source={images.frames} style={styles.divider} resizeMode="contain" tintColor="#E6D8BD" />
         </View>
       )}
 
@@ -145,8 +143,9 @@ function StepsBody() {
   const en = lang === 'en';
   return (
     <>
-      <ImageBackground source={images.focusChecklistCard} resizeMode="stretch" style={styles.stepsCard} imageStyle={styles.stepsCardImg}>
-        <Image source={images.introStepsLine} style={styles.stepsLine} resizeMode="stretch" />
+      <View style={styles.stepsCard}>
+        <StepsCardCorners />
+        <View style={styles.stepsLine} />
         {intro.steps.items.map((s, i) => (
           // index.html ch05RowAppear / ch05IconPop：上の項目から 0.2秒ずつずらして出る（アイコンは 0.3倍から弾む）
           <Appear key={i} from="up" distance={8} delay={200 + i * 200} duration={500} style={styles.stepRow}>
@@ -160,11 +159,33 @@ function StepsBody() {
             <Text style={[styles.stepBody, en && styles.stepBodyEn]}>{tr(s.body)}</Text>
           </Appear>
         ))}
-      </ImageBackground>
+      </View>
       <View style={[styles.body, styles.bodyWide]}>
         <Text style={[styles.bodyText, en && styles.bodyTextEn]}>{tr(intro.steps.desc)}</Text>
       </View>
     </>
+  );
+}
+
+/** Figma CH0-05 の Frame 119 の四隅の飾り（Group 258〜261、#E6D8BD）。左上の形を左右・上下に反転して置く */
+const CORNER_PATHS = [
+  'M10.59,8.07C11.27,8.63 12.37,9.23 13.17,9.67C14.2,10.24 15.27,10.75 16.39,11.12C18.43,11.81 20.85,12.09 22.69,10.74C24.2,9.63 24.96,7.64 24.48,5.82C21.7,8.35 15.48,9.43 10.6,8.07Z',
+  'M8.07,10.59C8.63,11.27 9.23,12.37 9.67,13.17C10.24,14.2 10.75,15.27 11.12,16.39C11.81,18.43 12.09,20.85 10.74,22.69C9.63,24.2 7.64,24.96 5.82,24.49C8.35,21.7 9.43,15.48 8.07,10.6Z',
+  'M22.06,22.06C20.69,22.11 15.32,20.06 14.5,19.54C13.11,18.23 11.81,12.84 9.33,9.33C12.84,11.81 18.23,13.11 19.54,14.5C20.06,15.31 22.11,20.68 22.06,22.06Z',
+];
+const CORNER_TRANSFORMS = ['translate(1 1)', 'matrix(-1 0 0 1 339 1)', 'matrix(1 0 0 -1 1 273)', 'matrix(-1 0 0 -1 339 273)'];
+
+function StepsCardCorners() {
+  return (
+    <Svg style={styles.stepsCorners} width={340} height={274} viewBox="0 0 340 274" pointerEvents="none">
+      {CORNER_TRANSFORMS.map((t) => (
+        <G key={t} transform={t}>
+          {CORNER_PATHS.map((d) => (
+            <Path key={d} d={d} fill="#E6D8BD" />
+          ))}
+        </G>
+      ))}
+    </Svg>
   );
 }
 
@@ -284,7 +305,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 18, fontWeight: '700', color: colors.white, textAlign: 'center', lineHeight: 27 },
   // index.html の英語（.is-en）：見出し 17px・行の高さ 25、本文 15px・行の高さ 22・幅 360、ラベル 11px、手順の項目 14.5px・説明 12px
   titleEn: { fontSize: 17, lineHeight: 25 },
-  divider: { marginTop: 10 },
+  divider: { width: 240, height: 13, marginTop: 10 },
   panel: { position: 'absolute', left: 0, right: 0, bottom: 0 },
   arch: { position: 'absolute', top: 0, left: 0 },
   panelBody: { position: 'absolute', top: 107, left: 0, right: 0, bottom: 0, backgroundColor: colors.beige },
@@ -304,23 +325,27 @@ const styles = StyleSheet.create({
   bodyWide: { paddingHorizontal: layout.sideMargin },
   bodyText: { fontSize: 16, lineHeight: 24, color: colors.black, textAlign: 'center' },
   bodyTextEn: { fontSize: 15, lineHeight: 22 },
-  // .ch05-steps-card：326×284、白・角丸 16、背景に Frame 342
+  // Figma CH0-05 の Frame 119：340×274、白、枠 #E6D8BD 5px（内側）、角丸 10。
+  // 項目（Group 257）は枠の外側から (29,35)、アイコン 36 を 56 おきに並べ、アイコンの中心を幅 4 の #B3EFED の線でつなぐ
   stepsCard: {
     position: 'absolute',
     top: 67,
     alignSelf: 'center',
-    width: 326,
-    height: 284,
+    width: 340,
+    height: 274,
     backgroundColor: colors.white,
-    borderRadius: 16,
-    paddingTop: 24,
-    paddingLeft: 22,
-    gap: 30.6,
+    borderRadius: 10,
+    borderWidth: 5,
+    borderColor: '#E6D8BD',
+    paddingTop: 30,
+    paddingLeft: 24,
+    gap: 20,
   },
-  stepsCardImg: { width: '100%', height: '100%', borderRadius: 16 },
-  stepsLine: { position: 'absolute', left: 38, top: 40, width: 4, height: 204 },
+  // 枠の内側が原点になるので、枠の太さ（5）だけ外へずらす
+  stepsCorners: { position: 'absolute', left: -5, top: -5 },
+  stepsLine: { position: 'absolute', left: 24 + 16, top: 30 + 18, width: 4, height: 168, backgroundColor: '#B3EFED' },
   stepRow: { flexDirection: 'row', alignItems: 'center', height: 36 },
-  stepIcon: { width: 36, height: 36, marginRight: 14 },
+  stepIcon: { width: 36, height: 36, marginRight: 13 },
   stepHeadEn: { fontSize: 14.5 },
   stepBodyEn: { fontSize: 12 },
   stepHead: { fontSize: 16, lineHeight: 20.8, fontWeight: '700', color: '#1A202C', marginRight: 8 },

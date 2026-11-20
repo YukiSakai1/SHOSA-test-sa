@@ -6,14 +6,13 @@
  * Figma の注記どおりに動く：
  * - 正否表示から 1.5 秒後に SHOSA の吹き出しが出て、同時に「SHOSA Focus」ボタンが脈動を始める
  * - NEXT は最初 Disabled（灰色）。SHOSA Focus モーダルを一度開くと Active になり、閉じても Active のまま
- * URL パラメータ choice（A / B）で選んだ答えを受け取る。
+ * URL パラメータ choice（A / B）で選んだ答えを受け取る。確認用：開発中は ?focus=1 で SHOSA Focus を開いた状態から始まる（lib/devParams.ts）。
  */
 import { useEffect, useRef, useState } from 'react';
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { Animated, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { PatternBackground, patterns } from '@/components/PatternBackground';
 import { CtaButton, usePulse, PressScale } from '@/components/ui';
 import { useMascotMotion } from '@/components/useMascotMotion';
 import { chapter1, chapter1LessonCount, parseLessonIndex } from '@/content/chapter1';
@@ -22,6 +21,7 @@ import { FocusModal } from '@/features/chapter1/FocusModal';
 import { cardEdgeXml } from '@/features/chapter1/cardTopArt';
 import { Ch1CardLeaf, ChapterHeader, ch1, progressPercent } from '@/features/chapter1/PlayLayout';
 import { useLang } from '@/i18n/LanguageProvider';
+import { devParam } from '@/lib/devParams';
 import { images } from '@/theme/images';
 
 const BUBBLE_DELAY_MS = 1500;
@@ -34,11 +34,12 @@ function parseChoice(raw: string | undefined): ChoiceId | null {
 }
 
 export default function ResultScreen() {
-  const params = useLocalSearchParams<{ lesson: string; choice: string }>();
+  const params = useLocalSearchParams<{ lesson: string; choice: string; focus?: string }>();
   const { lang, t, tr } = useLang();
   const insets = useSafeAreaInsets();
-  const [focusOpen, setFocusOpen] = useState(false);
-  const [focusSeen, setFocusSeen] = useState(false);
+  const openFocusFromUrl = devParam(params.focus) === '1';
+  const [focusOpen, setFocusOpen] = useState(openFocusFromUrl);
+  const [focusSeen, setFocusSeen] = useState(openFocusFromUrl);
   const [bubbleShown, setBubbleShown] = useState(false);
   const bubbleOpacity = useRef(new Animated.Value(0)).current;
   const focusScale = usePulse(bubbleShown && !focusSeen);
@@ -69,7 +70,8 @@ export default function ResultScreen() {
   };
 
   return (
-    <PatternBackground color={ch1.screenBg} patternColor={patterns.beige.patternColor} tile={patterns.beige.tile}>
+    // 背景は Figma の #E8DECB の単色（柄は無し：CH1-L01-04）
+    <View style={{ flex: 1, backgroundColor: ch1.screenBg }}>
       <ChapterHeader percent={progressPercent(index, 4)} style={{ paddingBottom: 20 }} />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} bounces={false}>
         <View style={[styles.panel, { minHeight: PANEL_H + insets.bottom + 24 }]}>
@@ -128,7 +130,7 @@ export default function ResultScreen() {
         </View>
       </ScrollView>
       <FocusModal lesson={lesson} visible={focusOpen} onClose={() => setFocusOpen(false)} />
-    </PatternBackground>
+    </View>
   );
 }
 

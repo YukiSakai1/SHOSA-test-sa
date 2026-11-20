@@ -8,7 +8,7 @@
  * 「その他」を選ぶと編集シートを自動で開く（Web版と同じ）。
  */
 import { useEffect, useRef, useState } from 'react';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
 import { BottomSheet } from '@/components/BottomSheet';
 import { pad2, range, WheelPicker } from '@/components/WheelPicker';
@@ -16,6 +16,7 @@ import { schedule } from '@/content/onboarding';
 import { blockProgress, OptionCard, QuestionLayout } from '@/features/onboarding/components';
 import { useOnboarding } from '@/features/onboarding/OnboardingProvider';
 import { useLang } from '@/i18n/LanguageProvider';
+import { devParam } from '@/lib/devParams';
 import { haptics } from '@/lib/haptics';
 import { colors } from '@/theme/colors';
 import { motion, nativeDriver } from '@/theme/motion';
@@ -27,7 +28,9 @@ export default function ScheduleScreen() {
   const { t, tr } = useLang();
   const { record, update } = useOnboarding();
   const s = record.schedule;
-  const [editing, setEditing] = useState(false);
+  // 確認用：開発中は ?edit=1 で、お知らせ時間を編集するシートを開いた状態から始まる（lib/devParams.ts）
+  const { edit } = useLocalSearchParams<{ edit?: string }>();
+  const [editing, setEditing] = useState(devParam(edit) === '1');
   const [draft, setDraft] = useState({ h: 10, m: 30 });
 
   const [hh, mm] = s.notifyTime.split(':');

@@ -1,5 +1,7 @@
 # モーションQA：フロントエンドSHOSA_motion.xlsx の実装状況
 
+> 旧 Web 版のファイル（`index.html`・`src/*.ts`・`css/style.css` など）は、2026-11-20 から `reference/` の下にあります。この記録の中の旧 Web 版のパスは、`reference/` からの相対パスとして読んでください。
+
 - 基準：`フロントエンドSHOSA_motion.xlsx`（シート「演出仕様」M-01〜M-41 の39項目、シート「要点」）
 - 比べた対象：旧Web版（`index.html` + `src/*.ts` + `css/style.css`）と React Native版（`mobile/`、http://localhost:8082）
 - 確認した日：2026-11-18（React Native版にモーションを実装したあとの状態）

@@ -2,7 +2,7 @@
 
 このフォルダは SHOSA の本番アプリ（iOS・Android）です。
 **プロジェクト固有のルール、フォルダ構成、移植の状況は [../docs/mobile.md](../docs/mobile.md) にまとめています。必ず先に読んでください。**
-仕様の見本である Web 版の説明は [../CLAUDE.md](../CLAUDE.md) にあります。
+仕様の見本である旧 Web 版の説明は [../reference/CLAUDE.md](../reference/CLAUDE.md) にあります。
 
 ## 特に大事なルール（詳しくは docs/mobile.md を参照）
 - 書くのは `.ts` / `.tsx` だけです。TypeScript は strict にしています。作業を終える前に必ず `npm run typecheck` を実行してください。

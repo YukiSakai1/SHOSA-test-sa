@@ -1,21 +1,31 @@
 /**
  * ヒアリング 4問（Figma CH0-09〜11）。1問1画面、1つ選ぶと NEXT が押せる。
  * 「その他」を選ぶとカードが広がり、自由入力欄が出る（入力しないと NEXT は押せない）。
+ * 確認用：開発中は ?select=<選択肢の id>（例：?select=other）で、その選択肢を選んだ状態から開く（lib/devParams.ts）。
  */
+import { useEffect } from 'react';
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { hearings, OTHER_INPUT_MAX_LENGTH } from '@/content/onboarding';
 import { blockProgress, OptionCard, QuestionLayout } from '@/features/onboarding/components';
 import { useOnboarding } from '@/features/onboarding/OnboardingProvider';
 import { useLang } from '@/i18n/LanguageProvider';
+import { devParam } from '@/lib/devParams';
 import { colors } from '@/theme/colors';
 
 export default function HearingScreen() {
-  const { step: raw } = useLocalSearchParams<{ step: string }>();
+  const { step: raw, select: selectParam } = useLocalSearchParams<{ step: string; select?: string }>();
   const { t, tr } = useLang();
   const { record, update } = useOnboarding();
   const index = Number(raw);
   const q = Number.isInteger(index) ? hearings[index] : undefined;
+  const preselect = devParam(selectParam);
+  // 確認用：URL で指定した選択肢を選んだ状態にする（開発中だけ）
+  useEffect(() => {
+    if (!q || !preselect || !q.options.some((o) => o.id === preselect)) return;
+    update((r) => ({ ...r, hearing: { ...r.hearing, [q.key]: { optionId: preselect, otherText: r.hearing[q.key]?.otherText } } }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [q?.key, preselect]);
   if (!q) return <Redirect href="/onboarding/language" />;
 
   const answer = record.hearing[q.key];

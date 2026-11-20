@@ -51,7 +51,7 @@ export const chapter1: Chapter1Data = {
         ja: '時刻は12:45。午後のシフトインを前に、\nバックヤードの姿見の前へ。',
         en: "It's 12:45. Before your afternoon shift begins, you head to the full-length mirror in the back-of-house area.",
       },
-      sceneImage: 'sceneL01Mirror',
+      sceneImage: 'sceneL01Locker',
       // Figma CH1-L01-02：話者は「先輩」、セリフは括弧なし
       speaker: { ja: '先輩', en: 'Senior colleague' },
       line1: {

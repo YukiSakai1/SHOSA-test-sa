@@ -1,24 +1,24 @@
 /**
  * 第1章 ガイダンス（Figma CH0-08）。
  * 空色の背景（#6DCAF1）に、上がアーチ型のクリーム色の面（features/chapter1/guideArt.ts：Figma のベクターをそのまま SVG にしたもの）。
- * 面の中：101（Montserrat 34・#DAC397・金茶の影）→ タイトル（Montserrat 22）→ 副題（12）→ SHOSA（170×114）
- *   → 白い説明カード（上下に 28 の帯、枠は #E6D8BD、角に金の飾り）。下に紫の START（360×48）。
+ * 面の中：101（Montserrat 34・#DAC397・金茶の影）→ タイトル（Montserrat 22）→ 副題（12）→ SHOSA（170×114、体は止めたまま頭と顔だけが左右にゆっくり傾く）
+ *   → 白い説明カード（上下に 28 の帯、枠は #E6D8BD、角に #E6D8BD の葉の飾り）。下に紫の START（360×48）。
  * 位置は Figma の画面（402×874、上のステータスバー 59 を含む）から。セーフエリアの上端からの距離で置く。
  */
 import { router } from 'expo-router';
-import { Animated, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SvgXml } from 'react-native-svg';
 import { PatternBackground, patterns } from '@/components/PatternBackground';
 import { RichText } from '@/components/RichText';
-import { useMascotMotion } from '@/components/useMascotMotion';
+import { Appear } from '@/components/Appear';
+import { ShosaMascot } from '@/components/ShosaMascot';
 import { CtaButton, LangToggle } from '@/components/ui';
 import { chapter1 } from '@/content/chapter1';
 import { GUIDE_ART_XML } from '@/features/chapter1/guideArt';
-import { Ch1Flourish } from '@/features/chapter1/PlayLayout';
+import { Ch1CardLeaf } from '@/features/chapter1/PlayLayout';
 import { useLang } from '@/i18n/LanguageProvider';
 import { colors, fonts } from '@/theme/colors';
-import { images } from '@/theme/images';
 import { layout } from '@/theme/layout';
 
 /** Figma の画面でのステータスバーの高さ（iPhone 17 Pro の上のセーフエリア） */
@@ -29,7 +29,6 @@ export default function Chapter1IntroScreen() {
   const { lang, tr } = useLang();
   const insets = useSafeAreaInsets();
   const { guide } = chapter1;
-  const { mascot: mascotMotion } = useMascotMotion();
   // 英語は文が長いため、本文を少し小さくし、副題を 1行に収めて、スクロールなしで START の上に収める
   const en = lang === 'en';
   // Figma の y（画面の上端から）を、セーフエリアの上端からの距離に直す
@@ -54,8 +53,10 @@ export default function Chapter1IntroScreen() {
           <Text style={styles.title}>{tr(guide.title)}</Text>
           <Text style={[styles.subtitle, en && styles.subtitleEn]}>{tr(guide.subtitle)}</Text>
         </View>
-        {/* SHOSA（170×114）。足元の手が、カードの上の帯（枠）に 12 かかる */}
-        <Animated.Image source={images.mascotIntro} style={[styles.mascot, mascotMotion]} resizeMode="contain" />
+        {/* SHOSA（170×114、Figma のベクター）。足元の手が、カードの上の帯（枠）に 12 かかる。フェードインのあと、頭と顔だけを動かす */}
+        <Appear from="none" delay={200} duration={400} style={styles.mascot}>
+          <ShosaMascot moveHead />
+        </Appear>
         <View style={styles.card}>
           <View style={styles.cap} />
           <View style={styles.cardBody}>
@@ -66,10 +67,11 @@ export default function Chapter1IntroScreen() {
             ))}
           </View>
           <View style={[styles.cap, styles.capBottom]} />
-          <Ch1Flourish corner="tl" />
-          <Ch1Flourish corner="tr" />
-          <Ch1Flourish corner="bl" />
-          <Ch1Flourish corner="br" />
+          {/* Figma の Frame 255 / 290 の角の飾り（Group 258 / 259：#E6D8BD の葉 3枚、角から 1）。下の帯は上下反転 */}
+          <Ch1CardLeaf corner="tl" edge={1} inset={1} />
+          <Ch1CardLeaf corner="tr" edge={1} inset={1} />
+          <Ch1CardLeaf corner="bl" edge={1} inset={1} />
+          <Ch1CardLeaf corner="br" edge={1} inset={1} />
         </View>
       </ScrollView>
 
@@ -77,6 +79,8 @@ export default function Chapter1IntroScreen() {
         <CtaButton
           testID="chapter1-start"
           variant="primary"
+          // Figma の btn：DROP_SHADOW（0, 3）・ぼかし 0・#4D3CA8
+          ledge={{ color: '#4D3CA8', depth: 3 }}
           label={tr(guide.button)}
           onPress={() => router.push({ pathname: '/chapter1/[lesson]/situation', params: { lesson: '0' } })}
         />

@@ -69,7 +69,7 @@ export function FocusModal({ lesson, visible, onClose }: { lesson: Chapter1Lesso
                   {tr(p)}
                 </Text>
               ))}
-              {/* チェックリストカード（289×278）：白い面・#E6D8BD の枠・角の飾りは画像、絵は幅 110 */}
+              {/* チェックリストカード（289×278）：白い面・#E6D8BD の枠・角の飾りは画像。絵は Figma「1116」の Frame 1 どおり、カードの左 67・上 11 に 181×168 */}
               <View style={styles.checklist}>
                 <Image source={images.focusChecklistCard} style={styles.checklistBg} resizeMode="stretch" />
                 {lesson.focusImage && <Image source={images[lesson.focusImage]} style={styles.checklistImg} resizeMode="contain" />}
@@ -108,7 +108,8 @@ const styles = StyleSheet.create({
   para: { fontSize: 16, lineHeight: 24, color: '#000000' },
   checklist: { width: '100%', maxWidth: 289, height: 278, alignSelf: 'center', marginTop: 36, alignItems: 'center' },
   checklistBg: { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' },
-  checklistImg: { position: 'absolute', top: 31, width: 110, height: 137 },
+  // 中央より 13 右（カードの左 67 から幅 181）
+  checklistImg: { position: 'absolute', top: 11, width: 181, height: 168, transform: [{ translateX: 13 }] },
   caption: { position: 'absolute', top: 188, left: 40, right: 39, fontSize: 14, lineHeight: 20, color: '#988464', fontWeight: '700', textAlign: 'center' },
   captionHl: { color: '#715BE1', fontWeight: '800' },
   magnifier: { position: 'absolute', top: -9, left: 7, width: 58, height: 79 },

@@ -1,16 +1,17 @@
 /**
  * 適性診断 完了！（index.html #screen-ob-passport、Figma CH0-19）：オレンジ背景・メダル・1章解放のお知らせ。
- * 「結果を見る」ボタンは紫（360×48）で、左にクリップボードのアイコン（41×50）。脈動する（1.5秒周期）。
+ * 「結果を見る」ボタンは紫（360×48）で、左にクリップボードのアイコン（41×50）。文字は Bold 18（Figma）、下に #4D3CA8 の縁（真下 3px・ぼかし無し）。脈動はさせない。
+ * 案内文の「結果を見る」だけ太字にする。
  */
 import { router } from 'expo-router';
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { Celebration, CelebrationDivider } from '@/components/Celebration';
-import { PressScale, usePulse } from '@/components/ui';
+import { PressScale } from '@/components/ui';
+import { RichText } from '@/components/RichText';
 import { diagnosisComplete } from '@/content/onboarding';
 import { useLang } from '@/i18n/LanguageProvider';
 import { colors } from '@/theme/colors';
-import { useReducedMotion } from '@/theme/motion';
 import { svgIcons } from '@/theme/svgIcons';
 
 export default function DiagnosisCompleteScreen() {
@@ -22,16 +23,18 @@ export default function DiagnosisCompleteScreen() {
       {/* Figma の区切り線（星形のきらめきと、先の細い線） */}
       <CelebrationDivider style={styles.divider} />
       <Text style={styles.body}>{tr(c.body)}</Text>
-      <Text style={styles.hint}>{tr(c.hint)}</Text>
+      <RichText style={styles.hint} highlightStyle={styles.hintBold}>
+        {tr(c.hint)}
+      </RichText>
     </Celebration>
   );
 }
 
 function ResultButton({ label }: { label: string }) {
-  const reduced = useReducedMotion();
-  const scale = usePulse(!reduced);
   return (
-    <Animated.View style={{ transform: [{ scale }] }}>
+    <View>
+      {/* Figma の影：DROP_SHADOW（0, 3）・ぼかし 0・#4D3CA8。ボタンと同じ形を 3 下にずらして後ろに置く */}
+      <View style={styles.ledge} pointerEvents="none" />
       <PressScale testID="see-results" accessibilityRole="button" onPress={() => router.push('/onboarding/result')} style={styles.button}>
         {/* Figma の icon（40×56）：ボタンの左 34・下端にそろえ、上に 8 はみ出す。絵は少し傾いた（-10°）クリップボードで、枠より一回り大きい（50×62） */}
         <View style={styles.icon} pointerEvents="none">
@@ -39,7 +42,7 @@ function ResultButton({ label }: { label: string }) {
         </View>
         <Text style={styles.buttonText}>{label}</Text>
       </PressScale>
-    </Animated.View>
+    </View>
   );
 }
 
@@ -48,28 +51,17 @@ const styles = StyleSheet.create({
   divider: { marginTop: 0, marginBottom: 20 },
   body: { fontSize: 16, lineHeight: 24, color: colors.white, textAlign: 'center', marginBottom: 17 },
   hint: { fontSize: 16, lineHeight: 24, color: colors.white, textAlign: 'center' },
+  hintBold: { color: colors.white, fontWeight: '700' },
   button: {
     height: 48,
     borderRadius: 999,
     backgroundColor: colors.purple,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: 'rgb(84,66,179)',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.78,
-    shadowRadius: 6,
-    elevation: 4,
   },
+  ledge: { position: 'absolute', left: 0, right: 0, top: 3, height: 48, borderRadius: 999, backgroundColor: '#4D3CA8' },
   icon: { position: 'absolute', left: 34, bottom: 0, width: 40, height: 56 },
   iconSvg: { position: 'absolute', left: -5, top: -3 },
-  // 「結果を見る」は一番押してほしいボタンなので、他のボタンより大きく太く、少し字間をあけて、下に濃い紫の影を付けて強調する
-  buttonText: {
-    fontSize: 20,
-    fontWeight: '900',
-    letterSpacing: 1.5,
-    color: colors.white,
-    textShadowColor: 'rgba(84,66,179,0.9)',
-    textShadowOffset: { width: 0, height: 1.5 },
-    textShadowRadius: 0,
-  },
+  // 「結果を見る」：Figma は Noto Sans CJK JP Bold 18・白
+  buttonText: { fontSize: 18, fontWeight: '700', color: colors.white },
 });
